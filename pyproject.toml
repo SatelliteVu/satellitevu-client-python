@@ -16,6 +16,7 @@ flake8 = "^5.0.4"
 isort = "^5.10.1"
 nox = "^2022.8.7"
 nox-poetry = "^1.0.1"
+pyfakefs = "^4.7.0"
 
 [build-system]
 requires = ["poetry-core"]
