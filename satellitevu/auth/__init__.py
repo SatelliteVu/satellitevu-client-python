@@ -1,3 +1,4 @@
+from .auth import Auth
 from .cache import AbstractCache, AppDirCache
 
-__all__ = ["AppDirCache", "AbstractCache"]
+__all__ = ["AbstractCache", "AppDirCache", "Auth"]

@@ -17,6 +17,14 @@ isort = "^5.10.1"
 nox = "^2022.8.7"
 nox-poetry = "^1.0.1"
 pyfakefs = "^4.7.0"
+mocket = "^3.10.8"
+pytest-cov = "^4.0.0"
+
+[tool.poetry.group.requests]
+optional = true
+
+[tool.poetry.group.requests.dependencies]
+requests = "^2.28.1"
 
 [build-system]
 requires = ["poetry-core"]

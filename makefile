@@ -41,6 +41,7 @@ else
 endif
 
 
+export PYTEST_ADDOPTS=--cov=satellitevu
 PHONY: test
 test: ## Run tests (single Python version)
 	poetry run pytest
