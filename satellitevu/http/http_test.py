@@ -2,9 +2,11 @@ from importlib import import_module
 from json import dumps
 from unittest.mock import Mock
 
-from mocket import Mocketizer
+from mocket import Mocket, Mocketizer
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, param, skip
+
+from satellitevu.auth.auth import Auth
 
 from . import ResponseWrapper, UrllibClient
 
@@ -62,3 +64,36 @@ def test_http_custom_actor(http_client_class):
     client.request("GET", "http://example.com/")
 
     assert instance.request.called
+
+
+@mark.parametrize(
+    "url, headers, uses_injected_auth",
+    (
+        ("http://example.com/", None, False),
+        ("http://api.example.com/", None, False),
+        ("http://api.example.com/non-authed", None, False),
+        ("http://api.example.com/authed/", None, True),
+        ("http://api.example.com/authed/subpath", None, True),
+        (
+            "http://api.example.com/authed/subpath",
+            {"Authorization": "some-other"},
+            False,
+        ),
+    ),
+)
+def test_http_set_auth(http_client_class, url, headers, uses_injected_auth):
+    auth = Mock(wraps=Auth(client_id="mocked", client_secret="mocked"))
+    auth.token = "mock-token"
+    Entry.single_register("GET", url)
+
+    client = http_client_class()
+    client.set_auth("http://api.example.com/authed/", auth)
+
+    with Mocketizer():
+        client.request("GET", url, headers=headers)
+        requests = Mocket.request_list()
+
+    assert len(requests) == 1
+    assert (
+        requests[0].headers.get("Authorization") == "mock-token"
+    ) == uses_injected_auth

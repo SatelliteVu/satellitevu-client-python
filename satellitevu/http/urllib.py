@@ -40,6 +40,7 @@ class UrllibClient(AbstractClient):
             body = urlencode(data).encode("utf-8")
             headers["Content-Type"] = "application/x-www-form-urlencoded"
 
+        self._set_auth(url, headers)
         request = Request(method=method, url=url, data=body, headers=headers)
         try:
             response = urlopen(request)

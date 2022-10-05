@@ -27,6 +27,7 @@ class RequestsSession(AbstractClient):
     session: Session
 
     def __init__(self, instance: Optional[Session] = None):
+        super().__init__()
         self.session = instance or Session()
 
     def request(
@@ -37,6 +38,9 @@ class RequestsSession(AbstractClient):
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None
     ) -> ResponseWrapper:
+        headers = headers or {}
+
+        self._set_auth(url, headers)
         response = self.session.request(
             method=method, url=url, headers=headers, data=data
         )
