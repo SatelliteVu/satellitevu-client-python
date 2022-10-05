@@ -1,0 +1,4 @@
+/.coverage
+/.nox
+/.pytest-cache
+/dist

@@ -1,0 +1,55 @@
+from abc import ABC, abstractmethod
+from configparser import ConfigParser
+from os import replace
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+from typing import Optional
+
+from appdirs import user_cache_dir
+
+
+class AbstractCache(ABC):
+    """
+    Abstract cache interface, implemented by actual cache classes
+    """
+
+    @abstractmethod
+    def save(self, client_id: str, value: str):
+        pass
+
+    @abstractmethod
+    def load(self, client_id: str) -> Optional[str]:
+        pass
+
+
+class AppDirCache(AbstractCache):
+    """
+    File based token cache using an INI file in the user's cache dir or given dir.
+    """
+
+    cache_dir: Path
+    cache_file: Path
+
+    def __init__(self, cache_dir: Optional[str] = None):
+        self.cache_dir = Path(cache_dir if cache_dir else user_cache_dir("SatelliteVu"))
+        self.cache_file = self.cache_dir / "tokencache"
+
+    def save(self, client_id: str, value: str):
+        parser = ConfigParser()
+        parser.read(self.cache_file)
+
+        parser.add_section(client_id)
+        parser[client_id]["access_token"] = value
+
+        with NamedTemporaryFile("w", dir=str(self.cache_dir), delete=False) as handle:
+            parser.write(handle)
+        replace(handle.name, self.cache_file)
+
+    def load(self, client_id: str) -> Optional[str]:
+        try:
+            parser = ConfigParser()
+            parser.read(self.cache_file)
+
+            return parser[client_id]["access_token"]
+        except (FileNotFoundError, KeyError):
+            return None
