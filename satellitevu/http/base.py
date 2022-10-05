@@ -19,6 +19,11 @@ class AbstractClient(ABC):
     Abstract HTTP client
     """
 
+    _auth: Dict[str, Any]
+
+    def __init__(self):
+        self._auth = {}
+
     def post(
         self, url, *, headers: Optional[Dict] = None, data: Optional[Dict] = None
     ) -> ResponseWrapper:
@@ -34,3 +39,14 @@ class AbstractClient(ABC):
         data: Optional[Dict] = None
     ) -> ResponseWrapper:
         pass
+
+    def set_auth(self, base_url: str, auth):
+        self._auth[base_url] = auth
+
+    def _set_auth(self, url: str, headers):
+        auth = next((v for k, v in self._auth.items() if url.startswith(k)), None)
+        has_auth = next(
+            (True for k in headers.keys() if k.lower() == "authorization"), False
+        )
+        if auth and not has_auth:
+            headers["authorization"] = auth.token
