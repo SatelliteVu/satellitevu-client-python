@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from configparser import ConfigParser
+from configparser import ConfigParser, DuplicateSectionError
 from os import replace
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -38,7 +38,10 @@ class AppDirCache(AbstractCache):
         parser = ConfigParser()
         parser.read(self.cache_file)
 
-        parser.add_section(client_id)
+        try:
+            parser.add_section(client_id)
+        except DuplicateSectionError:
+            pass
         parser[client_id]["access_token"] = value
 
         with NamedTemporaryFile("w", dir=str(self.cache_dir), delete=False) as handle:
