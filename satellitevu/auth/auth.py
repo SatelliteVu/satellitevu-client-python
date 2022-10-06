@@ -1,5 +1,6 @@
 from base64 import b64decode
 from datetime import datetime
+from hashlib import sha1
 from json import loads
 from logging import getLogger
 from typing import Optional
@@ -55,16 +56,19 @@ class Auth:
         self.auth_url = auth_url or AUTH_URL
         self.client = client or UrllibClient()
 
-    def token(self) -> str:
-        token = self.cache.load(self.client_id)
+    def token(self, scopes=[]) -> str:
+        cache_key = sha1(self.client_id.encode("utf-8"))
+        cache_key.update("".join(scopes).encode("utf-8"))
+
+        token = self.cache.load(cache_key.hexdigest())
 
         if not token or is_expired_token(token):
-            token = self._auth()
-            self.cache.save(self.client_id, token)
+            token = self._auth(scopes)
+            self.cache.save(cache_key.hexdigest(), token)
 
         return token
 
-    def _auth(self) -> str:
+    def _auth(self, scopes=[]) -> str:
         logger.info("Performing client_credential authentication")
         token_url = urljoin(self.auth_url, "oauth/token")
         response = self.client.post(
@@ -75,12 +79,14 @@ class Auth:
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "audience": self.audience,
+                "scope": " ".join(scopes),
             },
         )
 
         if response.status != 200:
             raise AuthError(
-                f"Unexpected error code for client_credential flow: {response.status}"
+                "Unexpected error code for client_credential flow: "
+                f"{response.status} - {response.text}"
             )
         try:
             payload = response.json()
