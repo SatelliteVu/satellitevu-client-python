@@ -25,9 +25,14 @@ class AbstractClient(ABC):
         self._auth = {}
 
     def post(
-        self, url, *, headers: Optional[Dict] = None, data: Optional[Dict] = None
+        self,
+        url,
+        *,
+        headers: Optional[Dict] = None,
+        data: Optional[Dict] = None,
+        json: Optional[Any] = None
     ) -> ResponseWrapper:
-        return self.request("POST", url, headers=headers, data=data)
+        return self.request("POST", url, headers=headers, data=data, json=json)
 
     @abstractmethod
     def request(
@@ -36,7 +41,8 @@ class AbstractClient(ABC):
         url: str,
         *,
         headers: Optional[Dict] = None,
-        data: Optional[Dict] = None
+        data: Optional[Dict] = None,
+        json: Optional[Any] = None
     ) -> ResponseWrapper:
         pass
 

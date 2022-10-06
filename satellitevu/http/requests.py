@@ -1,5 +1,5 @@
 from ast import Dict
-from typing import Optional
+from typing import Any, Optional
 
 from requests import Response, Session
 
@@ -36,12 +36,13 @@ class RequestsSession(AbstractClient):
         url: str,
         *,
         headers: Optional[Dict] = None,
-        data: Optional[Dict] = None
+        data: Optional[Dict] = None,
+        json: Optional[Any] = None
     ) -> ResponseWrapper:
         headers = headers or {}
 
         self._set_auth(url, headers)
         response = self.session.request(
-            method=method, url=url, headers=headers, data=data
+            method=method, url=url, headers=headers, data=data, json=json
         )
         return ResponseWrapper(response)

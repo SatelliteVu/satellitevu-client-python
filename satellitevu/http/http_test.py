@@ -97,3 +97,27 @@ def test_http_set_auth(http_client_class, url, headers, uses_injected_auth):
     assert (
         requests[0].headers.get("Authorization") == "mock-token"
     ) == uses_injected_auth
+
+
+@mark.parametrize(
+    "data, json, body, content_type",
+    (
+        ({"foo": "bar"}, None, "foo=bar", "application/x-www-form-urlencoded"),
+        (None, {"foo": "bar"}, '{"foo": "bar"}', "application/json"),
+        (
+            {"bar": "foo"},
+            {"foo": "bar"},
+            "bar=foo",
+            "application/x-www-form-urlencoded",
+        ),
+    ),
+)
+def test_payload(http_client_class, data, json, body, content_type):
+    client = http_client_class()
+    Entry.single_register("POST", "http://api.example.com")
+
+    with Mocketizer():
+        client.request("POST", "http://api.example.com", data=data, json=json)
+        request = Mocket.last_request()
+    assert request.headers["Content-Type"] == content_type
+    assert request.body == body
