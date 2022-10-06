@@ -1,6 +1,6 @@
 from http.client import HTTPResponse
-from json import loads
-from typing import Dict, Optional
+from json import dumps, loads
+from typing import Any, Dict, Optional
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -32,13 +32,17 @@ class UrllibClient(AbstractClient):
         url: str,
         *,
         headers: Optional[Dict] = None,
-        data: Optional[Dict] = None
+        data: Optional[Dict] = None,
+        json: Optional[Any] = None
     ) -> ResponseWrapper:
         headers = headers or {}
         body = None
         if data:
             body = urlencode(data).encode("utf-8")
             headers["Content-Type"] = "application/x-www-form-urlencoded"
+        elif json:
+            body = dumps(json).encode("utf-8")
+            headers["Content-Type"] = "application/json"
 
         self._set_auth(url, headers)
         request = Request(method=method, url=url, data=body, headers=headers)
