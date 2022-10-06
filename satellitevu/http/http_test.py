@@ -83,7 +83,7 @@ def test_http_custom_actor(http_client_class):
 )
 def test_http_set_auth(http_client_class, url, headers, uses_injected_auth):
     auth = Mock(wraps=Auth(client_id="mocked", client_secret="mocked"))
-    auth.token = "mock-token"
+    auth.token.return_value = "mock-token"
     Entry.single_register("GET", url)
 
     client = http_client_class()
