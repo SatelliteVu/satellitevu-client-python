@@ -49,3 +49,23 @@ def test_partial_cache_save(fs: FakeFilesystem):
     assert {key: value for key, value in parser.items("other-client")} == {
         "access_token": "foo",
     }
+
+
+def test_cache_update(fs: FakeFilesystem):
+    fs.makedir(TEST_DIR)
+    cache = AppDirCache(TEST_DIR)
+    cache_file = TEST_DIR / "tokencache"
+
+    parser = ConfigParser()
+    parser.add_section("test-client")
+    parser["test-client"]["access_token"] = "foo"
+    with open(cache_file, "w") as handle:
+        parser.write(handle)
+
+    cache.save("test-client", "bar")
+
+    parser = ConfigParser()
+    parser.read(cache_file)
+    assert {key: value for key, value in parser.items("test-client")} == {
+        "access_token": "bar",
+    }
