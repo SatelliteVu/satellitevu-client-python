@@ -24,7 +24,7 @@ from satellitevu.auth import Auth
 
 
 auth = Auth(getenv("CLIENT_ID"), getenv("CLIENT_SECRET"))
-print(auth.token)
+print(auth.token())
 ```
 
 Thus retrieved token can be used for bearer token authentication in HTTP request

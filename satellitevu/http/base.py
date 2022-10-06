@@ -55,4 +55,4 @@ class AbstractClient(ABC):
             (True for k in headers.keys() if k.lower() == "authorization"), False
         )
         if auth and not has_auth:
-            headers["authorization"] = auth.token
+            headers["authorization"] = auth.token()
