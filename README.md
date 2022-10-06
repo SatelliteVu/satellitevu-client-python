@@ -12,18 +12,44 @@ TBD
 A User API Client credential set consisting of an _client id_ and _client secret_ is
 needed and should be set in your script's environment variables.
 
+Check out the [examples](./examples/) provided. They can for example be run locally with
+
+```
+poetry run python ./examples/archive.py --example=recent
+```
+
+### Simple Client Usage
+
+The easiest way to get started is to use the `satellitevu.Client` class, which needs
+a client_id and client_secret only:
+
+```
+import os
+
+from satellitevu import Client
+
+
+client = Client(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
+print(client.archive_v1.search().json())
+```
+
+`client.archive_v1.search` supports all supported request body parameters documented
+in the [API docs](search-api-docs), with special handling for `datetime` which is
+constructed from the optional `date_from` and `date_to` parameters and a default result
+page size limit of 25.
+
 ### Authentication Handling
 
-The `satellitevu.auth.Auth` class provides the main interface to retrieve an
+The `satellitevu.Auth` class provides the main interface to retrieve an
 authorization token required to interact with the API endpoints.
 
 ```
-from os import getenv
+import os
 
-from satellitevu.auth import Auth
+from satellitevu import Auth
 
 
-auth = Auth(getenv("CLIENT_ID"), getenv("CLIENT_SECRET"))
+auth = Auth(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
 print(auth.token())
 ```
 
@@ -108,3 +134,4 @@ nox
 [pipx]: https://pypa.github.io/pipx/
 [nox]: https://nox.thea.codes/en/stable/
 [nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
+[search-api-docs]: https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post

@@ -30,7 +30,7 @@ class AbstractClient(ABC):
         *,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
-        json: Optional[Any] = None
+        json: Optional[Any] = None,
     ) -> ResponseWrapper:
         return self.request("POST", url, headers=headers, data=data, json=json)
 
@@ -42,7 +42,7 @@ class AbstractClient(ABC):
         *,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
-        json: Optional[Any] = None
+        json: Optional[Any] = None,
     ) -> ResponseWrapper:
         pass
 
@@ -55,4 +55,4 @@ class AbstractClient(ABC):
             (True for k in headers.keys() if k.lower() == "authorization"), False
         )
         if auth and not has_auth:
-            headers["authorization"] = auth.token()
+            headers["authorization"] = f"Bearer {auth.token()}"

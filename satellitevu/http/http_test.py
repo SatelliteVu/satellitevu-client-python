@@ -95,7 +95,7 @@ def test_http_set_auth(http_client_class, url, headers, uses_injected_auth):
 
     assert len(requests) == 1
     assert (
-        requests[0].headers.get("Authorization") == "mock-token"
+        requests[0].headers.get("Authorization") == "Bearer mock-token"
     ) == uses_injected_auth
 
 
