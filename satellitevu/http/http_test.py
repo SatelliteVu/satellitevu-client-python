@@ -30,7 +30,7 @@ except ImportError:
             ],
         ),
         param(
-            "HttpxClient",
+            "httpx.HttpxClient",
             marks=[mark.skipif(HttpxClient is None, reason="httpx is not installed")],
         ),
     )
