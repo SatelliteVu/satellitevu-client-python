@@ -7,6 +7,10 @@ handling and convenience methods to interact wit the published APIs.
 
 TBD
 
+For now, need to use the repo as an git based dependency. Can use the `requests` or
+`httpx` optional dependency groups, as these http client implementations can be used
+instead of the default urllib based client.
+
 ## Usage
 
 A User API Client credential set consisting of an _client id_ and _client secret_ is
@@ -78,7 +82,7 @@ Commonly used properties and methods are exposed on both `AbstractClient` and
 `ResponseWrapper`.
 
 - `satellitevu.http.UrllibClient` for Python standard lib's `urllib`
-- `satellitevu.http.requests.` using `requests.Session` class
+- `satellitevu.http.requests.RequestsSession` using `requests.Session` class
 - `satellitevu.http.httpx.HttpxClient` using `httpx.Client` (Todo)
 
 Implementations based on `requests` and `httpx` allow setting an instance of the
