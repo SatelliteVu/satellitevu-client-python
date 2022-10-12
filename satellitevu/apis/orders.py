@@ -4,7 +4,7 @@ from .base import AbstractApi
 
 
 class OrdersV1(AbstractApi):
-    api_path = "orders/v1"
+    _api_path = "orders/v1"
 
     def submit(self, item_ids: Union[List[str], str]):
         url = self._url("/")

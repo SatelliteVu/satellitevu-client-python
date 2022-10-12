@@ -14,12 +14,10 @@ class ArchiveV1(AbstractApi):
         date_from: Optional[datetime] = None,
         date_to: Optional[datetime] = None,
         limit=25,
-        page_token: Optional[str] = None,
-        **kwargs,
+        page_token: Optional[str] = None
     ):
         url = self._url("/search")
         payload = {
-            **kwargs,
             "intersects": intersects,
             "limit": limit,
             "token": page_token,
