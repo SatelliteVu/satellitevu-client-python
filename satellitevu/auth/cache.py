@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from configparser import ConfigParser, DuplicateSectionError
 from os import replace
@@ -33,6 +34,9 @@ class AppDirCache(AbstractCache):
     def __init__(self, cache_dir: Optional[str] = None):
         self.cache_dir = Path(cache_dir if cache_dir else user_cache_dir("SatelliteVu"))
         self.cache_file = self.cache_dir / "tokencache"
+
+        if not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir)
 
     def save(self, client_id: str, value: str):
         parser = ConfigParser()
