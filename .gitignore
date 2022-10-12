@@ -3,3 +3,4 @@ __pycache__
 /.nox
 /.pytest-cache
 /dist
+.envrc
