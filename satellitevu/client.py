@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
 from satellitevu.apis.archive import ArchiveV1
+from satellitevu.apis.orders import OrdersV1
 from satellitevu.auth import AbstractCache, Auth
 from satellitevu.config import GATEWAY
 from satellitevu.http import AbstractClient, UrllibClient
@@ -13,6 +14,7 @@ class Client:
     auth: Auth
 
     archive_v1: ArchiveV1
+    orders_v1: OrdersV1
 
     def __init__(
         self,
@@ -39,6 +41,7 @@ class Client:
         self._client.set_auth(self._gateway_url, self.auth)
 
         self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
+        self.orders_v1 = OrdersV1(self._client, self._gateway_url)
 
     def _setup_client(self) -> AbstractClient:
         client = self._setup_requests_session()
