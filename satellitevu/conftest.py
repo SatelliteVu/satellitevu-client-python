@@ -22,3 +22,8 @@ class MemoryCache(AbstractCache):
 @fixture
 def memory_cache():
     return MemoryCache()
+
+
+@fixture
+def redirect_response():
+    return {"url": "https://image.test"}
