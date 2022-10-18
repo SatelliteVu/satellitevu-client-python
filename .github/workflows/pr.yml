@@ -57,5 +57,12 @@ jobs:
           pipx install poetry
           pipx install nox
           pipx inject nox nox-poetry
+      - name: Create dummy file
+        uses: "DamianReeves/write-file-action@master"
+        with:
+          path: /home/runner/Downloads/image.zip
+          write-mode: overwrite
+          contents: |
+            console.log('some contents')
       - name: Run tests
         run: nox
