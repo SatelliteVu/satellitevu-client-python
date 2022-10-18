@@ -8,9 +8,28 @@ from .base import AbstractApi
 
 
 class OrdersV1(AbstractApi):
+    """
+    Client interface to the Orders API located at
+    https://api.qa.satellitevu.com/orders/v1/docs.
+    """
+
     _api_path = "orders/v1"
 
     def submit(self, item_ids: Union[List[str], str]):
+        """
+        Submit an imagery order for items present in the Satellite Vu archive.
+
+        Args:
+            item_ids: A string or list of strings representing the image
+            identifiers. For example: "20220211T031818000_L1C_30_EM" or
+            ["20220211T031818000_L1C_30_EM, "20220211T015055000_L1C_30_EM"].
+
+        Returns:
+            A dictionary containing keys: id, type, features where the id field
+            corresponds to an order id and features map to an array of imagery
+            items described with conformity to the STAC specification.
+
+        """
         url = self._url("/")
 
         if isinstance(item_ids, str):
@@ -25,6 +44,30 @@ class OrdersV1(AbstractApi):
         redirect: bool = True,
         destfile: Optional[str] = None,
     ) -> Union[Dict, str]:
+        """
+        Download a submitted imagery order.
+
+        Args:
+            order_id: UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+            item_id: A string representing the specific image identifiers e.g.
+            "20220211T031818000_L1C_30_EM".
+
+            redirect: Boolean value (default=True).
+
+            destfile: An optional string representing the path to which the imagery
+            will be downloaded to. If not specified, the imagery will be downloaded
+            to the user's Downloads directory and labelled as <item_id>.zip.
+
+        Returns:
+            If redirect is False, a dictionary containing the url which the
+            image can be downloaded from.
+
+            If redirect is True, a string is returned specifying the path the
+            imagery has been downloaded to.
+
+        """
         url = self._url(f"/{order_id}/{item_id}/download?redirect=False")
 
         redirect_resp = self.client.request(method="GET", url=url)
