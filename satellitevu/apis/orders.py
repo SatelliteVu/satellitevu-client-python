@@ -34,7 +34,14 @@ class OrdersV1(AbstractApi):
             return redirect_json
 
         response = self.client.request(method="GET", url=redirect_json["url"])
-        data = BytesIO(response.raw.read())
+        bytes = response.raw
+
+        if hasattr(bytes, "read"):
+            data = BytesIO(bytes.read())
+        elif hasattr(bytes, "iter_content"):
+            data = BytesIO()
+            for chunk in response.raw.iter_content():
+                data.read(chunk)
 
         if destfile is None:
             downloads_path = str(Path.home() / "Downloads")
