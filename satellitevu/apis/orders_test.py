@@ -13,7 +13,7 @@ from satellitevu.client import Client
 @mark.parametrize(
     "item_ids",
     (
-        "20220211T031818000_L1C_30_EM",
+        "20221005T214049000_basic_0_TABI",
         "20220923T222227000_basic_0_TABI",
     ),
 )
@@ -51,7 +51,7 @@ def test_submit_single_items(memory_cache, item_ids):
 @mark.parametrize(
     "item_ids",
     (
-        ["20220211T031818000_L1C_30_EM", "20220923T222227000_basic_0_TABI"],
+        ["20221005T214049000_basic_0_TABI", "20220923T222227000_basic_0_TABI"],
         ["20220923T222227000_basic_0_TABI"],
     ),
 )

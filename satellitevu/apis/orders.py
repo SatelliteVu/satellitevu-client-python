@@ -21,8 +21,8 @@ class OrdersV1(AbstractApi):
 
         Args:
             item_ids: A string or list of strings representing the image
-            identifiers. For example: "20220211T031818000_L1C_30_EM" or
-            ["20220211T031818000_L1C_30_EM, "20220211T015055000_L1C_30_EM"].
+            identifiers. For example: "20221005T214049000_basic_0_TABI" or
+            ["20221005T214049000_basic_0_TABI, "20221010T222611000_basic_0_TABI"].
 
         Returns:
             A dictionary containing keys: id, type, features where the id field
@@ -52,7 +52,7 @@ class OrdersV1(AbstractApi):
             "2009466e-cccc-4712-a489-b09aeb772296".
 
             item_id: A string representing the specific image identifiers e.g.
-            "20220211T031818000_L1C_30_EM".
+            "20221010T222611000_basic_0_TABI".
 
             redirect: Boolean value (default=True).
 
