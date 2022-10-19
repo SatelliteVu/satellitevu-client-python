@@ -60,6 +60,4 @@ jobs:
       - name: Run tests
         run: nox
       - name: Build package wheel
-        run: |
-          poetry build
-          poetry publish -r testpypi -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }}
+        run: poetry build
