@@ -1,11 +1,14 @@
-import os
+import tempfile
+from io import BytesIO
 from json import dumps
+from unittest.mock import patch
 from urllib.parse import urljoin, urlparse
 
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import mark
 
+from satellitevu.apis.orders import bytes_to_file
 from satellitevu.client import Client
 
 
@@ -86,7 +89,7 @@ def test_submit_multiple_items(memory_cache, item_ids):
 
 
 @mocketize(strict_mode=True)
-def test_download_no_redirect(memory_cache, redirect_response):
+def test_download_item_url(memory_cache, redirect_response):
     order_id = "uuid"
     item_id = "image"
 
@@ -106,7 +109,7 @@ def test_download_no_redirect(memory_cache, redirect_response):
         body=dumps(redirect_response),
     )
 
-    response = client.orders_v1.download(order_id, item_id, False)
+    response = client.orders_v1.download_item_url(order_id, item_id)
     requests = Mocket.request_list()
 
     assert len(requests) == 2
@@ -120,7 +123,7 @@ def test_download_no_redirect(memory_cache, redirect_response):
 
 
 @mocketize(strict_mode=True)
-def test_download_redirect(memory_cache, redirect_response):
+def test_download_order_item(memory_cache, redirect_response):
     order_id = "uuid"
     item_id = "image"
 
@@ -144,7 +147,9 @@ def test_download_redirect(memory_cache, redirect_response):
 
     requests = Mocket.request_list()
 
-    r = client.orders_v1.download(order_id, item_id, True)
+    with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
+        mock_file_dl.return_value = "Downloads/image.zip"
+        client.orders_v1.download_item(order_id, item_id)
 
     assert len(requests) == 3
 
@@ -153,8 +158,13 @@ def test_download_redirect(memory_cache, redirect_response):
     assert api_request.path == "/orders/v1/uuid/image/download?redirect=False"
     assert api_request.headers["Authorization"] == "Bearer mock-token"
 
-    assert isinstance(r, str)
-    assert "Downloads" in r
-    assert os.path.basename(r) == "image.zip"
+    mock_file_dl.assert_called_once()
 
     Mocket.assert_fail_if_entries_not_served()
+
+
+def test_bytes_to_file():
+    outfile_path = tempfile.mkstemp()[1]
+    output = bytes_to_file(BytesIO(b"Hello world"), outfile_path)
+
+    assert isinstance(output, str)
