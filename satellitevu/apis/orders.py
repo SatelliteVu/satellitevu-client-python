@@ -158,8 +158,12 @@ class OrdersV1(AbstractApi):
             order_id: UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
+            destdir: String specifying path of the directory where imagery will
+            be downloaded to
+
         Returns:
             A string specifying the path the imagery has been downloaded to.
+            All items will be downloaded into one ZIP file.
         """
         order_details = self.get_order_details(order_id)
 
@@ -168,7 +172,7 @@ class OrdersV1(AbstractApi):
 
         if destdir is None:
             downloads_path = str(Path.home() / "Downloads")
-            print("Imagery will be downloaded to the Downloads folder")
+            print("Imagery will be downloaded as a ZIP file to the Downloads folder")
             destzip = os.path.join(downloads_path, f"SatelliteVu_{order_id}")
 
         else:
