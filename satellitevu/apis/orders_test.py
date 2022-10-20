@@ -108,7 +108,7 @@ def test_download_order_item(client, oauth_token_entry, redirect_response):
 
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
         mock_file_dl.return_value = "Downloads/image.zip"
-        client.orders_v1.download_item(order_id, item_id, "Downloads")
+        response = client.orders_v1.download_item(order_id, item_id, "Downloads")
 
     assert len(requests) == 3
 
@@ -118,6 +118,7 @@ def test_download_order_item(client, oauth_token_entry, redirect_response):
     assert api_request.headers["Authorization"] == "Bearer mock-token"
 
     mock_file_dl.assert_called_once()
+    assert response == mock_file_dl()
 
     Mocket.assert_fail_if_entries_not_served()
 
@@ -148,7 +149,6 @@ def test_get_order_details(client, oauth_token_entry, order_details_response):
 @mocketize(strict_mode=True)
 def test_download_order(client, order_details_response, redirect_response):
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
-    item_id = "image"
     download_dir = "downloads"
 
     Entry.single_register(
@@ -163,32 +163,25 @@ def test_download_order(client, order_details_response, redirect_response):
         body=dumps({**order_details_response, **{"access_token": None}}),
     )
 
-    Entry.single_register(
-        "GET",
-        client._gateway_url
-        + f"orders/v1/{fake_uuid}/{item_id}/download?redirect=False",
-        body=dumps(redirect_response),
-    )
-
-    Entry.single_register("GET", uri="https://image.test")
-
-    with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
+    with patch("satellitevu.apis.orders.OrdersV1._save_order_to_zip") as mock_zip:
+        mock_zip.return_value = f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
         response = client.orders_v1.download_order(fake_uuid, download_dir)
 
     requests = Mocket.request_list()
-    assert len(requests) == 5
+
+    assert len(requests) == 2
 
     api_request = requests[1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/orders/v1/{fake_uuid}"
     assert api_request.headers["Authorization"] == "Bearer None"
 
-    mock_file_dl.assert_called_once()
-
-    Mocket.assert_fail_if_entries_not_served()
+    mock_zip.assert_called_once()
 
     assert isinstance(response, str)
-    assert response == f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
+    assert response == mock_zip()
+
+    Mocket.assert_fail_if_entries_not_served()
 
 
 def test_bytes_to_file():
