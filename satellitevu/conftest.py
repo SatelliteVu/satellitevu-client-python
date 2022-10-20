@@ -2,6 +2,8 @@ from typing import Dict, Optional
 
 from pytest import fixture
 
+from satellitevu.client import Client
+
 from .auth.cache import AbstractCache
 
 
@@ -17,6 +19,11 @@ class MemoryCache(AbstractCache):
 
     def load(self, client_id: str) -> Optional[str]:
         return self.cache.get(client_id)
+
+
+@fixture
+def client(memory_cache):
+    return Client(client_id="mock-id", client_secret="mock-secret", cache=memory_cache)
 
 
 @fixture
