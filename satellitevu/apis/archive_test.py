@@ -1,12 +1,10 @@
 from datetime import datetime
 from json import dumps
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import mark
-
-from satellitevu.client import Client
 
 
 @mocketize(strict_mode=True)
@@ -25,16 +23,7 @@ from satellitevu.client import Client
         ({"bbox": [0, 0, 1, 1]}, {"bbox": [0, 0, 1, 1], "limit": 25}),
     ),
 )
-def test_search(memory_cache, kwargs, payload):
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
+def test_search(client, oauth_token_entry, kwargs, payload):
     Entry.single_register(
         "POST", client._gateway_url + "archive/v1/search", "mock-stac-response"
     )
