@@ -48,16 +48,6 @@ class OrdersV1(AbstractApi):
 
     _api_path = "orders/v1"
 
-    def _save_order_to_zip(self, destzip: str, order_id: UUID, item_ids: List[str]):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            for item_id in item_ids:
-                destfile = os.path.join(tmpdir, f"{item_id}.zip")
-                self.download_item(order_id, item_id, destfile)
-
-            zipfile = shutil.make_archive(destzip, "zip", tmpdir)
-
-        return zipfile
-
     def get_order_details(self, order_id: UUID) -> Dict:
         """
         Retrieve details of an imagery order.
@@ -169,6 +159,14 @@ class OrdersV1(AbstractApi):
         order_id = order_details["id"]
         item_ids = [i["properties"]["item_id"] for i in order_details["features"]]
 
-        destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
+        return self._save_order_to_zip(destdir, order_id, item_ids)
 
-        return self._save_order_to_zip(destzip, order_id, item_ids)
+    def _save_order_to_zip(self, destdir: str, order_id: UUID, item_ids: List[str]):
+        destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
+        with tempfile.TemporaryDirectory(dir=destdir) as tmpdir:
+            for item_id in item_ids:
+                self.download_item(order_id, item_id, tmpdir)
+
+            zipfile = shutil.make_archive(destzip, "zip", tmpdir)
+
+        return zipfile
