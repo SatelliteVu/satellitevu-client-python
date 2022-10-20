@@ -89,7 +89,7 @@ def test_submit_multiple_items(memory_cache, item_ids):
 
 
 @mocketize(strict_mode=True)
-def test_download_item_url(memory_cache, redirect_response):
+def test_item_download_url(memory_cache, redirect_response):
     order_id = "uuid"
     item_id = "image"
 
@@ -109,7 +109,7 @@ def test_download_item_url(memory_cache, redirect_response):
         body=dumps(redirect_response),
     )
 
-    response = client.orders_v1.download_item_url(order_id, item_id)
+    response = client.orders_v1.item_download_url(order_id, item_id)
     requests = Mocket.request_list()
 
     assert len(requests) == 2
