@@ -1,5 +1,8 @@
+from json import dumps
 from typing import Dict, Optional
+from urllib.parse import urljoin
 
+from mocket.mockhttp import Entry
 from pytest import fixture
 
 from satellitevu.client import Client
@@ -29,6 +32,15 @@ def client(memory_cache):
 @fixture
 def memory_cache():
     return MemoryCache()
+
+
+@fixture
+def oauth_token_entry(client):
+    return Entry.single_register(
+        "POST",
+        urljoin(client.auth.auth_url, "oauth/token"),
+        body=dumps({"access_token": "mock-token"}),
+    )
 
 
 @fixture
