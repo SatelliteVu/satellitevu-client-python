@@ -2,8 +2,7 @@ import os
 import shutil
 import tempfile
 from io import BytesIO
-from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 from uuid import UUID
 
 from satellitevu.http.base import ResponseWrapper
@@ -113,12 +112,7 @@ class OrdersV1(AbstractApi):
         response = self.client.request(method="GET", url=url)
         return response.json()
 
-    def download_item(
-        self,
-        order_id: UUID,
-        item_id: str,
-        destfile: Optional[str] = None,
-    ) -> str:
+    def download_item(self, order_id: UUID, item_id: str, destdir: str) -> str:
         """
         Download a submitted imagery order.
 
@@ -129,9 +123,8 @@ class OrdersV1(AbstractApi):
             item_id: A string representing the specific image identifiers e.g.
             "20221010T222611000_basic_0_TABI".
 
-            destfile: An optional string representing the path to which the imagery
-            will be downloaded to. If not specified, the imagery will be downloaded
-            to the user's Downloads directory and labelled as <item_id>.zip.
+            destfile: A string (file path) representing the directory to which
+            the imagery will be downloaded.
 
         Returns:
             A string specifying the path the imagery has been downloaded to.
@@ -141,16 +134,12 @@ class OrdersV1(AbstractApi):
 
         response = self.client.request(method="GET", url=item_url)
 
-        if destfile is None:
-            downloads_path = str(Path.home() / "Downloads")
-            print("Zip file will be downloaded to the Downloads folder")
-            destfile = os.path.join(downloads_path, f"{item_id}.zip")
-
+        destfile = os.path.join(destdir, f"{item_id}.zip")
         data = raw_response_to_bytes(response)
 
         return bytes_to_file(data, destfile)
 
-    def download_order(self, order_id: UUID, destdir: str = None) -> str:
+    def download_order(self, order_id: UUID, destdir: str) -> str:
         """
         Downloads entire imagery order into one ZIP file.
 
@@ -170,13 +159,7 @@ class OrdersV1(AbstractApi):
         order_id = order_details["id"]
         item_ids = [i["properties"]["item_id"] for i in order_details["features"]]
 
-        if destdir is None:
-            downloads_path = str(Path.home() / "Downloads")
-            print("Imagery will be downloaded as a ZIP file to the Downloads folder")
-            destzip = os.path.join(downloads_path, f"SatelliteVu_{order_id}")
-
-        else:
-            destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
+        destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for item_id in item_ids:
@@ -185,4 +168,4 @@ class OrdersV1(AbstractApi):
 
             shutil.make_archive(destzip, "zip", tmpdir)
 
-        return destzip
+        return destzip + ".zip"

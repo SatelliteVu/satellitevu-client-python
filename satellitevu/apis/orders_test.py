@@ -9,7 +9,6 @@ from mocket.mockhttp import Entry
 from pytest import mark
 
 from satellitevu.apis.orders import bytes_to_file
-from satellitevu.client import Client
 
 
 @mocketize(strict_mode=True)
@@ -20,18 +19,8 @@ from satellitevu.client import Client
         "20220923T222227000_basic_0_TABI",
     ),
 )
-def test_submit_single_items(memory_cache, item_ids):
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
+def test_submit_single_item(client, oauth_token_entry, item_ids):
     payload = dumps({"item_id": [item_ids]})
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
 
     Entry.single_register("POST", client._gateway_url + "orders/v1/", body=payload)
 
@@ -58,18 +47,8 @@ def test_submit_single_items(memory_cache, item_ids):
         ["20220923T222227000_basic_0_TABI"],
     ),
 )
-def test_submit_multiple_items(memory_cache, item_ids):
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
+def test_submit_multiple_items(client, oauth_token_entry, item_ids):
     payload = dumps({"item_id": item_ids})
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
 
     Entry.single_register("POST", client._gateway_url + "orders/v1/", body=payload)
 
@@ -89,19 +68,9 @@ def test_submit_multiple_items(memory_cache, item_ids):
 
 
 @mocketize(strict_mode=True)
-def test_item_download_url(memory_cache, redirect_response):
+def test_item_download_url(client, oauth_token_entry, redirect_response):
     order_id = "uuid"
     item_id = "image"
-
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
 
     Entry.single_register(
         "GET",
@@ -123,19 +92,9 @@ def test_item_download_url(memory_cache, redirect_response):
 
 
 @mocketize(strict_mode=True)
-def test_download_order_item(memory_cache, redirect_response):
+def test_download_order_item(client, oauth_token_entry, redirect_response):
     order_id = "uuid"
     item_id = "image"
-
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
 
     Entry.single_register(
         "GET",
@@ -149,7 +108,7 @@ def test_download_order_item(memory_cache, redirect_response):
 
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
         mock_file_dl.return_value = "Downloads/image.zip"
-        client.orders_v1.download_item(order_id, item_id)
+        client.orders_v1.download_item(order_id, item_id, "Downloads")
 
     assert len(requests) == 3
 
@@ -164,17 +123,8 @@ def test_download_order_item(memory_cache, redirect_response):
 
 
 @mocketize(strict_mode=True)
-def test_get_order_details(memory_cache, order_details_response):
+def test_get_order_details(client, oauth_token_entry, order_details_response):
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
-
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
-    )
 
     Entry.single_register(
         "GET",
@@ -196,13 +146,10 @@ def test_get_order_details(memory_cache, order_details_response):
 
 
 @mocketize(strict_mode=True)
-def test_download_order(memory_cache, order_details_response, redirect_response):
+def test_download_order(client, order_details_response, redirect_response):
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
     item_id = "image"
-
-    client = Client(
-        client_id="mock-id", client_secret="mock-secret", cache=memory_cache
-    )
+    download_dir = "downloads"
 
     Entry.single_register(
         "POST",
@@ -226,7 +173,7 @@ def test_download_order(memory_cache, order_details_response, redirect_response)
     Entry.single_register("GET", uri="https://image.test")
 
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
-        response = client.orders_v1.download_order(fake_uuid)
+        response = client.orders_v1.download_order(fake_uuid, download_dir)
 
     requests = Mocket.request_list()
     assert len(requests) == 5
@@ -241,6 +188,7 @@ def test_download_order(memory_cache, order_details_response, redirect_response)
     Mocket.assert_fail_if_entries_not_served()
 
     assert isinstance(response, str)
+    assert response == f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
 
 
 def test_bytes_to_file():
