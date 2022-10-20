@@ -27,3 +27,22 @@ def memory_cache():
 @fixture
 def redirect_response():
     return {"url": "https://image.test"}
+
+
+@fixture
+def order_details_response():
+    return {
+        "id": "528b0f77-5df1-4ed7-9224-502817170613",
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "id": "8566d747-8833-44a7-a1c8-8d13e541f673",
+                "properties": {
+                    "item_id": "image",
+                    "owned_by": "random",
+                    "created_at": "2022-10-20T09:23:14.959823",
+                    "updated_at": "2022-10-20T09:23:14.959823",
+                },
+            }
+        ],
+    }
