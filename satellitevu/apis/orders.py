@@ -69,51 +69,7 @@ class OrdersV1(AbstractApi):
 
         return self.client.post(url=url, json={"item_id": item_ids})
 
-    def download_item(
-        self,
-        order_id: UUID,
-        item_id: str,
-        redirect: bool = True,
-        destfile: Optional[str] = None,
-    ) -> str:
-        """
-        Download a submitted imagery order.
-
-        Args:
-            order_id: UUID representing the order id e.g.
-            "2009466e-cccc-4712-a489-b09aeb772296".
-
-            item_id: A string representing the specific image identifiers e.g.
-            "20221010T222611000_basic_0_TABI".
-
-            destfile: An optional string representing the path to which the imagery
-            will be downloaded to. If not specified, the imagery will be downloaded
-            to the user's Downloads directory and labelled as <item_id>.zip.
-
-        Returns:
-            A string specifying the path the imagery has been downloaded to.
-
-        """
-        url = self._url(f"/{order_id}/{item_id}/download?redirect=False")
-
-        redirect_resp = self.client.request(method="GET", url=url)
-        redirect_json = redirect_resp.json()
-
-        if redirect is False:
-            return redirect_json
-
-        response = self.client.request(method="GET", url=redirect_json["url"])
-
-        if destfile is None:
-            downloads_path = str(Path.home() / "Downloads")
-            print("Zip file will be downloaded to the Downloads folder")
-            destfile = os.path.join(downloads_path, f"{item_id}.zip")
-
-        data = raw_response_to_bytes(response)
-
-        return bytes_to_file(data, destfile)
-
-    def download_item_url(
+    def item_download_url(
         self,
         order_id: UUID,
         item_id: str,
@@ -135,3 +91,40 @@ class OrdersV1(AbstractApi):
 
         response = self.client.request(method="GET", url=url)
         return response.json()
+
+    def download_item(
+        self,
+        order_id: UUID,
+        item_id: str,
+        destfile: Optional[str] = None,
+    ) -> str:
+        """
+        Download a submitted imagery order.
+
+        Args:
+            order_id: UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+            item_id: A string representing the specific image identifiers e.g.
+            "20221010T222611000_basic_0_TABI".
+
+            destfile: An optional string representing the path to which the imagery
+            will be downloaded to. If not specified, the imagery will be downloaded
+            to the user's Downloads directory and labelled as <item_id>.zip.
+
+        Returns:
+            A string specifying the path the imagery has been downloaded to.
+
+        """
+        item_url = self.item_download_url(order_id, item_id)["url"]
+
+        response = self.client.request(method="GET", url=item_url)
+
+        if destfile is None:
+            downloads_path = str(Path.home() / "Downloads")
+            print("Zip file will be downloaded to the Downloads folder")
+            destfile = os.path.join(downloads_path, f"{item_id}.zip")
+
+        data = raw_response_to_bytes(response)
+
+        return bytes_to_file(data, destfile)
