@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 from io import BytesIO
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -46,6 +48,22 @@ class OrdersV1(AbstractApi):
     """
 
     _api_path = "orders/v1"
+
+    def get_order_details(self, order_id: UUID) -> Dict:
+        """
+        Retrieve details of an imagery order.
+
+        Args:
+            order_id: UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+        Returns:
+            A dictionary containing properties of the order.
+        """
+        url = self._url(f"/{order_id}")
+        response = self.client.request(method="GET", url=url)
+
+        return response.json()
 
     def submit(self, item_ids: Union[List[str], str]):
         """
@@ -128,3 +146,36 @@ class OrdersV1(AbstractApi):
         data = raw_response_to_bytes(response)
 
         return bytes_to_file(data, destfile)
+
+    def download_order(self, order_id: UUID, destdir: str = None) -> str:
+        """
+        Downloads entire imagery order into one ZIP file.
+
+        Args:
+            order_id: UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+        Returns:
+            A string specifying the path the imagery has been downloaded to.
+        """
+        order_details = self.get_order_details(order_id)
+
+        order_id = order_details["id"]
+        item_ids = [i["properties"]["item_id"] for i in order_details["features"]]
+
+        if destdir is None:
+            downloads_path = str(Path.home() / "Downloads")
+            print("Imagery will be downloaded to the Downloads folder")
+            destzip = os.path.join(downloads_path, f"SatelliteVu_{order_id}")
+
+        else:
+            destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for item_id in item_ids:
+                destfile = os.path.join(tmpdir, f"{item_id}.zip")
+                self.download_item(order_id, item_id, destfile)
+
+            shutil.make_archive(destzip, "zip", tmpdir)
+
+        return destzip
