@@ -63,6 +63,9 @@ class OrdersV1(AbstractApi):
         url = self._url(f"/{order_id}")
         response = self.client.request(method="GET", url=url)
 
+        if response.status != 200:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
         return response.json()
 
     def submit(self, item_ids: Union[List[str], str]):
