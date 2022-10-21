@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "satellitevu"
-version = "0.8.0"
+version = "0.9.0"
 description = "Client SDK for SatelliteVu's platform APIs"
 authors = ["Christian Wygoda <christian.wygoda@satellitevu.com>", "Zhelini Sivanesan <zhelini.sivanesan@satellitevu.com>"]
 license = "MIT"
