@@ -23,9 +23,15 @@ def raw_response_to_bytes(response: ResponseWrapper) -> BytesIO:
     elif hasattr(raw_response, "iter_content"):
         data = BytesIO()
         for chunk in raw_response.iter_content():
-            data.read(chunk)
+            data.write(chunk)
+        data.seek(0)
     else:
-        raise Exception("Cannot convert Response object into byte stream.")
+        raise Exception(
+            (
+                "Cannot convert response object with raw type"
+                f"{type(raw_response)} into byte stream."
+            )
+        )
 
     return data
 
