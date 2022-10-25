@@ -38,7 +38,7 @@ print(client.archive_v1.search().json())
 ```
 
 `client.archive_v1.search` supports all supported request body parameters documented
-in the [API docs](search-api-docs), with special handling for `datetime` which is
+in the [API docs][search-api-docs], with special handling for `datetime` which is
 constructed from the optional `date_from` and `date_to` parameters and a default result
 page size limit of 25.
 
@@ -94,8 +94,8 @@ underlying implementation, but will provide a default instance if not.
 
 - Installations of Python 3.8 and 3.10 (for example using [Pyenv][pyenv])
 - Global installations (for example managed with [pipx][pipx]) of
-  - Python [Poetry](poetry)
-  - Python [nox](nox) with [nox-poetry](nox-poetry) plugin
+  - Python [Poetry][poetry]
+  - Python [nox][nox] with [nox-poetry][nox-poetry] plugin
 - Make (optional)
 
 Example global setup (with `pyenv` and `pipx`):
