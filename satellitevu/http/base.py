@@ -1,4 +1,5 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
+from importlib.metadata import version
 from typing import Any, Dict, Optional
 
 
@@ -56,3 +57,17 @@ class AbstractClient(ABC):
         )
         if auth and not has_auth:
             headers["authorization"] = f"Bearer {auth.token()}"
+
+    def prepare_headers(self, url: str, headers):
+        _headers = {**(headers or {})}
+
+        self._set_auth(url, _headers)
+
+        sv_comment = f"(satellitevu/{version('satellitevu')})"
+        _headers["User-Agent"] = f"{self.user_agent} {sv_comment}"
+
+        return _headers
+
+    @abstractproperty
+    def user_agent(self) -> str:
+        pass

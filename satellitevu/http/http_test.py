@@ -1,4 +1,5 @@
 from importlib import import_module
+from importlib.metadata import version
 from json import dumps
 from unittest.mock import Mock
 
@@ -53,6 +54,22 @@ def test_http_client(http_client_class, method):
 
     assert isinstance(response, ResponseWrapper)
     assert response.json() == {"message": "Hello"}
+
+
+def test_http_client_user_agent(http_client_class):
+    client = http_client_class()
+
+    Entry.single_register(
+        "GET", "http://example.com/", body=dumps({"message": "Hello"})
+    )
+
+    with Mocketizer():
+        client.request("GET", "http://example.com/")
+        requests = Mocket.request_list()
+
+    sv_version = version("satellitevu")
+    sv_comment = f"(satellitevu/{sv_version})"
+    assert requests[0].headers.get("User-Agent").endswith(sv_comment)
 
 
 def test_http_custom_actor(http_client_class):

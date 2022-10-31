@@ -2,6 +2,7 @@ from ast import Dict
 from typing import Any, Optional
 
 from requests import Response, Session
+from requests.utils import default_user_agent
 
 from .base import AbstractClient
 from .base import ResponseWrapper as BaseResponse
@@ -37,12 +38,17 @@ class RequestsSession(AbstractClient):
         *,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
-        json: Optional[Any] = None
+        json: Optional[Any] = None,
     ) -> ResponseWrapper:
-        headers = headers or {}
-
-        self._set_auth(url, headers)
         response = self.session.request(
-            method=method, url=url, headers=headers, data=data, json=json
+            method=method,
+            url=url,
+            headers=self.prepare_headers(url, headers),
+            data=data,
+            json=json,
         )
         return ResponseWrapper(response)
+
+    @property
+    def user_agent(self) -> str:
+        return f"{default_user_agent()}"

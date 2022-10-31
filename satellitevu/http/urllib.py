@@ -1,5 +1,6 @@
 from http.client import HTTPResponse
 from json import dumps, loads
+from sys import version_info
 from typing import Any, Dict, Optional
 from urllib.error import HTTPError
 from urllib.parse import urlencode
@@ -33,9 +34,9 @@ class UrllibClient(AbstractClient):
         *,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
-        json: Optional[Any] = None
+        json: Optional[Any] = None,
     ) -> ResponseWrapper:
-        headers = headers or {}
+        headers = self.prepare_headers(url, headers)
         body = None
         if data:
             body = urlencode(data).encode("utf-8")
@@ -44,7 +45,6 @@ class UrllibClient(AbstractClient):
             body = dumps(json).encode("utf-8")
             headers["Content-Type"] = "application/json"
 
-        self._set_auth(url, headers)
         request = Request(method=method, url=url, data=body, headers=headers)
         try:
             response = urlopen(request)
@@ -53,3 +53,7 @@ class UrllibClient(AbstractClient):
 
         wrapper = ResponseWrapper(raw=response)
         return wrapper
+
+    @property
+    def user_agent(self) -> str:
+        return f"Python-urllib/{version_info[0]}.{version_info[1]}"
