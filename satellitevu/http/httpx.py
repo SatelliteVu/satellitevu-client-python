@@ -1,7 +1,7 @@
-from ast import Dict
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from httpx import Client, Response
+from httpx.__version__ import __version__
 
 from .base import AbstractClient
 from .base import ResponseWrapper as BaseResponse
@@ -37,12 +37,17 @@ class HttpxClient(AbstractClient):
         *,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
-        json: Optional[Any] = None
+        json: Optional[Any] = None,
     ) -> ResponseWrapper:
-        headers = headers or {}
-
-        self._set_auth(url, headers)
         response = self.client.request(
-            method=method, url=url, headers=headers, data=data, json=json
+            method=method,
+            url=url,
+            headers=self.prepare_headers(url, headers),
+            data=data,
+            json=json,
         )
         return ResponseWrapper(response)
+
+    @property
+    def user_agent(self) -> str:
+        return f"python-httpx/{__version__}"
