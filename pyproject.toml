@@ -26,6 +26,15 @@ optional = true
 [tool.poetry.group.requests.dependencies]
 requests = "^2.28.1"
 
+[tool.poetry.group.notebooks]
+optional = true
+
+[tool.poetry.group.notebooks.dependencies]
+pandas = "^1.5.1"
+geopandas = "^0.12.1"
+folium = "^0.13.0"
+shapely = "^1.8.5.post1"
+
 [tool.poetry.group.httpx]
 optional = true
 

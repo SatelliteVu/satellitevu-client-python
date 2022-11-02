@@ -26,7 +26,12 @@ def raw_response_to_bytes(response: ResponseWrapper) -> BytesIO:
             data.write(chunk)
         data.seek(0)
     else:
-        raise Exception("Cannot convert Response object into byte stream.")
+        raise Exception(
+            (
+                "Cannot convert response object with raw type"
+                f"{type(raw_response)} into byte stream."
+            )
+        )
 
     return data
 
