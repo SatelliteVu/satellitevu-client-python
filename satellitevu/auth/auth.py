@@ -10,6 +10,7 @@ from satellitevu.config import AUDIENCE, AUTH_URL
 from satellitevu.http import AbstractClient, UrllibClient
 
 from .cache import AbstractCache, AppDirCache
+from .exc import AuthError
 
 logger = getLogger(__file__)
 
@@ -22,10 +23,6 @@ def is_expired_token(token: str) -> bool:
     exp = float(claims["exp"])
     exp_dt = datetime.fromtimestamp(exp)
     return exp_dt <= datetime.now()
-
-
-class AuthError(RuntimeError):
-    pass
 
 
 class Auth:

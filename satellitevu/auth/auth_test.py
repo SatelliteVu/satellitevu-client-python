@@ -10,7 +10,8 @@ from mocket import mocketize
 from mocket.mockhttp import Entry
 from pytest import mark, raises
 
-from .auth import Auth, AuthError, is_expired_token
+from .auth import Auth, is_expired_token
+from .exc import AuthError
 
 
 def _encode(claims: Dict[str, any]) -> str:
