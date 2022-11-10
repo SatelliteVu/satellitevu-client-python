@@ -28,10 +28,10 @@ def fqdn(subdomain, use_qa=False):
 
 
 """
-Set SATELLITEVU_USE_QA to a truthy value to use QA endpoints by default. Individual
-config values can still be overriden with their env variables.
+Set SATELLITEVU_USE_QA to a truthy value to use production endpoints by default.
+Individual config values can still be overridden with their env variables.
 """
-USE_QA = boolize(getenv("USE_QA", "1"))
+USE_QA = boolize(getenv("USE_QA", "0"))
 
 """
 Set SATELLITEVU_API_GATEWAY to an base URL to use for all API calls. Defaults to
