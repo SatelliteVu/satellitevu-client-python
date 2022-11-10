@@ -66,7 +66,7 @@ class OrdersV1(AbstractApi):
             A dictionary containing properties of the order.
         """
         url = self._url(f"/{order_id}")
-        response = self.client.request(method="GET", url=url)
+        response = self._handle_request(method="GET", url=url)
 
         if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
@@ -93,7 +93,7 @@ class OrdersV1(AbstractApi):
         if isinstance(item_ids, str):
             item_ids = [item_ids]
 
-        return self.client.post(url=url, json={"item_id": item_ids})
+        return self._handle_request(method="POST", url=url, json={"item_id": item_ids})
 
     def item_download_url(
         self,
@@ -115,7 +115,7 @@ class OrdersV1(AbstractApi):
         """
         url = self._url(f"/{order_id}/{item_id}/download?redirect=False")
 
-        response = self.client.request(method="GET", url=url)
+        response = self._handle_request(method="GET", url=url)
         return response.json()
 
     def download_item(self, order_id: UUID, item_id: str, destdir: str) -> str:
@@ -138,7 +138,7 @@ class OrdersV1(AbstractApi):
         """
         item_url = self.item_download_url(order_id, item_id)["url"]
 
-        response = self.client.request(method="GET", url=item_url)
+        response = self._handle_request(method="GET", url=item_url)
 
         destfile = os.path.join(destdir, f"{item_id}.zip")
         data = raw_response_to_bytes(response)

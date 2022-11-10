@@ -34,7 +34,6 @@ class ArchiveV1(AbstractApi):
             ),
         }
 
-        return self.client.post(
-            url,
-            json={k: v for k, v in payload.items() if v},
+        return self._handle_request(
+            method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
