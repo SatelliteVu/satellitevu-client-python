@@ -20,7 +20,7 @@ class AbstractApi(ABC):
             api_base_url += "/"
         return urljoin(api_base_url, path.lstrip("/"))
 
-    def _handle_request(self, *args, **kwargs):
+    def _make_request(self, *args, **kwargs):
         response = self.client.request(*args, **kwargs)
 
         if response.status == 401:
