@@ -1,6 +1,7 @@
 from abc import ABC
 from urllib.parse import urljoin
 
+from satellitevu.auth.exc import Api401Error, Api403Error
 from satellitevu.http import AbstractClient
 
 
@@ -18,3 +19,13 @@ class AbstractApi(ABC):
         if api_base_url[-1] != "/":
             api_base_url += "/"
         return urljoin(api_base_url, path.lstrip("/"))
+
+    def _handle_request(self, *args, **kwargs):
+        response = self.client.request(*args, **kwargs)
+
+        if response.status == 401:
+            raise Api401Error()
+        elif response.status == 403:
+            raise Api403Error()
+
+        return response
