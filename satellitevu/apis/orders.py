@@ -49,7 +49,7 @@ def bytes_to_file(data: BytesIO, destfile: str) -> str:
 class OrdersV1(AbstractApi):
     """
     Client interface to the Orders API located at
-    https://api.qa.satellitevu.com/orders/v1/docs.
+    https://api.satellitevu.com/orders/v1/docs.
     """
 
     _api_path = "orders/v1"
