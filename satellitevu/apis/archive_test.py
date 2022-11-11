@@ -1,10 +1,14 @@
 from datetime import datetime
 from json import dumps
+from unittest.mock import Mock
 from urllib.parse import urlparse
 
+import pytest
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import mark
+
+from satellitevu.auth.exc import Api401Error, Api403Error
 
 
 @mocketize(strict_mode=True)
@@ -40,3 +44,38 @@ def test_search(client, oauth_token_entry, kwargs, payload):
     assert api_request.headers["Authorization"] == "Bearer mock-token"
     assert api_request.body == dumps(payload)
     assert response.text == "mock-stac-response"
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    "kwargs, payload, status, exception",
+    (
+        ({}, {"limit": 25}, 401, Api401Error),
+        ({"limit": 50}, {"limit": 50}, 403, Api403Error),
+    ),
+)
+def test_unauthorized_search(
+    client, oauth_token_entry, kwargs, payload, status, exception
+):
+    mock_exc = Mock()
+    mock_exc.status = 401
+
+    Entry.single_register(
+        "POST",
+        client._gateway_url + "archive/v1/search",
+        "mock-stac-response",
+        status=status,
+    )
+
+    with pytest.raises(exception):
+        client.archive_v1.search(**kwargs)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/archive/v1/search"
+    assert api_request.headers["Content-Type"] == "application/json"
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.body == dumps(payload)
