@@ -1,6 +1,5 @@
 from datetime import datetime
 from json import dumps
-from unittest.mock import Mock
 from urllib.parse import urlparse
 
 import pytest
@@ -57,9 +56,6 @@ def test_search(client, oauth_token_entry, kwargs, payload):
 def test_unauthorized_search(
     client, oauth_token_entry, kwargs, payload, status, exception
 ):
-    mock_exc = Mock()
-    mock_exc.status = 401
-
     Entry.single_register(
         "POST",
         client._gateway_url + "archive/v1/search",
@@ -79,3 +75,5 @@ def test_unauthorized_search(
     assert api_request.headers["Content-Type"] == "application/json"
     assert api_request.headers["Authorization"] == "Bearer mock-token"
     assert api_request.body == dumps(payload)
+
+    Mocket.assert_fail_if_entries_not_served()
