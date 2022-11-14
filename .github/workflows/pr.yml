@@ -52,6 +52,11 @@ jobs:
         with:
           python-version: 3.8.13
           architecture: x64
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11.0
+          architecture: x64
       - name: Install testing tools
         run: |
           pipx install poetry
