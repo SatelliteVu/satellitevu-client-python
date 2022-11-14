@@ -18,9 +18,9 @@ class Client:
 
     def __init__(
         self,
-        *,
         client_id: str,
         client_secret: str,
+        *,
         audience: Optional[str] = None,
         cache: Optional[AbstractCache] = None,
         auth_url: Optional[str] = None,
