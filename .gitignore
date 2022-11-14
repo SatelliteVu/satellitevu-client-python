@@ -5,4 +5,5 @@ __pycache__
 /dist
 .envrc
 .DS_Store
+.python-version
 .idea/
