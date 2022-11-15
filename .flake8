@@ -2,3 +2,4 @@
 max-line-length = 88
 extend-ignore = E203
 max-complexity = 8
+exclude = __pycache__,.nox

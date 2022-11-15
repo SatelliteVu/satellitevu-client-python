@@ -41,15 +41,14 @@ else
 endif
 
 
-export PYTEST_ADDOPTS=--cov=satellitevu
 PHONY: test
-test: ## Run tests (single Python version)
-	poetry run pytest
+test: ## Run tests with nox (multiple Python versions)
+	nox --session=tests
 
 
-PHONY: test-nox
-test-nox: ## Run tests with nox (multiple Python versions)
-	nox
+PHONY: lint
+lint: ## Run linting with nox
+	nox --session=lint
 
 
 .PHONY: help
