@@ -1,15 +1,17 @@
-# SatelliteVu Platform API Client SDK
+# SatelliteVu SDK for Python
 
 Lightweight API Client SDK for SatelliteVu's Platform APIs, providing authorization
 handling and convenience methods to interact wit the published APIs.
 
 ## Installation
 
-TBD
+The package is published to [PyPi][pypi] and can be installed with pip:
 
-For now, need to use the repo as an git based dependency. Can use the `requests` or
-`httpx` optional dependency groups, as these http client implementations can be used
-instead of the default urllib based client.
+```
+pip install satellitevu
+```
+
+Currently Python 3.8 and Python 3.10 are supported.
 
 ## Usage
 
@@ -139,3 +141,4 @@ nox
 [nox]: https://nox.thea.codes/en/stable/
 [nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
 [search-api-docs]: https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post
+[pypi]: https://pypi.org/project/satellitevu/
