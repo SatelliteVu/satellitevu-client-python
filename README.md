@@ -90,51 +90,6 @@ Commonly used properties and methods are exposed on both `AbstractClient` and
 Implementations based on `requests` and `httpx` allow setting an instance of the
 underlying implementation, but will provide a default instance if not.
 
-## Developer Setup
-
-### Requirements
-
-- Installations of Python 3.8 and 3.10 (for example using [Pyenv][pyenv])
-- Global installations (for example managed with [pipx][pipx]) of
-  - Python [Poetry][poetry]
-  - Python [nox][nox] with [nox-poetry][nox-poetry] plugin
-- Make (optional)
-
-Example global setup (with `pyenv` and `pipx`):
-
-```
-pyenv install 3.8.13
-pyenv install 3.10.4
-pipx install poetry
-pipx install nox
-pipx inject nox nox-poetry
-```
-
-Please bootstrap your environment with `make bootstrap`.
-
-#### Example test setup with `pyenv` and `pipx`
-
-Run tests against Python version used by poetry:
-
-```
-make test
-make PYTEST_ADDOPTS="-x -s" test
-```
-
-or
-
-```
-poetry run pytest
-PYTEST_ADDOPTS="-x -s" poetry run pytest
-```
-
-Run tests against Python 3.8 and Python 3.10:
-
-```
-pyenv shell 3.8.13 3.10.4
-nox
-```
-
 [pyenv]: https://github.com/pyenv/pyenv
 [poetry]: https://python-poetry.org
 [pipx]: https://pypa.github.io/pipx/
