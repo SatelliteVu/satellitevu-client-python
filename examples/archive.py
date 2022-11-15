@@ -1,9 +1,9 @@
 import argparse
-import http.client as http_client
-import logging
 import os
 import pprint
 from datetime import datetime, timedelta
+
+from common import setup_logging
 
 from satellitevu import Client
 
@@ -32,21 +32,6 @@ def _setup_client():
     return Client(client_id=client_id, client_secret=client_secret)
 
 
-def _setup_logging(verbose=False):
-    """
-    Setup verbose request logging if needed
-    """
-    http_client.HTTPConnection.debuglevel = 1 if verbose else 0
-    log_level = logging.DEBUG if verbose else logging.WARNING
-
-    logging.basicConfig()
-    logging.getLogger().setLevel(log_level)
-
-    requests_log = logging.getLogger("requests.packages.urllib3")
-    requests_log.setLevel(log_level)
-    requests_log.propagate = True
-
-
 def archive_search(**kwargs):
     """
     Have client, will search
@@ -65,7 +50,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    _setup_logging(args.verbose)
+    setup_logging(args.verbose)
 
     search_args = EXAMPLES[args.example]
     archive_search(**search_args)
