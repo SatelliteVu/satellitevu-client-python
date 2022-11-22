@@ -1,7 +1,7 @@
 # SatelliteVu SDK for Python
 
 Lightweight API Client SDK for SatelliteVu's Platform APIs, providing authorization
-handling and convenience methods to interact wit the published APIs.
+handling and convenience methods to interact with the published APIs.
 
 ## Installation
 
