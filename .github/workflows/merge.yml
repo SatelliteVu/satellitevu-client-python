@@ -16,13 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Install poetry
-        run: |
-          pipx install poetry
+        run: pipx install poetry
       - name: Bump version
-        run: |
-          poetry version $(echo ${PR_BRANCH_REF} | cut -d "/" -f 1)
-          echo "new_version=$(poetry version -s)" >> $GITHUB_ENV
+        run: ./github/version.py | tee -a $GITHUB_ENV
       - name: Update repository
+        if: ${{ env.NEW_VERSION != '' }}
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -30,7 +28,3 @@ jobs:
           git commit -m "Update version to ${{ env.new_version }}"
           git tag v${{ env.new_version }}
           git push --atomic origin ${{ github.event.repository.default_branch }} v${{ env.new_version }}
-      - name: Build and Publish package
-        run: |
-          poetry build
-          poetry publish -u ${{ secrets.PYPI_USER }} -p ${{ secrets.PYPI_PASSWORD }}
