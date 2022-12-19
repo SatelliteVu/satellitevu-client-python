@@ -18,7 +18,7 @@ Currently Python 3.8 and Python 3.10 are supported.
 A User API Client credential set consisting of an _client id_ and _client secret_ is
 needed and should be set in your script's environment variables.
 
-Check out the [examples](./examples/) provided. They can for example be run locally with
+Check out the [examples](/examples/) provided. They can for example be run locally with
 
 ```
 poetry run python ./examples/archive.py --example=recent
