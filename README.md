@@ -18,7 +18,7 @@ Currently Python 3.8 and Python 3.10 are supported.
 A User API Client credential set consisting of an _client id_ and _client secret_ is
 needed and should be set in your script's environment variables.
 
-Check out the [examples](https://github.com/SatelliteVu/satellitevu-client-python/tree/main/examples) provided. They can for example be run locally with
+Check out the [examples][examples] provided. They can for example be run locally with
 
 ```
 poetry run python ./examples/archive.py --example=recent
@@ -97,3 +97,4 @@ underlying implementation, but will provide a default instance if not.
 [nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
 [search-api-docs]: https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post
 [pypi]: https://pypi.org/project/satellitevu/
+[examples]: https://github.com/SatelliteVu/satellitevu-client-python/tree/main/examples
