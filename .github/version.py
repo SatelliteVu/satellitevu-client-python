@@ -16,14 +16,14 @@ def get_bump_rule(branch: str):
 
 def bump_version(rule):
     run(["poetry", "version", rule])
-    return run(["poetry", "version", "-s"])
+    return run(["poetry", "version", "-s"], capture_output=True, text=True)
 
 
 def main(branch):
     rule = get_bump_rule(branch)
     if rule:
         new_version = bump_version(rule)
-        print(f"NEW_VERSION={new_version}")
+        print(f"NEW_VERSION={new_version.stdout}")
     else:
         print("No bump rule detected, skipping", file=stderr)
 
