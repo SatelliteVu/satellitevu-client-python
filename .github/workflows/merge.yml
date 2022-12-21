@@ -18,7 +18,7 @@ jobs:
       - name: Install poetry
         run: pipx install poetry
       - name: Bump version
-        run: ./github/version.py | tee -a $GITHUB_ENV
+        run: ./.github/version.py | tee -a $GITHUB_ENV
       - name: Update repository
         if: ${{ env.NEW_VERSION != '' }}
         run: |
