@@ -15,7 +15,7 @@ def get_bump_rule(branch: str):
 
 
 def bump_version(rule):
-    run(["poetry", "version", rule])
+    run(["poetry", "version", rule], capture_output=True)
     return run(["poetry", "version", "-s"], capture_output=True, text=True)
 
 
