@@ -18,7 +18,7 @@ jobs:
       - name: Install poetry
         run: pipx install poetry
       - name: Bump version
-        run: echo "$(./.github/version.py ${{ env.PR_BRANCH_REF }})" | awk '{$1=$1};1' >> $GITHUB_ENV
+        run: echo "$(./.github/version.py ${{ env.PR_BRANCH_REF }})" >> $GITHUB_ENV
       - name: Update repository
         if: ${{ env.NEW_VERSION != '' }}
         run: |
