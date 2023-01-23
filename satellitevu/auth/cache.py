@@ -23,6 +23,16 @@ class AbstractCache(ABC):
         pass
 
 
+class MemoryCache(AbstractCache):
+    _items = {}
+
+    def save(self, client_id: str, value: str):
+        self._items[client_id] = value
+
+    def load(self, client_id: str) -> Optional[str]:
+        return self._items.get(client_id)
+
+
 class AppDirCache(AbstractCache):
     """
     File based token cache using an INI file in the user's cache dir or given dir.

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pyfakefs.fake_filesystem import FakeFilesystem
 
-from .cache import AppDirCache
+from .cache import AppDirCache, MemoryCache
 
 TEST_DIR = Path("/test")
 
@@ -69,3 +69,16 @@ def test_cache_update(fs: FakeFilesystem):
     assert {key: value for key, value in parser.items("test-client")} == {
         "access_token": "bar",
     }
+
+
+def test_memory_cache_empty():
+    cache = MemoryCache()
+
+    assert cache.load("test-client") is None
+
+
+def test_memory_cache():
+    cache = MemoryCache()
+    cache.save("test-client", "bar")
+
+    assert cache.load("test-client") == "bar"
