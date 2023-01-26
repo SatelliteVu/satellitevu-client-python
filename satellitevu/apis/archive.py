@@ -18,7 +18,7 @@ class ArchiveV1(AbstractApi):
         intersects: Optional[Any] = None,
         date_from: Optional[datetime] = None,
         date_to: Optional[datetime] = None,
-        limit=25,
+        limit=10,
         page_token: Optional[str] = None,
         **kwargs,
     ):
@@ -37,7 +37,7 @@ class ArchiveV1(AbstractApi):
 
             date_to: Optional datetime representing the end date of the search.
 
-            limit:  Number of search results (defaults to 25) to be returned.
+            limit:  Number of search results (defaults to 10) to be returned.
 
             bbox: List of points (min longitude, min latitude, max longitude,
             max latitude) specifying a bounding box to search within.
