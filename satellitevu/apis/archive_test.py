@@ -14,16 +14,16 @@ from satellitevu.auth.exc import Api401Error, Api403Error
 @mark.parametrize(
     "kwargs, payload",
     (
-        ({}, {"limit": 25}),
+        ({}, {"limit": 10}),
         ({"limit": 50}, {"limit": 50}),
         (
             {
                 "date_from": datetime(2022, 9, 10, 0, 0, 0),
                 "date_to": datetime(2022, 10, 10, 0, 0, 0),
             },
-            {"limit": 25, "datetime": "2022-09-10T00:00:00/2022-10-10T00:00:00"},
+            {"limit": 10, "datetime": "2022-09-10T00:00:00/2022-10-10T00:00:00"},
         ),
-        ({"bbox": [0, 0, 1, 1]}, {"bbox": [0, 0, 1, 1], "limit": 25}),
+        ({"bbox": [0, 0, 1, 1]}, {"bbox": [0, 0, 1, 1], "limit": 10}),
     ),
 )
 def test_search(client, oauth_token_entry, kwargs, payload):
@@ -49,7 +49,7 @@ def test_search(client, oauth_token_entry, kwargs, payload):
 @mark.parametrize(
     "kwargs, payload, status, exception",
     (
-        ({}, {"limit": 25}, 401, Api401Error),
+        ({}, {"limit": 10}, 401, Api401Error),
         ({"limit": 50}, {"limit": 50}, 403, Api403Error),
     ),
 )
