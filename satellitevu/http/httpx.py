@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, Optional
 
 from httpx import Client, Response
 from httpx.__version__ import __version__
@@ -35,6 +35,7 @@ class HttpxClient(AbstractClient):
         method: str,
         url: str,
         *,
+        scopes: Iterable[str] = [],
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
         json: Optional[Any] = None,
@@ -42,7 +43,7 @@ class HttpxClient(AbstractClient):
         response = self.client.request(
             method=method,
             url=url,
-            headers=self.prepare_headers(url, headers),
+            headers=self.prepare_headers(url, headers, scopes),
             data=data,
             json=json,
         )

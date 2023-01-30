@@ -1,45 +1,14 @@
-from importlib import import_module
 from importlib.metadata import version
 from json import dumps
 from unittest.mock import Mock
 
 from mocket import Mocket, Mocketizer
 from mocket.mockhttp import Entry
-from pytest import fixture, mark, param, skip
+from pytest import mark, skip
 
 from satellitevu.auth.auth import Auth
 
 from . import ResponseWrapper, UrllibClient
-
-try:
-    from requests import Session as RequestsSession
-except ImportError:
-    RequestsSession = None
-try:
-    from httpx import Client as HttpxClient
-except ImportError:
-    HttpxClient = None
-
-
-@fixture(
-    params=(
-        param("UrllibClient"),
-        param(
-            "requests.RequestsSession",
-            marks=[
-                mark.skipif(RequestsSession is None, reason="requests is not installed")
-            ],
-        ),
-        param(
-            "httpx.HttpxClient",
-            marks=[mark.skipif(HttpxClient is None, reason="httpx is not installed")],
-        ),
-    )
-)
-def http_client_class(request):
-    full_path = f"{__package__}.{request.param}"
-    module = import_module(full_path.rsplit(".", maxsplit=1)[0])
-    return getattr(module, full_path.rsplit(".")[-1])
 
 
 @mark.parametrize("method", ("GET", "POST"))
