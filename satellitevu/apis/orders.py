@@ -53,6 +53,7 @@ class OrdersV1(AbstractApi):
     """
 
     api_path = "orders/v1"
+    scopes = []
 
     def get_order_details(self, order_id: UUID) -> Dict:
         """

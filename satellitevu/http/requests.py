@@ -1,5 +1,5 @@
 from ast import Dict
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 from requests import Response, Session
 from requests.utils import default_user_agent
@@ -36,6 +36,7 @@ class RequestsSession(AbstractClient):
         method: str,
         url: str,
         *,
+        scopes: Iterable[str] = [],
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
         json: Optional[Any] = None,
@@ -43,7 +44,7 @@ class RequestsSession(AbstractClient):
         response = self.session.request(
             method=method,
             url=url,
-            headers=self.prepare_headers(url, headers),
+            headers=self.prepare_headers(url, headers, scopes),
             data=data,
             json=json,
         )

@@ -11,6 +11,7 @@ class ArchiveV1(AbstractApi):
     """
 
     api_path = "archive/v1"
+    scopes = []
 
     def search(
         self,

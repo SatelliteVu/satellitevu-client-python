@@ -1,7 +1,7 @@
 from http.client import HTTPResponse
 from json import dumps, loads
 from sys import version_info
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Iterable, Optional
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -32,11 +32,12 @@ class UrllibClient(AbstractClient):
         method: str,
         url: str,
         *,
+        scopes: Iterable[str] = [],
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
         json: Optional[Any] = None,
     ) -> ResponseWrapper:
-        headers = self.prepare_headers(url, headers)
+        headers = self.prepare_headers(url, headers, scopes)
         body = None
         if data:
             body = urlencode(data).encode("utf-8")

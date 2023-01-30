@@ -9,6 +9,7 @@ class AbstractApi(ABC):
     client: AbstractClient
     base_url: str
     api_path: str
+    scopes = []
 
     def __init__(self, client: AbstractClient, base_url: str):
         self.client = client
@@ -21,6 +22,8 @@ class AbstractApi(ABC):
         return urljoin(api_base_url, path.lstrip("/"))
 
     def make_request(self, *args, **kwargs):
+        if "scopes" not in kwargs:
+            kwargs["scopes"] = self.scopes
         response = self.client.request(*args, **kwargs)
 
         if response.status == 401:
