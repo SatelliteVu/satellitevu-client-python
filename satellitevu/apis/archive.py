@@ -10,7 +10,7 @@ class ArchiveV1(AbstractApi):
     https://api.satellitevu.com/archive/v1/docs.
     """
 
-    _api_path = "archive/v1"
+    api_path = "archive/v1"
 
     def search(
         self,
@@ -58,7 +58,7 @@ class ArchiveV1(AbstractApi):
             criteria.
 
         """
-        url = self._url("/search")
+        url = self.url("/search")
         payload = {
             **kwargs,
             "intersects": intersects,
@@ -75,6 +75,6 @@ class ArchiveV1(AbstractApi):
             ),
         }
 
-        return self._make_request(
+        return self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
