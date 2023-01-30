@@ -52,7 +52,7 @@ class OrdersV1(AbstractApi):
     https://api.satellitevu.com/orders/v1/docs.
     """
 
-    _api_path = "orders/v1"
+    api_path = "orders/v1"
 
     def get_order_details(self, order_id: UUID) -> Dict:
         """
@@ -65,8 +65,8 @@ class OrdersV1(AbstractApi):
         Returns:
             A dictionary containing properties of the order.
         """
-        url = self._url(f"/{order_id}")
-        response = self._make_request(method="GET", url=url)
+        url = self.url(f"/{order_id}")
+        response = self.make_request(method="GET", url=url)
 
         if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
@@ -88,12 +88,12 @@ class OrdersV1(AbstractApi):
             items described with conformity to the STAC specification.
 
         """
-        url = self._url("/")
+        url = self.url("/")
 
         if isinstance(item_ids, str):
             item_ids = [item_ids]
 
-        return self._make_request(method="POST", url=url, json={"item_id": item_ids})
+        return self.make_request(method="POST", url=url, json={"item_id": item_ids})
 
     def item_download_url(
         self,
@@ -113,9 +113,9 @@ class OrdersV1(AbstractApi):
         Returns:
             A dictionary containing the url which the image can be downloaded from.
         """
-        url = self._url(f"/{order_id}/{item_id}/download?redirect=False")
+        url = self.url(f"/{order_id}/{item_id}/download?redirect=False")
 
-        response = self._make_request(method="GET", url=url)
+        response = self.make_request(method="GET", url=url)
         return response.json()
 
     def download_item(self, order_id: UUID, item_id: str, destdir: str) -> str:
@@ -138,7 +138,7 @@ class OrdersV1(AbstractApi):
         """
         item_url = self.item_download_url(order_id, item_id)["url"]
 
-        response = self._make_request(method="GET", url=item_url)
+        response = self.make_request(method="GET", url=item_url)
 
         destfile = os.path.join(destdir, f"{item_id}.zip")
         data = raw_response_to_bytes(response)

@@ -14,13 +14,13 @@ class AbstractApi(ABC):
         self.client = client
         self.base_url = base_url
 
-    def _url(self, path: str) -> str:
-        api_base_url = urljoin(self.base_url, self._api_path.lstrip("/"))
+    def url(self, path: str) -> str:
+        api_base_url = urljoin(self.base_url, self.api_path.lstrip("/"))
         if api_base_url[-1] != "/":
             api_base_url += "/"
         return urljoin(api_base_url, path.lstrip("/"))
 
-    def _make_request(self, *args, **kwargs):
+    def make_request(self, *args, **kwargs):
         response = self.client.request(*args, **kwargs)
 
         if response.status == 401:
