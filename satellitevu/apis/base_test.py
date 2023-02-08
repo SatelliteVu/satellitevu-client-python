@@ -12,6 +12,8 @@ from satellitevu.http.base import AbstractClient
 
 
 class TestApi(AbstractApi):
+    __test__ = False
+
     api_path = "/test"
     scopes = ["test"]
 
