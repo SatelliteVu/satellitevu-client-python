@@ -74,7 +74,7 @@ class OtmV1(AbstractApi):
             method="GET", url=self.url(f"/tasking/feasibilities/?{query}")
         )
 
-    def post_order(
+    def create_order(
         self,
         *,
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
@@ -100,12 +100,12 @@ class OtmV1(AbstractApi):
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
 
-    def get_order(self, *, id: Union[UUID, str]):
+    def get_order(self, *, order_id: Union[UUID, str]):
         """
         TODO: Docs
         """
         return self.make_request(
-            method="GET", url=self.url(f"/tasking/orders/{str(id)}")
+            method="GET", url=self.url(f"/tasking/orders/{str(order_id)}")
         )
 
     def list_orders(self, *, per_page: int = 25, page_token: Optional[str] = None):
