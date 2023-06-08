@@ -1,5 +1,10 @@
 # SatelliteVu SDK for Python
 
+[![pypi](https://img.shields.io/pypi/v/satellitevu)](https://pypi.org/project/satellitevu/)
+[![license](https://img.shields.io/github/license/SatelliteVu/satellitevu-client-python)](https://github.com/SatelliteVu/satellitevu-client-python/blob/main/LICENSE)
+[![Twitter](https://img.shields.io/twitter/follow/satellitevu?style=social)](https://twitter.com/intent/follow?screen_name=satellitevu)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-blue?style=flat&logo=linkedin)](https://uk.linkedin.com/company/satellitevu)
+
 Lightweight API Client SDK for SatelliteVu's Platform APIs, providing authorization
 handling and convenience methods to interact with the published APIs.
 
