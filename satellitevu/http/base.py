@@ -62,7 +62,7 @@ class AbstractClient(ABC):
             (True for k in headers.keys() if k.lower() == "authorization"), False
         )
         if auth and not has_auth:
-            headers["authorization"] = f"Bearer {auth.token(scopes)}"
+            headers["Authorization"] = f"Bearer {auth.token(scopes)}"
 
     def prepare_headers(
         self,
