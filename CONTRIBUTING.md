@@ -54,3 +54,9 @@ We use branch names to identify how the version will need to be updated once mer
 a nutshell, every branch name must start with either `patch/`, `minor/` or `major/` to
 trigger the semantic versioning bump rule. PRs with branch names not following this
 pattern will fail.
+
+[pyenv]: https://github.com/pyenv/pyenv
+[poetry]: https://python-poetry.org
+[pipx]: https://pypa.github.io/pipx/
+[nox]: https://nox.thea.codes/en/stable/
+[nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
