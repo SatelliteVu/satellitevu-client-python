@@ -7,7 +7,7 @@ how to make the contribution process smooth.
 
 ## Requirements
 
-- Installations of Python 3.8 and 3.10 (for example using [Pyenv][pyenv])
+- Installations of Python 3.8, 3.10 and 3.11 (for example using [Pyenv][pyenv])
 - Global installations (for example managed with [pipx][pipx]) of
   - Python [Poetry][poetry]
   - Python [nox][nox] with [nox-poetry][nox-poetry] plugin
@@ -18,6 +18,7 @@ Example global setup (with `pyenv` and `pipx`):
 ```
 pyenv install 3.8.13
 pyenv install 3.10.4
+pyenv install 3.11.4
 pipx install poetry
 pipx install nox
 pipx inject nox nox-poetry
@@ -31,7 +32,7 @@ Using pyenv, activate the Python version to be tested against, then run linting 
 suites with nox:
 
 ```
-pyenv shell 3.8.13 3.10.4
+pyenv shell 3.8.13 3.10.4 3.11.4
 nox --session=linting
 nox --session=tests
 ```
