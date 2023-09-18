@@ -3,19 +3,21 @@ from warnings import warn
 
 from satellitevu.apis.archive import ArchiveV1
 from satellitevu.apis.orders import OrdersV1
-from satellitevu.apis.otm import OtmV1
+from satellitevu.apis.otm import OtmV1, OtmV2
 from satellitevu.auth import AbstractCache, Auth
 from satellitevu.config import GATEWAY
 from satellitevu.http import AbstractClient, UrllibClient
 
 
 class FutureApis:
-    otm: OtmV1
+    otm_v1: OtmV1
+    otm_v2: OtmV2
 
     _called: Dict[str, bool] = {}
 
     def __init__(self, client: AbstractClient, gateway_url: str):
-        self.otm = OtmV1(client, gateway_url)
+        self.otm_v1 = OtmV1(client, gateway_url)
+        self.otm_v2 = OtmV2(client, gateway_url)
 
     def __getattribute__(self, __name: str):
         attr = super().__getattribute__(__name)
