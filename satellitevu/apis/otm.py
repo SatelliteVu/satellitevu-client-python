@@ -1,4 +1,5 @@
 from datetime import datetime
+from json import loads
 from typing import Optional, Tuple, Union
 from uuid import UUID
 
@@ -57,7 +58,12 @@ class OtmV1(AbstractApi):
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
-        return response.json()
+
+        if response.status != 202:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
+        raw_response = response.raw.read()
+        return loads(raw_response.decode("utf-8"))
 
     def get_feasibility(self, *, id: Union[UUID, str]):
         """
@@ -289,7 +295,12 @@ class OtmV2(AbstractApi):
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
-        return response.json()
+
+        if response.status != 202:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
+        raw_response = response.raw.read()
+        return loads(raw_response.decode("utf-8"))
 
     def get_feasibility(self, *, contract_id: UUID, id: Union[UUID, str]):
         """
@@ -404,6 +415,10 @@ class OtmV2(AbstractApi):
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
+
+        if response.status != 201:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
         return response.json()
 
     def get_order(self, *, contract_id: UUID, order_id: Union[UUID, str]):
