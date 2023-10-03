@@ -128,7 +128,7 @@ class OtmV1(AbstractApi):
         Creates a tasking order request.
 
         Args:
-            coordinates: An array of coordinates.
+            coordinates: An array of coordinates - (longitude, latitude) or (longitude, latitude, altitude).
 
             date_from: datetime representing the start date of the order.
 
