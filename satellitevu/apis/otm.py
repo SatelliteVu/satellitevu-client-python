@@ -4,6 +4,7 @@ from typing import Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
+from satellitevu.apis.orders import raw_response_to_bytes
 
 # TODO: Tests
 
@@ -62,8 +63,8 @@ class OtmV1(AbstractApi):
         if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
 
-        raw_response = response.raw.read()
-        return loads(raw_response.decode("utf-8"))
+        response_bytes = raw_response_to_bytes(response)
+        return loads(response_bytes.read())
 
     def get_feasibility(self, *, id: Union[UUID, str]):
         """
@@ -299,8 +300,9 @@ class OtmV2(AbstractApi):
         if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
 
-        raw_response = response.raw.read()
-        return loads(raw_response.decode("utf-8"))
+        response_bytes = raw_response_to_bytes(response)
+
+        return loads(response_bytes.read())
 
     def get_feasibility(self, *, contract_id: UUID, id: Union[UUID, str]):
         """
