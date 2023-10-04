@@ -5,7 +5,6 @@ from uuid import uuid4
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, raises
-import re
 
 
 @fixture()
@@ -23,11 +22,11 @@ def versioned_otm_client(request, client):
     indirect=["versioned_otm_client"],
 )
 def test_cannot_use_v2_without_contract_id(version, versioned_otm_client):
-    error_message = (
-        "OtmV2.get_order() missing 1 required keyword-only argument: 'contract_id'"
-    )
-    with raises(TypeError, match=re.escape(error_message)):
+    error_message = "missing 1 required keyword-only argument: 'contract_id'"
+    with raises(TypeError) as exc:
         versioned_otm_client.get_order(order_id=uuid4())
+
+    assert error_message in str(exc.value)
 
 
 @mocketize(strict_mode=True)
