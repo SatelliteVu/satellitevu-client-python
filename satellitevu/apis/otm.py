@@ -261,7 +261,7 @@ class OtmV2(AbstractApi):
     def post_feasibility(
         self,
         *,
-        contract_id: UUID,
+        contract_id: Union[UUID, str],
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
@@ -313,7 +313,7 @@ class OtmV2(AbstractApi):
 
         return loads(response_bytes.read())
 
-    def get_feasibility(self, *, contract_id: UUID, id: Union[UUID, str]):
+    def get_feasibility(self, *, contract_id: Union[UUID, str], id: Union[UUID, str]):
         """
         Retrieve the feasibility request with a given ID.
 
@@ -333,7 +333,9 @@ class OtmV2(AbstractApi):
         )
         return response.json()
 
-    def get_feasibility_response(self, *, contract_id: UUID, id: Union[UUID, str]):
+    def get_feasibility_response(
+        self, *, contract_id: Union[UUID, str], id: Union[UUID, str]
+    ):
         """
         Retrieves the feasibility response for the feasibility request
         with a given id.
@@ -357,7 +359,11 @@ class OtmV2(AbstractApi):
         return response.json()
 
     def list_feasibility_requests(
-        self, *, contract_id: UUID, per_page: int = 25, page_token: Optional[str] = None
+        self,
+        *,
+        contract_id: Union[UUID, str],
+        per_page: int = 25,
+        page_token: Optional[str] = None,
     ):
         """
         Retrieves a list of your feasibility requests.
@@ -384,7 +390,7 @@ class OtmV2(AbstractApi):
     def create_order(
         self,
         *,
-        contract_id: UUID,
+        contract_id: Union[UUID, str],
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
@@ -434,7 +440,7 @@ class OtmV2(AbstractApi):
 
         return response.json()
 
-    def get_order(self, *, contract_id: UUID, order_id: Union[UUID, str]):
+    def get_order(self, *, contract_id: Union[UUID, str], order_id: Union[UUID, str]):
         """
         Retrieve the order with a given order_id.
 
@@ -455,7 +461,11 @@ class OtmV2(AbstractApi):
         return response.json()
 
     def list_orders(
-        self, *, contract_id: UUID, per_page: int = 25, page_token: Optional[str] = None
+        self,
+        *,
+        contract_id: Union[UUID, str],
+        per_page: int = 25,
+        page_token: Optional[str] = None,
     ):
         """
         Retrieves a list of your orders. The orders are returned sorted by creation
@@ -482,7 +492,7 @@ class OtmV2(AbstractApi):
     def get_price(
         self,
         *,
-        contract_id: UUID,
+        contract_id: Union[UUID, str],
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
