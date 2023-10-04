@@ -59,7 +59,7 @@ class OtmV1(AbstractApi):
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
 
-        if response.status != 202:
+        if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
 
         raw_response = response.raw.read()
@@ -296,7 +296,7 @@ class OtmV2(AbstractApi):
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
 
-        if response.status != 202:
+        if response.status != 200:
             raise Exception(f"Error - {response.status} : {response.text}")
 
         raw_response = response.raw.read()

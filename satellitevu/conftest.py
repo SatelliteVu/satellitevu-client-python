@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
 from importlib import import_module
 from json import dumps
 from typing import Dict, Optional
 from urllib.parse import urljoin
+from uuid import uuid4
 
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, param
@@ -94,4 +96,47 @@ def order_details_response():
                 },
             }
         ],
+    }
+
+
+@fixture
+def otm_request_parameters():
+    now = datetime.now().utcnow()
+    return {
+        "type": "Feature",
+        "coordinates": [0, 0],
+        "date_from": now,
+        "date_to": (now + timedelta(hours=24)).utcnow(),
+        "day_night_mode": "night",
+        "max_cloud_cover": 100,
+        "min_off_nadir": 0,
+        "max_off_nadir": 45,
+        "contract_id": uuid4(),
+    }
+
+
+@fixture
+def otm_response(otm_request_parameters):
+    return {
+        "bbox": [0.0, 0.0, 0.0, 0.0],
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": otm_request_parameters["coordinates"],
+        },
+        "properties": {
+            "datetime": (
+                f"{otm_request_parameters['date_from']}/{otm_request_parameters['date_to']}"
+            ),
+            "satvu:day_night_mode": otm_request_parameters["day_night_mode"],
+            "max_cloud_cover": otm_request_parameters["max_cloud_cover"],
+            "min_off_nadir": otm_request_parameters["min_off_nadir"],
+            "max_off_nadir": otm_request_parameters["min_off_nadir"],
+            "min_gsd": 3.5,
+            "max_gsd": 6.8,
+            "status": "pending",
+        },
+        "id": str(uuid4()),
+        "contract_id": str(uuid4()),
+        "links": [],
     }
