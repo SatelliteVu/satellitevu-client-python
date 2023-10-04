@@ -103,7 +103,6 @@ def order_details_response():
 def otm_request_parameters():
     now = datetime.now().utcnow()
     return {
-        "type": "Feature",
         "coordinates": [0, 0],
         "date_from": now,
         "date_to": (now + timedelta(hours=24)).utcnow(),
