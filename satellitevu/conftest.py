@@ -111,7 +111,7 @@ def otm_request_parameters():
         "max_cloud_cover": 100,
         "min_off_nadir": 0,
         "max_off_nadir": 45,
-        "contract_id": uuid4(),
+        "contract_id": str(uuid4()),
     }
 
 
@@ -137,6 +137,6 @@ def otm_response(otm_request_parameters):
             "status": "pending",
         },
         "id": str(uuid4()),
-        "contract_id": str(uuid4()),
+        "contract_id": str(otm_request_parameters["contract_id"]),
         "links": [],
     }
