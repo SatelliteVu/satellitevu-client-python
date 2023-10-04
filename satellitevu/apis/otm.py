@@ -1,6 +1,6 @@
 from datetime import datetime
 from json import loads
-from typing import Optional, Tuple, Union
+from typing import Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
@@ -24,20 +24,22 @@ class OtmV1(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
-        day_night_mode: str = "day-night",
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         **kwargs,
     ):
         """
         Creates a tasking feasibility request.
 
         Args:
-            coordinates: An array of coordinates.
+            coordinates: An array of coordinates - (longitude, latitude) or
+            (longitude, latitude, altitude).
 
             date_from: datetime representing the start date of the feasibility request.
 
             date_to: datetime representing the end date of the feasibility request.
 
-            day_night_mode: The mode of data capture, defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed values
+            include ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the feasibility request.
@@ -128,20 +130,22 @@ class OtmV1(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
-        day_night_mode: str = "day-night",
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         **kwargs,
     ):
         """
         Creates a tasking order request.
 
         Args:
-            coordinates: An array of coordinates - (longitude, latitude) or (longitude, latitude, altitude).
+            coordinates: An array of coordinates - (longitude, latitude) or
+            (longitude, latitude, altitude).
 
             date_from: datetime representing the start date of the order.
 
             date_to: datetime representing the end date of the order.
 
-            day_night_mode: The mode of data capture, defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed values
+            include ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the order created.
@@ -261,7 +265,7 @@ class OtmV2(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
-        day_night_mode: str = "day-night",
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         **kwargs,
     ):
         """
@@ -271,13 +275,15 @@ class OtmV2(AbstractApi):
             contract_id: Associated ID of the Contract under which the feasibility
             request will be performed.
 
-            coordinates: An array of coordinates.
+            coordinates: An array of coordinates - (longitude, latitude) or
+            (longitude, latitude, altitude).
 
             date_from: datetime representing the start date of the feasibility request.
 
             date_to: datetime representing the end date of the feasibility request.
 
-            day_night_mode: The mode of data capture, defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed values
+            include ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the feasibility request.
@@ -382,7 +388,7 @@ class OtmV2(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
-        day_night_mode: str = "day-night",
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         **kwargs,
     ):
         """
@@ -392,13 +398,15 @@ class OtmV2(AbstractApi):
             contract_id: Associated ID of the Contract under which the tasking
             order will be submitted.
 
-            coordinates: An array of coordinates.
+            coordinates: An array of coordinates - (longitude, latitude) or
+            (longitude, latitude, altitude).
 
             date_from: datetime representing the start date of the order.
 
             date_to: datetime representing the end date of the order.
 
-            day_night_mode: The mode of data capture, defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed values
+            include ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the order created.
