@@ -60,7 +60,7 @@ class OtmV1(AbstractApi):
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
 
-        if response.status != 200:
+        if response.status != 202:
             raise Exception(f"Error - {response.status} : {response.text}")
 
         response_bytes = raw_response_to_bytes(response)
@@ -163,6 +163,9 @@ class OtmV1(AbstractApi):
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
+        if response.status != 201:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
         return response.json()
 
     def get_order(self, *, order_id: Union[UUID, str]):
@@ -297,7 +300,7 @@ class OtmV2(AbstractApi):
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
         )
 
-        if response.status != 200:
+        if response.status != 202:
             raise Exception(f"Error - {response.status} : {response.text}")
 
         response_bytes = raw_response_to_bytes(response)

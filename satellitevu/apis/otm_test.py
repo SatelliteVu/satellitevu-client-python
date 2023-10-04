@@ -40,7 +40,7 @@ def test_post_feasibility(
         "POST",
         client._gateway_url + api_path,
         body=dumps(otm_response),
-        status=200,
+        status=202,
     )
 
     if version == "v1":
@@ -245,4 +245,189 @@ def test_list_feasibilities(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    ["version", "api_path", "versioned_otm_client"],
+    (
+        ("v1", "otm/v1/tasking/orders/", "versioned_otm_client"),
+        ("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),
+    ),
+    indirect=["versioned_otm_client"],
+)
+def test_post_order(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    otm_response,
+    version,
+    api_path,
+    versioned_otm_client,
+):
+    contract_id = otm_request_parameters["contract_id"]
+    api_path = api_path.replace("contract-id", str(contract_id))
+
+    Entry.single_register(
+        "POST",
+        client._gateway_url + api_path,
+        body=dumps(otm_response),
+        status=201,
+    )
+
+    if version == "v1":
+        assert contract_id not in api_path
+
+    response = versioned_otm_client.create_order(**otm_request_parameters)
+    assert isinstance(response, dict)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path
+    assert api_request.headers["Content-Type"] == "application/json"
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+    api_request_body = loads(api_request.body)
+    assert api_request_body["geometry"] == {
+        "type": "Point",
+        "coordinates": otm_request_parameters["coordinates"],
+    }
+    assert (
+        api_request_body["properties"]["max_cloud_cover"]
+        == otm_request_parameters["max_cloud_cover"]
+    )
+    assert (
+        api_request_body["properties"]["min_off_nadir"]
+        == otm_request_parameters["min_off_nadir"]
+    )
+    assert (
+        api_request_body["properties"]["max_off_nadir"]
+        == otm_request_parameters["max_off_nadir"]
+    )
+    assert (
+        api_request_body["properties"]["datetime"]
+        == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
+    )
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    ["version", "api_path", "per_page", "versioned_otm_client"],
+    (
+        (
+            "v1",
+            "otm/v1/tasking/orders/",
+            None,
+            "versioned_otm_client",
+        ),
+        (
+            "v1",
+            "otm/v1/tasking/orders/",
+            10,
+            "versioned_otm_client",
+        ),
+        (
+            "v2",
+            "otm/v2/contract-id/tasking/orders/",
+            None,
+            "versioned_otm_client",
+        ),
+        (
+            "v2",
+            "otm/v2/contract-id/tasking/orders/",
+            10,
+            "versioned_otm_client",
+        ),
+    ),
+    indirect=["versioned_otm_client"],
+)
+def test_list_tasking_orders(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    otm_response,
+    version,
+    api_path,
+    per_page,
+    versioned_otm_client,
+):
+    contract_id = otm_request_parameters["contract_id"]
+    per_page = per_page if not None else 25
+    api_path = api_path.replace("contract-id", str(contract_id)) + f"?{per_page=}"
+
+    Entry.single_register(
+        "GET",
+        client._gateway_url + api_path,
+        status=200,
+        body=dumps(otm_response),
+    )
+
+    if version == "v1":
+        assert contract_id not in api_path
+        response = versioned_otm_client.list_orders(per_page=per_page)
+    else:
+        response = versioned_otm_client.list_orders(
+            contract_id=contract_id, per_page=per_page
+        )
+
+    assert isinstance(response, dict)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    ["version", "api_path", "versioned_otm_client"],
+    (
+        ("v1", "otm/v1/tasking/orders/", "versioned_otm_client"),
+        ("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),
+    ),
+    indirect=["versioned_otm_client"],
+)
+def test_get_tasking_order(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    otm_response,
+    version,
+    api_path,
+    versioned_otm_client,
+):
+    order_id = uuid4()
+    contract_id = otm_request_parameters["contract_id"]
+    api_path = api_path.replace("contract-id", str(contract_id))
+
+    Entry.single_register(
+        "GET",
+        client._gateway_url + api_path + str(order_id),
+        status=200,
+        body=dumps(otm_response),
+    )
+
+    if version == "v1":
+        assert contract_id not in api_path
+        response = versioned_otm_client.get_order(order_id=order_id)
+    else:
+        response = versioned_otm_client.get_order(
+            contract_id=contract_id, order_id=order_id
+        )
+
+    assert isinstance(response, dict)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path + f"{order_id}"
     assert api_request.headers["Authorization"] == "Bearer mock-token"
