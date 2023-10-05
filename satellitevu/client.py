@@ -2,8 +2,8 @@ from typing import Dict, Optional, Union
 from warnings import warn
 
 from satellitevu.apis.archive import ArchiveV1
-from satellitevu.apis.orders import OrdersV1
 from satellitevu.apis.otm import OtmV1, OtmV2
+from satellitevu.apis.orders import OrdersV1, OrdersV2
 from satellitevu.auth import AbstractCache, Auth
 from satellitevu.config import GATEWAY
 from satellitevu.http import AbstractClient, UrllibClient
@@ -40,6 +40,7 @@ class Client:
 
     archive_v1: ArchiveV1
     orders_v1: OrdersV1
+    orders_v2: OrdersV2
 
     future: FutureApis
 
