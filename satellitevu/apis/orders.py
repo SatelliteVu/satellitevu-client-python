@@ -55,6 +55,21 @@ class OrdersV1(AbstractApi):
     api_path = "orders/v1"
     scopes = ["orders:w", "stac:r"]
 
+    def get_orders(self) -> Dict:
+        """
+        Retrieve details of all imagery orders.
+
+        Returns:
+            A dictionary containing properties of the order.
+        """
+        url = self.url("/")
+        response = self.make_request(method="GET", url=url)
+
+        if response.status != 200:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
+        return response.json()
+
     def get_order_details(self, order_id: UUID) -> Dict:
         """
         Retrieve details of an imagery order.
@@ -187,6 +202,25 @@ class OrdersV2(AbstractApi):
 
     api_path = "orders/v2"
     scopes = ["orders:w", "stac:r"]
+
+    def get_orders(self, *, contract_id: Union[UUID, str]) -> Dict:
+        """
+         Retrieve details of all imagery orders.
+
+        Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an order is associated with.
+
+        Returns:
+            A dictionary containing properties of the order.
+        """
+        url = self.url(f"/{contract_id}/")
+        response = self.make_request(method="GET", url=url)
+
+        if response.status != 200:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
+        return response.json()
 
     def get_order_details(
         self, *, contract_id: Union[UUID, str], order_id: Union[UUID, str]

@@ -402,6 +402,49 @@ def test_get_order_details(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
+    ["version", "api_path", "versioned_orders_client"],
+    (
+        ("v1", "orders/v1/", "versioned_orders_client"),
+        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
+    ),
+    indirect=["versioned_orders_client"],
+)
+def test_get_orders(
+    client,
+    oauth_token_entry,
+    order_details_response,
+    version,
+    api_path,
+    versioned_orders_client,
+):
+    contract_id = str(uuid4())
+    api_path = api_path.replace("contract-id", str(contract_id))
+
+    Entry.single_register(
+        "GET",
+        client._gateway_url + api_path,
+        body=dumps(order_details_response),
+    )
+
+    if version == "v1":
+        assert contract_id not in versioned_orders_client.api_path
+        response = versioned_orders_client.get_orders()
+    else:
+        response = versioned_orders_client.get_orders(contract_id=contract_id)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == f"/{api_path}"
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+    assert isinstance(response, dict)
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "status", "exception"],
     (
         ("v1", "orders/v1/", "versioned_orders_client", 401, Api401Error),
