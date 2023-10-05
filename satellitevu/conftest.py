@@ -125,7 +125,8 @@ def otm_response(otm_request_parameters):
         },
         "properties": {
             "datetime": (
-                f"{otm_request_parameters['date_from']}/{otm_request_parameters['date_to']}"
+                f"{otm_request_parameters['date_from']}/"
+                f"{otm_request_parameters['date_to']}"
             ),
             "satvu:day_night_mode": otm_request_parameters["day_night_mode"],
             "max_cloud_cover": otm_request_parameters["max_cloud_cover"],
