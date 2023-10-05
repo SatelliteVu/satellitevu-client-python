@@ -195,6 +195,9 @@ class OrdersV2(AbstractApi):
         Retrieve details of an imagery order.
 
         Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an order is associated with.
+
             order_id: UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
@@ -214,6 +217,9 @@ class OrdersV2(AbstractApi):
         Submit an imagery order for items present in the Satellite Vu archive.
 
         Args:
+            contract_id: String or UUID representing the ID of the Contract
+            under which an order will be created.
+
             item_ids: A string or list of strings representing the image
             identifiers. For example: "20221005T214049000_basic_0_TABI" or
             ["20221005T214049000_basic_0_TABI, "20221010T222611000_basic_0_TABI"].
@@ -242,6 +248,9 @@ class OrdersV2(AbstractApi):
         Finds the download url for an item in a submitted imagery order.
 
         Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an item in the order is associated with.
+
             order_id: UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
@@ -268,6 +277,9 @@ class OrdersV2(AbstractApi):
         Download a submitted imagery order.
 
         Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an item in the order is associated with.
+
             order_id: UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
@@ -303,6 +315,9 @@ class OrdersV2(AbstractApi):
         Downloads entire imagery order into one ZIP file.
 
         Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an order is associated with.
+
             order_id: UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
