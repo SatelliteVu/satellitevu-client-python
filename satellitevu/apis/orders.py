@@ -320,13 +320,24 @@ class OrdersV2(AbstractApi):
         order_id = order_details["id"]
         item_ids = [i["properties"]["item_id"] for i in order_details["features"]]
 
-        return self._save_order_to_zip(destdir, order_id, item_ids)
+        return self._save_order_to_zip(destdir, contract_id, order_id, item_ids)
 
-    def _save_order_to_zip(self, destdir: str, order_id: UUID, item_ids: List[str]):
+    def _save_order_to_zip(
+        self,
+        destdir: str,
+        contract_id: Union[UUID, str],
+        order_id: UUID,
+        item_ids: List[str],
+    ):
         destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
         with tempfile.TemporaryDirectory(dir=destdir) as tmpdir:
             for item_id in item_ids:
-                self.download_item(order_id, item_id, tmpdir)
+                self.download_item(
+                    contract_id=contract_id,
+                    order_id=order_id,
+                    item_id=item_id,
+                    destdir=tmpdir,
+                )
 
             zipfile = shutil.make_archive(destzip, "zip", tmpdir)
 

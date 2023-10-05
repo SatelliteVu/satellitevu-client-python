@@ -70,6 +70,7 @@ class Client:
 
         self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
         self.orders_v1 = OrdersV1(self._client, self._gateway_url)
+        self.orders_v2 = OrdersV2(self._client, self._gateway_url)
 
         self.future = FutureApis(self._client, self._gateway_url)
 
