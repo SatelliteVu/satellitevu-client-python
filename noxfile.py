@@ -7,7 +7,7 @@ PYTHON_VERSIONS = ("3.10", "3.8", "3.11.0")
 def lint(session):
     session.install("flake8", "black", "isort")
     session.run("black", ".")
-    session.run("flake8", ".")
+    session.run("flake8", "--max-line-length", "88", "--extend-ignore", "E203", ".")
     session.run("isort", ".")
 
 
