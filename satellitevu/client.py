@@ -2,6 +2,7 @@ from typing import Dict, Optional, Union
 from warnings import warn
 
 from satellitevu.apis.archive import ArchiveV1
+from satellitevu.apis.contracts import ContractsV1
 from satellitevu.apis.otm import OtmV1, OtmV2
 from satellitevu.apis.orders import OrdersV1, OrdersV2
 from satellitevu.auth import AbstractCache, Auth
@@ -38,6 +39,8 @@ class Client:
 
     auth: Auth
 
+    contracts_v1: ContractsV1
+
     archive_v1: ArchiveV1
     orders_v1: OrdersV1
     orders_v2: OrdersV2
@@ -67,6 +70,8 @@ class Client:
             client=self._client,
         )
         self._client.set_auth(self._gateway_url, self.auth)
+
+        self.contracts_v1 = ContractsV1(self._client, self._gateway_url)
 
         self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
         self.orders_v1 = OrdersV1(self._client, self._gateway_url)
