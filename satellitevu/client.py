@@ -71,7 +71,9 @@ class Client:
         )
         self._client.set_auth(self._gateway_url, self.auth)
 
-        self.contracts_v1 = ContractsV1(self._client, self._gateway_url)
+        self.contracts_v1 = ContractsV1(
+            client=self._client, base_url=self._gateway_url, auth=self.auth
+        )
 
         self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
         self.orders_v1 = OrdersV1(self._client, self._gateway_url)
