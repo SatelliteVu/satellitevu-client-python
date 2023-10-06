@@ -232,7 +232,7 @@ class OrdersV2(AbstractApi):
             contract_id: String or UUID representing the ID of the Contract
             which an order is associated with.
 
-            order_id: UUID representing the order id e.g.
+            order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
         Returns:
@@ -248,7 +248,7 @@ class OrdersV2(AbstractApi):
 
     def submit(self, *, contract_id: Union[UUID, str], item_ids: Union[List[str], str]):
         """
-        Submit an imagery order for items present in the Satellite Vu archive.
+        Submit an imagery order for items present in the SatVu archive.
 
         Args:
             contract_id: String or UUID representing the ID of the Contract
@@ -285,7 +285,7 @@ class OrdersV2(AbstractApi):
             contract_id: String or UUID representing the ID of the Contract
             which an item in the order is associated with.
 
-            order_id: UUID representing the order id e.g.
+            order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
             item_id: A string representing the specific image identifiers e.g.
@@ -314,7 +314,7 @@ class OrdersV2(AbstractApi):
             contract_id: String or UUID representing the ID of the Contract
             which an item in the order is associated with.
 
-            order_id: UUID representing the order id e.g.
+            order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
             item_id: A string representing the specific image identifiers e.g.
@@ -352,7 +352,7 @@ class OrdersV2(AbstractApi):
             contract_id: String or UUID representing the ID of the Contract
             which an order is associated with.
 
-            order_id: UUID representing the order id e.g.
+            order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
             destdir: String specifying path of the directory where imagery will
@@ -378,7 +378,7 @@ class OrdersV2(AbstractApi):
         order_id: UUID,
         item_ids: List[str],
     ):
-        destzip = os.path.join(destdir, f"SatelliteVu_{order_id}")
+        destzip = os.path.join(destdir, f"SatVu_{order_id}")
         with tempfile.TemporaryDirectory(dir=destdir) as tmpdir:
             for item_id in item_ids:
                 self.download_item(
