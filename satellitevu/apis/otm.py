@@ -1,12 +1,8 @@
 from datetime import datetime
-from json import loads
 from typing import Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
-from satellitevu.apis.orders import raw_response_to_bytes
-
-# TODO: Tests
 
 
 class OtmV1(AbstractApi):
@@ -38,8 +34,8 @@ class OtmV1(AbstractApi):
 
             date_to: datetime representing the end date of the feasibility request.
 
-            day_night_mode: String representing the mode of data capture. Allowed values
-            include ["day", "night", "day-night"]. Defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the feasibility request.
@@ -65,8 +61,7 @@ class OtmV1(AbstractApi):
         if response.status != 202:
             raise Exception(f"Error - {response.status} : {response.text}")
 
-        response_bytes = raw_response_to_bytes(response)
-        return loads(response_bytes.read())
+        return response.json()
 
     def get_feasibility(self, *, id: Union[UUID, str]):
         """
@@ -144,8 +139,8 @@ class OtmV1(AbstractApi):
 
             date_to: datetime representing the end date of the order.
 
-            day_night_mode: String representing the mode of data capture. Allowed values
-            include ["day", "night", "day-night"]. Defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the order created.
@@ -282,8 +277,8 @@ class OtmV2(AbstractApi):
 
             date_to: datetime representing the end date of the feasibility request.
 
-            day_night_mode: String representing the mode of data capture. Allowed values
-            include ["day", "night", "day-night"]. Defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the feasibility request.
@@ -309,9 +304,7 @@ class OtmV2(AbstractApi):
         if response.status != 202:
             raise Exception(f"Error - {response.status} : {response.text}")
 
-        response_bytes = raw_response_to_bytes(response)
-
-        return loads(response_bytes.read())
+        return response.json()
 
     def get_feasibility(self, *, contract_id: Union[UUID, str], id: Union[UUID, str]):
         """
@@ -411,8 +404,8 @@ class OtmV2(AbstractApi):
 
             date_to: datetime representing the end date of the order.
 
-            day_night_mode: String representing the mode of data capture. Allowed values
-            include ["day", "night", "day-night"]. Defaults to "day-night".
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing properties of the order created.
