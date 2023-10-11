@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Literal, Optional, Tuple, Union
+from typing import Any, Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
@@ -519,6 +519,90 @@ class OtmV2(AbstractApi):
             "properties": {
                 "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}"
             },
+        }
+
+        response = self.make_request(
+            method="POST", url=url, json={k: v for k, v in payload.items() if v}
+        )
+        return response.json()
+
+    def post_search(
+        self,
+        contract_id: Union[str, UUID],
+        page_token: Optional[str] = None,
+        per_page: int = 25,
+        collections: Optional[list[str]] = None,
+        ids: Optional[list[str]] = None,
+        datetime: Optional[str] = None,
+        created_at: Optional[str] = None,
+        updated_at: Optional[str] = None,
+        properties: Optional[dict] = None,
+        intersects: Optional[Any] = None,
+        sort_by: Optional[list[dict]] = None,
+    ):
+        """
+        Performs a search across all feasibility and orders associated with a
+        contract.
+
+        Args:
+            contract_id: Associated ID of the Contract under which the search
+            request will be performed.
+
+            page_token: Optional string key used to return specific page of results.
+            Defaults to None -> assumes page 0.
+
+            per_page: Number of results (defaults to 25) to be returned per page.
+
+            collections: List of strings specifying the collections within which
+            to search. Allowed values are:
+            [ "feasibility", "feasibility|response|%", "orders", "otm|orders|%" ]
+
+            ids: List of strings specifying the ids within which
+            to search.
+
+            datetime: Optional string specifying a closed datetime range within
+            which to search e.g. "2023-03-22T12:50:24+01:00/2023-03-29T12:50:24+01:00"
+            Assumed to be UTC if timezone offset is not given. This datetime range
+            corresponds directly to the datetime property associated with the
+            order/feasibility request/response item.
+
+            created_at: Optional string specifying a closed datetime range within
+            which to search e.g. "2023-03-22T12:50:24+01:00/2023-03-29T12:50:24+01:00"
+            Assumed to be UTC if timezone offset is not given. This datetime range
+            describes when the database entries are created.
+
+            updated_at: Optional string specifying a closed datetime range within
+            which to search e.g. "2023-03-22T12:50:24+01:00/2023-03-29T12:50:24+01:00"
+            Assumed to be UTC if timezone offset is not given. This datetime range
+            describes when database entries are updated.
+
+            properties: Optional dictionary specifying the filterable fields and
+            value. Fields can be filtered by 'status', 'min_off_nadir',
+            'max_off_nadir', 'min_gsd', 'max_gsd'.
+            Examples: {"status" : "failed", "max_gsd" : 6.5, "min_off_nadir": 35}
+
+            intersects: Optional dictionary with keys "coordinates" and "geometry"
+            type that search results intersect with. Available geometry types include:
+            "Point","MultiPoint", "LineString", "MultiLineString", "Polygon",
+            "MultiPolygon". For example:
+            intersects = {"coordinates":[-1.065151, 51.163899], "type" : "Point"}.
+
+            sortby: List of parameters specifying the field and direction
+            ('asc', 'desc') the results are sorted by. Currently only the 'status'
+            field is sortable e.g. [{"field": "status", "direction": "desc"}].
+        """
+        url = self.url(f"{str(contract_id)}/search/")
+        payload = {
+            "token": page_token,
+            "limit": per_page,
+            "collections": collections,
+            "ids": ids,
+            "datetime": datetime,
+            "created_at": created_at,
+            "updated_at": updated_at,
+            "properties": properties,
+            "intersects": intersects,
+            "sort_by": sort_by,
         }
 
         response = self.make_request(
