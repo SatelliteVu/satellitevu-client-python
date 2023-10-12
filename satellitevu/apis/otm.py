@@ -304,7 +304,7 @@ class OtmV1(AbstractApi):
             ('asc', 'desc') the results are sorted by. Currently only the 'status'
             field is sortable e.g. [{"field": "status", "direction": "desc"}].
         """
-        url = self.url("/search")
+        url = self.url("/search/")
         payload = {
             "token": page_token,
             "limit": per_page,

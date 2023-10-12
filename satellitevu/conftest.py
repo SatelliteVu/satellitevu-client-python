@@ -108,8 +108,8 @@ def otm_request_parameters():
         "date_to": (now + timedelta(hours=24)).utcnow(),
         "day_night_mode": "night",
         "max_cloud_cover": 100,
-        "min_off_nadir": 0,
-        "max_off_nadir": 45,
+        "min_off_nadir": 20,
+        "max_off_nadir": 30,
         "contract_id": str(uuid4()),
     }
 
@@ -134,9 +134,45 @@ def otm_response(otm_request_parameters):
             "max_off_nadir": otm_request_parameters["min_off_nadir"],
             "min_gsd": 3.5,
             "max_gsd": 6.8,
-            "status": "pending",
+            "status": "feasible",
         },
         "id": str(uuid4()),
         "contract_id": str(otm_request_parameters["contract_id"]),
+        "links": [],
+    }
+
+
+@fixture
+def search_response(otm_request_parameters):
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": otm_request_parameters["coordinates"],
+                },
+                "properties": {
+                    "datetime": (
+                        f"{otm_request_parameters['date_from']}/"
+                        f"{otm_request_parameters['date_to']}"
+                    ),
+                    "status": "feasible",
+                    "max_gsd": 6.8,
+                    "min_gsd": 3.5,
+                    "max_off_nadir": 45,
+                    "min_off_nadir": 0,
+                    "day_night_mode": "day",
+                    "max_cloud_cover": None,
+                    "created_at": "2023-10-06T08:56:26.760670",
+                    "updated_at": "2023-10-06T08:56:28.686189",
+                },
+                "id": "57645c80-fda4-4116-9270-6f1b2a097000",
+                "contract_id": "74841d4e-60d4-4e73-a691-2dddffa10d92",
+                "collection": "feasibility",
+            },
+        ],
+        "context": {"limit": 25, "matched": 1, "returned": 1},
         "links": [],
     }
