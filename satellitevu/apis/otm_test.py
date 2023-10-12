@@ -445,3 +445,61 @@ def test_get_tasking_order(
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{order_id}"
     assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    ["version", "api_path", "versioned_otm_client"],
+    (
+        ("v1", "otm/v1/search/", "versioned_otm_client"),
+        ("v2", "otm/v2/contract-id/search/", "versioned_otm_client"),
+    ),
+    indirect=["versioned_otm_client"],
+)
+def test_post_search(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    search_response,
+    version,
+    api_path,
+    versioned_otm_client,
+):
+    contract_id = otm_request_parameters["contract_id"]
+    api_path = api_path.replace("contract-id", str(contract_id))
+
+    Entry.single_register(
+        "POST",
+        client._gateway_url + api_path,
+        status=200,
+        body=dumps(search_response),
+    )
+
+    print(client._gateway_url + api_path)
+
+    search_parameters = {
+        "per_page": 100,
+        "collections": ["feasibility"],
+        "date_range": "2023-01-01T00:00:00/2023-01-31T11:59:59",
+        "properties": {"min_gsd": 15, "max_gsd": 35, "status": "feasible"},
+        "intersects": {},
+        "sort_by": [{"field": "min_gsd", "direction": "asc"}],
+    }
+
+    if version == "v1":
+        assert contract_id not in api_path
+        response = versioned_otm_client.post_search(**search_parameters)
+    else:
+        response = versioned_otm_client.post_search(
+            contract_id=contract_id, **search_parameters
+        )
+
+    assert isinstance(response, dict)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
