@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Literal, List, Optional, Tuple, Union
+from typing import Any, Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
@@ -247,14 +247,14 @@ class OtmV1(AbstractApi):
         self,
         page_token: Optional[str] = None,
         per_page: int = 25,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
+        collections: Union[list[str], None] = None,
+        ids: Union[list[str], None] = None,
         date_range: Optional[str] = None,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         properties: Optional[dict] = None,
         intersects: Optional[Any] = None,
-        sort_by: Optional[List[dict]] = None,
+        sort_by: Union[list[dict], None] = None,
     ):
         """
         Performs a search across all feasibility and orders associated with a
@@ -611,14 +611,14 @@ class OtmV2(AbstractApi):
         contract_id: Union[str, UUID],
         page_token: Optional[str] = None,
         per_page: int = 25,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
+        collections: Union[list[str], None] = None,
+        ids: Union[list[str], None] = None,
         date_range: Optional[str] = None,
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         properties: Optional[dict] = None,
         intersects: Optional[Any] = None,
-        sort_by: Optional[List[dict]] = None,
+        sort_by: Union[list[dict], None] = None,
     ):
         """
         Performs a search across all feasibility and orders associated with a
