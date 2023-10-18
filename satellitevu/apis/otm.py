@@ -243,7 +243,7 @@ class OtmV1(AbstractApi):
         )
         return response.json()
 
-    def post_search(
+    def search(
         self,
         page_token: Optional[str] = None,
         per_page: int = 25,
@@ -606,7 +606,7 @@ class OtmV2(AbstractApi):
         )
         return response.json()
 
-    def post_search(
+    def search(
         self,
         contract_id: Union[str, UUID],
         page_token: Optional[str] = None,
