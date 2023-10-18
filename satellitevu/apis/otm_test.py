@@ -475,8 +475,6 @@ def test_post_search(
         body=dumps(search_response),
     )
 
-    print(client._gateway_url + api_path)
-
     search_parameters = {
         "per_page": 100,
         "collections": ["feasibility"],
