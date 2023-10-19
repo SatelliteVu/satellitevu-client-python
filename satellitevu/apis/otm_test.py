@@ -486,9 +486,9 @@ def test_post_search(
 
     if version == "v1":
         assert contract_id not in api_path
-        response = versioned_otm_client.post_search(**search_parameters)
+        response = versioned_otm_client.search(**search_parameters)
     else:
-        response = versioned_otm_client.post_search(
+        response = versioned_otm_client.search(
             contract_id=contract_id, **search_parameters
         )
 
