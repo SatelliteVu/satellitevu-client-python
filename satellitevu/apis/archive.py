@@ -138,7 +138,7 @@ class ArchiveV2(AbstractApi):
             criteria.
 
         """
-        url = self.url("/{contract_id}/search")
+        url = self.url(f"/{contract_id}/search")
         payload = {
             **kwargs,
             "intersects": intersects,
