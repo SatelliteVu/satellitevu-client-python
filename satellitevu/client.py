@@ -1,7 +1,7 @@
 from typing import Dict, Optional, Union
 from warnings import warn
 
-from satellitevu.apis.archive import ArchiveV1
+from satellitevu.apis.archive import ArchiveV1, ArchiveV2
 from satellitevu.apis.contracts import ContractsV1
 from satellitevu.apis.otm import OtmV1, OtmV2
 from satellitevu.apis.orders import OrdersV1, OrdersV2
@@ -42,6 +42,7 @@ class Client:
     contracts_v1: ContractsV1
 
     archive_v1: ArchiveV1
+    archive_v2: ArchiveV2
     orders_v1: OrdersV1
     orders_v2: OrdersV2
 
@@ -76,6 +77,7 @@ class Client:
         )
 
         self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
+        self.archive_v2 = ArchiveV2(self._client, self._gateway_url)
         self.orders_v1 = OrdersV1(self._client, self._gateway_url)
         self.orders_v2 = OrdersV2(self._client, self._gateway_url)
 
