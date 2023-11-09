@@ -106,6 +106,10 @@ class ArchiveV2(AbstractApi):
         Perform a search on Satellite Vu's STAC. Relevant documentation is located
         at https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post
 
+        Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which a search is performed with.
+
         Kwargs:
             intersects: Optional dictionary with keys "coordinates" and "geometry"
             type that search results intersect with. Available geometry types include:
