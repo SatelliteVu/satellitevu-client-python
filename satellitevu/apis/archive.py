@@ -104,7 +104,7 @@ class ArchiveV2(AbstractApi):
     ):
         """
         Perform a search on Satellite Vu's STAC. Relevant documentation is located
-        at https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post
+        at https://api.satellitevu.com/archive/v2/docs#operation/Search_search_post
 
         Args:
             contract_id: String or UUID representing the ID of the Contract
