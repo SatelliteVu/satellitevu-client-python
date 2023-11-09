@@ -124,31 +124,80 @@ def test_search(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    "kwargs, payload, status, exception",
+    "version, api_path, versioned_archive_client, kwargs, payload, status, exception",
     (
-        ({}, {"limit": 10}, 401, Api401Error),
-        ({"limit": 50}, {"limit": 50}, 403, Api403Error),
+        (
+            "v1",
+            "archive/v1/",
+            "versioned_archive_client",
+            {},
+            {"limit": 10},
+            401,
+            Api401Error,
+        ),
+        (
+            "v1",
+            "archive/v1/",
+            "versioned_archive_client",
+            {"limit": 50},
+            {"limit": 50},
+            403,
+            Api403Error,
+        ),
+        (
+            "v2",
+            "archive/v2/contract-id/",
+            "versioned_archive_client",
+            {},
+            {"limit": 10},
+            401,
+            Api401Error,
+        ),
+        (
+            "v2",
+            "archive/v2/contract-id/",
+            "versioned_archive_client",
+            {"limit": 50},
+            {"limit": 50},
+            403,
+            Api403Error,
+        ),
     ),
+    indirect=["versioned_archive_client"],
 )
 def test_unauthorized_search(
-    client, oauth_token_entry, kwargs, payload, status, exception
+    client,
+    oauth_token_entry,
+    version,
+    api_path,
+    versioned_archive_client,
+    kwargs,
+    payload,
+    status,
+    exception,
 ):
+    contract_id = str(uuid4())
+    api_path = api_path.replace("contract-id", str(contract_id))
+
     Entry.single_register(
         "POST",
-        client._gateway_url + "archive/v1/search",
+        client._gateway_url + f"{api_path}search",
         "mock-stac-response",
         status=status,
     )
 
     with pytest.raises(exception):
-        client.archive_v1.search(**kwargs)
+        if version == "v1":
+            versioned_archive_client.search(**kwargs)
+        else:
+            versioned_archive_client.search(contract_id=contract_id, **kwargs)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
 
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
-    assert api_request.path == "/archive/v1/search"
+    assert api_request.path == f"/{api_path}search"
     assert api_request.headers["Content-Type"] == "application/json"
     assert api_request.headers["Authorization"] == "Bearer mock-token"
     assert api_request.body == dumps(payload)
