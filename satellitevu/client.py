@@ -12,13 +12,11 @@ from satellitevu.http import AbstractClient, UrllibClient
 
 class FutureApis:
     otm_v1: OtmV1
-    otm_v2: OtmV2
 
     _called: Dict[str, bool] = {}
 
     def __init__(self, client: AbstractClient, gateway_url: str):
         self.otm_v1 = OtmV1(client, gateway_url)
-        self.otm_v2 = OtmV2(client, gateway_url)
 
     def __getattribute__(self, __name: str):
         attr = super().__getattribute__(__name)
@@ -45,6 +43,7 @@ class Client:
     archive_v2: ArchiveV2
     orders_v1: OrdersV1
     orders_v2: OrdersV2
+    otm_v2: OtmV2
 
     future: FutureApis
 
@@ -80,6 +79,7 @@ class Client:
         self.archive_v2 = ArchiveV2(self._client, self._gateway_url)
         self.orders_v1 = OrdersV1(self._client, self._gateway_url)
         self.orders_v2 = OrdersV2(self._client, self._gateway_url)
+        self.otm_v2 = OtmV2(self._client, self._gateway_url)
 
         self.future = FutureApis(self._client, self._gateway_url)
 
