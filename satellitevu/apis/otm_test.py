@@ -12,7 +12,7 @@ def versioned_otm_client(request, client):
     if request.getfixturevalue("version") == "v1":
         yield client.future.otm_v1
     else:
-        yield client.future.otm_v2
+        yield client.otm_v2
 
 
 @mocketize(strict_mode=True)
