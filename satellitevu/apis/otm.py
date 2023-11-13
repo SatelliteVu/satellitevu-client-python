@@ -209,6 +209,7 @@ class OtmV1(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
     ):
         """
         Returns the price for a set of ordering parameters.
@@ -219,6 +220,9 @@ class OtmV1(AbstractApi):
             date_from: datetime representing the start date of the order.
 
             date_to: datetime representing the end date of the order.
+
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
 
         Returns:
             A dictionary containing keys: price, created_at where the price field
@@ -234,7 +238,8 @@ class OtmV1(AbstractApi):
                 "coordinates": coordinates,
             },
             "properties": {
-                "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}"
+                "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
+                "satvu:day_night_mode": day_night_mode,
             },
         }
 
