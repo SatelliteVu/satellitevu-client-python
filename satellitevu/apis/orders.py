@@ -53,7 +53,7 @@ class OrdersV1(AbstractApi):
     """
 
     api_path = "orders/v1"
-    scopes = ["orders:w", "stac:r"]
+    scopes = ["stac:r"]
 
     def get_orders(self) -> Dict:
         """
@@ -201,7 +201,7 @@ class OrdersV2(AbstractApi):
     """
 
     api_path = "orders/v2"
-    scopes = ["orders:w", "stac:r"]
+    scopes = ["stac:r"]
 
     def get_orders(self, *, contract_id: Union[UUID, str]) -> Dict:
         """
