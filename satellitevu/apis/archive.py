@@ -89,7 +89,7 @@ class ArchiveV2(AbstractApi):
     """
 
     api_path = "archive/v2"
-    scopes = ["stac:r"]
+    scopes = []
 
     def search(
         self,
