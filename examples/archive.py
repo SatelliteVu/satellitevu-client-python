@@ -32,18 +32,19 @@ def _setup_client():
     return Client(client_id=client_id, client_secret=client_secret)
 
 
-def archive_search(**kwargs):
+def archive_search(contract_id, **kwargs):
     """
-    Have client, will search
+    Have client, will search with a contract
     """
     client = _setup_client()
-    response = client.archive_v1.search(**kwargs)
+    response = client.archive_v2.search(contract_id=contract_id, **kwargs)
 
     pprint.pprint(response.json())
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("contract_id", help="A Contract ID must be provided.")
     parser.add_argument("--example", choices=EXAMPLES.keys(), default="everything")
     parser.add_argument(
         "--verbose", help="increase output verbosity", action="store_true"
@@ -53,4 +54,4 @@ if __name__ == "__main__":
     setup_logging(args.verbose)
 
     search_args = EXAMPLES[args.example]
-    archive_search(**search_args)
+    archive_search(contract_id=args.contract_id, **search_args)
