@@ -41,10 +41,11 @@ from satellitevu import Client
 
 
 client = Client(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
-print(client.archive_v1.search().json())
+contract_id = Client(os.getenv("CONTRACT_ID"))
+print(client.archive_v2.search(contract_id=contract_id).json())
 ```
 
-`client.archive_v1.search` supports all supported request body parameters documented
+`client.archive_v2.search` supports all supported request body parameters documented
 in the [API docs][search-api-docs], with special handling for `datetime` which is
 constructed from the optional `date_from` and `date_to` parameters and a default result
 page size limit of 25.
@@ -100,6 +101,6 @@ underlying implementation, but will provide a default instance if not.
 [pipx]: https://pypa.github.io/pipx/
 [nox]: https://nox.thea.codes/en/stable/
 [nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
-[search-api-docs]: https://api.satellitevu.com/archive/v1/docs#operation/Search_search_post
+[search-api-docs]: https://api.satellitevu.com/archive/v2/docs#operation/Search_search_post
 [pypi]: https://pypi.org/project/satellitevu/
 [examples]: https://github.com/SatelliteVu/satellitevu-client-python/tree/main/examples
