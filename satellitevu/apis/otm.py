@@ -336,7 +336,7 @@ class OtmV2(AbstractApi):
     """
 
     api_path = "otm/v2"
-    scopes = ["tasking:w"]
+    scopes = []
 
     def post_feasibility(
         self,
