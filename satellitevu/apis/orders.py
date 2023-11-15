@@ -62,6 +62,8 @@ class OrdersV1(AbstractApi):
         Returns:
             A dictionary containing properties of the order.
         """
+        self.deprecation_warning(OrdersV2)
+
         url = self.url("/")
         response = self.make_request(method="GET", url=url)
 
@@ -81,6 +83,8 @@ class OrdersV1(AbstractApi):
         Returns:
             A dictionary containing properties of the order.
         """
+        self.deprecation_warning(OrdersV2)
+
         url = self.url(f"/{order_id}")
         response = self.make_request(method="GET", url=url)
 
@@ -104,6 +108,8 @@ class OrdersV1(AbstractApi):
             items described with conformity to the STAC specification.
 
         """
+        self.deprecation_warning(OrdersV2)
+
         url = self.url("/")
 
         if isinstance(item_ids, str):
@@ -129,6 +135,8 @@ class OrdersV1(AbstractApi):
         Returns:
             A dictionary containing the url which the image can be downloaded from.
         """
+        self.deprecation_warning(OrdersV2)
+
         url = self.url(f"/{order_id}/{item_id}/download?redirect=False")
 
         response = self.make_request(method="GET", url=url)
@@ -152,6 +160,8 @@ class OrdersV1(AbstractApi):
             A string specifying the path the imagery has been downloaded to.
 
         """
+        self.deprecation_warning(OrdersV2)
+
         item_url = self.item_download_url(order_id, item_id)["url"]
 
         response = self.make_request(method="GET", url=item_url)
@@ -176,6 +186,8 @@ class OrdersV1(AbstractApi):
             A string specifying the path the imagery has been downloaded to.
             All items will be downloaded into one ZIP file.
         """
+        self.deprecation_warning(OrdersV2)
+
         order_details = self.get_order_details(order_id)
 
         order_id = order_details["id"]
