@@ -60,6 +60,8 @@ class ArchiveV1(AbstractApi):
             criteria.
 
         """
+        self.deprecation_warning(ArchiveV2)
+
         url = self.url("/search")
         payload = {
             **kwargs,

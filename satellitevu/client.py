@@ -1,5 +1,5 @@
 from typing import Dict, Optional, Union
-from warnings import warn
+from warnings import warn, simplefilter
 
 from satellitevu.apis.archive import ArchiveV1, ArchiveV2
 from satellitevu.apis.contracts import ContractsV1
@@ -60,6 +60,15 @@ class Client:
     ):
         self._gateway_url = gateway_url or GATEWAY
         self._client = http_client or self._setup_client()
+
+        simplefilter("always", DeprecationWarning)
+        warn(
+            message=(
+                "SatVu's Archive, Catalog & Orders APIs will soon stop supporting V1. "
+                "Please consider using V2."
+            ),
+            category=DeprecationWarning,
+        )
 
         self.auth = Auth(
             client_id=client_id,

@@ -1,5 +1,6 @@
 from abc import ABC
 from urllib.parse import urljoin
+from warnings import simplefilter, warn
 
 from satellitevu.auth.exc import Api401Error, Api403Error
 from satellitevu.http import AbstractClient
@@ -37,3 +38,11 @@ class AbstractApi(ABC):
             )
 
         return response
+
+    def deprecation_warning(self, new_cls):
+        simplefilter("always", DeprecationWarning)
+        warn(
+            f"\n{self.__class__.__name__} will soon be deprecated in favour of "
+            f"{new_cls.__name__}. Use at own risk! \n",
+            DeprecationWarning,
+        )

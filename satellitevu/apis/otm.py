@@ -65,6 +65,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing properties of the feasibility request.
         """
+        self.deprecation_warning(OtmV2)
+
         url = self.url("/tasking/feasibilities/")
         payload = {
             "type": "Feature",
@@ -99,6 +101,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing properties of the feasibility request.
         """
+        self.deprecation_warning(OtmV2)
+
         response = self.make_request(
             method="GET",
             url=self.url(f"/tasking/feasibilities/{str(id)}"),
@@ -117,6 +121,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing the feasibility response.
         """
+        self.deprecation_warning(OtmV2)
+
         response = self.make_request(
             method="GET",
             url=self.url(f"/tasking/feasibilities/{str(id)}/response"),
@@ -135,6 +141,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing a list of feasibility requests and their properties.
         """
+        self.deprecation_warning(OtmV2)
+
         query = f"per_page={per_page}"
         if page_token:
             query += f"&token={page_token}"
@@ -195,6 +203,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing properties of the order created.
         """
+        self.deprecation_warning(OtmV2)
+
         url = self.url("/tasking/orders/")
         payload = {
             "type": "Feature",
@@ -228,6 +238,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing properties of the order.
         """
+        self.deprecation_warning(OtmV2)
+
         response = self.make_request(
             method="GET", url=self.url(f"/tasking/orders/{str(order_id)}")
         )
@@ -244,6 +256,8 @@ class OtmV1(AbstractApi):
         Returns:
             A dictionary containing a list of orders and their properties.
         """
+        self.deprecation_warning(OtmV2)
+
         query = f"per_page={per_page}"
         if page_token:
             query += f"&token={page_token}"
@@ -280,6 +294,8 @@ class OtmV1(AbstractApi):
             created_at is the UTC datetime at which the price was calculated.
 
         """
+        self.deprecation_warning(OtmV2)
+
         url = self.url("/tasking/price/")
         payload = {
             "type": "Feature",
@@ -359,6 +375,8 @@ class OtmV1(AbstractApi):
             ('asc', 'desc') the results are sorted by. Currently only the 'status'
             field is sortable e.g. [{"field": "status", "direction": "desc"}].
         """
+        self.deprecation_warning(OtmV2)
+
         url = self.url("/search/")
         payload = {
             "token": page_token,
