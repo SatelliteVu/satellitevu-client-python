@@ -37,6 +37,31 @@ class OtmV1(AbstractApi):
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
 
+        Kwargs:
+            max_cloud_cover: Optional integer representing the maximum threshold
+            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+
+            min_off_nadir: Optional integer representing the minimum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Defaults to 0.
+
+            max_off_nadir: Optional integer representing the maximum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Must be larger than min_off_nadir. Defaults to 45.
+
+            min_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 3.5.
+
+            max_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 6.8.
+
+            Please note that min/max off nadir and min/max gsd are mutually exclusive.
+            You must pick either the off nadir angle or gsd as parameters.
+
         Returns:
             A dictionary containing properties of the feasibility request.
         """
@@ -141,6 +166,31 @@ class OtmV1(AbstractApi):
 
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
+
+        Kwargs:
+            max_cloud_cover: Optional integer representing the maximum threshold
+            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+
+            min_off_nadir: Optional integer representing the minimum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Defaults to 0.
+
+            max_off_nadir: Optional integer representing the maximum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Must be larger than min_off_nadir. Defaults to 45.
+
+            min_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 3.5.
+
+            max_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 6.8.
+
+            Please note that min/max off nadir and min/max gsd are mutually exclusive.
+            You must pick either the off nadir angle or gsd as parameters.
 
         Returns:
             A dictionary containing properties of the order created.
@@ -365,6 +415,32 @@ class OtmV2(AbstractApi):
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
 
+
+        Kwargs:
+            max_cloud_cover: Optional integer representing the maximum threshold
+            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+
+            min_off_nadir: Optional integer representing the minimum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Defaults to 0.
+
+            max_off_nadir: Optional integer representing the maximum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Must be larger than min_off_nadir. Defaults to 45.
+
+            min_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 3.5.
+
+            max_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 6.8.
+
+            Please note that min/max off nadir and min/max gsd are mutually exclusive.
+            You must pick either the off nadir angle or gsd as parameters.
+
         Returns:
             A dictionary containing properties of the feasibility request.
         """
@@ -491,6 +567,31 @@ class OtmV2(AbstractApi):
 
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
+
+        Kwargs:
+            max_cloud_cover: Optional integer representing the maximum threshold
+            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+
+            min_off_nadir: Optional integer representing the minimum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Defaults to 0.
+
+            max_off_nadir: Optional integer representing the maximum angle from
+            the sensor between nadir and the scene center. Measured in decimal
+            degrees. Must be larger than min_off_nadir. Defaults to 45.
+
+            min_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 3.5.
+
+            max_gsd: Optional integer representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to 6.8.
+
+            Please note that min/max off nadir and min/max gsd are mutually exclusive.
+            You must pick either the off nadir angle or gsd as parameters.
 
         Returns:
             A dictionary containing properties of the order created.

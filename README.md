@@ -45,7 +45,7 @@ contract_id = Client(os.getenv("CONTRACT_ID"))
 print(client.archive_v2.search(contract_id=contract_id).json())
 ```
 
-`client.archive_v2.search` supports all supported request body parameters documented
+`client.archive_v2.search` supports all request body parameters documented
 in the [API docs][search-api-docs], with special handling for `datetime` which is
 constructed from the optional `date_from` and `date_to` parameters and a default result
 page size limit of 25.
