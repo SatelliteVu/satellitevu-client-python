@@ -64,8 +64,8 @@ class Client:
         simplefilter("always", DeprecationWarning)
         warn(
             message=(
-                "SatVu's Archive, Catalog & Orders APIs will soon stop supporting V1. "
-                "Please consider using V2."
+                "\nSatVu's v1 Archive, Catalog & Orders APIs are deprecated."
+                "Please consider using v2.\n"
             ),
             category=DeprecationWarning,
         )
