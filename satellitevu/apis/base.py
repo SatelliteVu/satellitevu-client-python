@@ -42,7 +42,7 @@ class AbstractApi(ABC):
     def deprecation_warning(self, new_cls):
         simplefilter("always", DeprecationWarning)
         warn(
-            f"\n{self.__class__.__name__} will soon be deprecated in favour of "
-            f"{new_cls.__name__}. Use at own risk! \n",
+            f"\n{self.__class__.__name__} is deprecated in favour of "
+            f"{new_cls.__name__} and will be removed in an upcoming version.\n",
             DeprecationWarning,
         )
