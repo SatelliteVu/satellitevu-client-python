@@ -1,22 +1,20 @@
 from typing import Dict, Optional, Union
-from warnings import warn, simplefilter
+from warnings import warn
 
-from satellitevu.apis.archive import ArchiveV1, ArchiveV2
+from satellitevu.apis.archive import ArchiveV2
 from satellitevu.apis.contracts import ContractsV1
-from satellitevu.apis.otm import OtmV1, OtmV2
-from satellitevu.apis.orders import OrdersV1, OrdersV2
+from satellitevu.apis.otm import OtmV2
+from satellitevu.apis.orders import OrdersV2
 from satellitevu.auth import AbstractCache, Auth
 from satellitevu.config import GATEWAY
 from satellitevu.http import AbstractClient, UrllibClient
 
 
 class FutureApis:
-    otm_v1: OtmV1
-
     _called: Dict[str, bool] = {}
 
     def __init__(self, client: AbstractClient, gateway_url: str):
-        self.otm_v1 = OtmV1(client, gateway_url)
+        pass
 
     def __getattribute__(self, __name: str):
         attr = super().__getattribute__(__name)
@@ -39,9 +37,7 @@ class Client:
 
     contracts_v1: ContractsV1
 
-    archive_v1: ArchiveV1
     archive_v2: ArchiveV2
-    orders_v1: OrdersV1
     orders_v2: OrdersV2
     otm_v2: OtmV2
 
@@ -61,15 +57,6 @@ class Client:
         self._gateway_url = gateway_url or GATEWAY
         self._client = http_client or self._setup_client()
 
-        simplefilter("always", DeprecationWarning)
-        warn(
-            message=(
-                "\nSatVu's v1 Archive, Catalog & Orders APIs are deprecated."
-                "Please consider using v2.\n"
-            ),
-            category=DeprecationWarning,
-        )
-
         self.auth = Auth(
             client_id=client_id,
             client_secret=client_secret,
@@ -84,9 +71,7 @@ class Client:
             client=self._client, base_url=self._gateway_url, auth=self.auth
         )
 
-        self.archive_v1 = ArchiveV1(self._client, self._gateway_url)
         self.archive_v2 = ArchiveV2(self._client, self._gateway_url)
-        self.orders_v1 = OrdersV1(self._client, self._gateway_url)
         self.orders_v2 = OrdersV2(self._client, self._gateway_url)
         self.otm_v2 = OtmV2(self._client, self._gateway_url)
 
