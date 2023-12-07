@@ -9,9 +9,7 @@ from pytest import fixture, mark, raises
 
 @fixture()
 def versioned_otm_client(request, client):
-    if request.getfixturevalue("version") == "v1":
-        yield client.future.otm_v1
-    else:
+    if request.getfixturevalue("version") == "v2":
         yield client.otm_v2
 
 
@@ -32,10 +30,7 @@ def test_cannot_use_v2_without_contract_id(version, versioned_otm_client):
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/tasking/feasibilities/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_post_feasibility(
@@ -56,9 +51,6 @@ def test_post_feasibility(
         body=dumps(otm_response),
         status=202,
     )
-
-    if version == "v1":
-        assert contract_id not in api_path
 
     response = versioned_otm_client.post_feasibility(**otm_request_parameters)
     assert isinstance(response, dict)
@@ -98,10 +90,7 @@ def test_post_feasibility(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/tasking/feasibilities/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_get_feasibility(
@@ -124,13 +113,9 @@ def test_get_feasibility(
         body=dumps(otm_response),
     )
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.get_feasibility(id=feasibility_id)
-    else:
-        response = versioned_otm_client.get_feasibility(
-            contract_id=contract_id, id=feasibility_id
-        )
+    response = versioned_otm_client.get_feasibility(
+        contract_id=contract_id, id=feasibility_id
+    )
 
     assert isinstance(response, dict)
 
@@ -146,10 +131,7 @@ def test_get_feasibility(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/tasking/feasibilities/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_get_feasibility_response(
@@ -172,13 +154,9 @@ def test_get_feasibility_response(
         body=dumps(otm_response),
     )
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.get_feasibility_response(id=feasibility_id)
-    else:
-        response = versioned_otm_client.get_feasibility_response(
-            contract_id=contract_id, id=feasibility_id
-        )
+    response = versioned_otm_client.get_feasibility_response(
+        contract_id=contract_id, id=feasibility_id
+    )
 
     assert isinstance(response, dict)
 
@@ -195,18 +173,6 @@ def test_get_feasibility_response(
 @mark.parametrize(
     ["version", "api_path", "per_page", "versioned_otm_client"],
     (
-        (
-            "v1",
-            "otm/v1/tasking/feasibilities/",
-            None,
-            "versioned_otm_client",
-        ),
-        (
-            "v1",
-            "otm/v1/tasking/feasibilities/",
-            10,
-            "versioned_otm_client",
-        ),
         (
             "v2",
             "otm/v2/contract-id/tasking/feasibilities/",
@@ -243,13 +209,9 @@ def test_list_feasibilities(
         body=dumps(otm_response),
     )
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.list_feasibility_requests(per_page=per_page)
-    else:
-        response = versioned_otm_client.list_feasibility_requests(
-            contract_id=contract_id, per_page=per_page
-        )
+    response = versioned_otm_client.list_feasibility_requests(
+        contract_id=contract_id, per_page=per_page
+    )
 
     assert isinstance(response, dict)
 
@@ -265,10 +227,7 @@ def test_list_feasibilities(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/tasking/orders/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_post_order(
@@ -289,9 +248,6 @@ def test_post_order(
         body=dumps(otm_response),
         status=201,
     )
-
-    if version == "v1":
-        assert contract_id not in api_path
 
     response = versioned_otm_client.create_order(**otm_request_parameters)
     assert isinstance(response, dict)
@@ -333,18 +289,6 @@ def test_post_order(
     ["version", "api_path", "per_page", "versioned_otm_client"],
     (
         (
-            "v1",
-            "otm/v1/tasking/orders/",
-            None,
-            "versioned_otm_client",
-        ),
-        (
-            "v1",
-            "otm/v1/tasking/orders/",
-            10,
-            "versioned_otm_client",
-        ),
-        (
             "v2",
             "otm/v2/contract-id/tasking/orders/",
             None,
@@ -380,13 +324,9 @@ def test_list_tasking_orders(
         body=dumps(otm_response),
     )
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.list_orders(per_page=per_page)
-    else:
-        response = versioned_otm_client.list_orders(
-            contract_id=contract_id, per_page=per_page
-        )
+    response = versioned_otm_client.list_orders(
+        contract_id=contract_id, per_page=per_page
+    )
 
     assert isinstance(response, dict)
 
@@ -402,10 +342,7 @@ def test_list_tasking_orders(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/tasking/orders/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_get_tasking_order(
@@ -428,13 +365,9 @@ def test_get_tasking_order(
         body=dumps(otm_response),
     )
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.get_order(order_id=order_id)
-    else:
-        response = versioned_otm_client.get_order(
-            contract_id=contract_id, order_id=order_id
-        )
+    response = versioned_otm_client.get_order(
+        contract_id=contract_id, order_id=order_id
+    )
 
     assert isinstance(response, dict)
 
@@ -450,10 +383,7 @@ def test_get_tasking_order(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_otm_client"],
-    (
-        ("v1", "otm/v1/search/", "versioned_otm_client"),
-        ("v2", "otm/v2/contract-id/search/", "versioned_otm_client"),
-    ),
+    (("v2", "otm/v2/contract-id/search/", "versioned_otm_client"),),
     indirect=["versioned_otm_client"],
 )
 def test_post_search(
@@ -484,13 +414,7 @@ def test_post_search(
         "sort_by": [{"field": "min_gsd", "direction": "asc"}],
     }
 
-    if version == "v1":
-        assert contract_id not in api_path
-        response = versioned_otm_client.search(**search_parameters)
-    else:
-        response = versioned_otm_client.search(
-            contract_id=contract_id, **search_parameters
-        )
+    response = versioned_otm_client.search(contract_id=contract_id, **search_parameters)
 
     assert isinstance(response, dict)
 
