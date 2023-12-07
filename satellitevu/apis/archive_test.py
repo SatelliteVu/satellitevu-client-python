@@ -13,9 +13,7 @@ from satellitevu.auth.exc import Api401Error, Api403Error
 
 @fixture()
 def versioned_archive_client(request, client):
-    if request.getfixturevalue("version") == "v1":
-        yield client.archive_v1
-    else:
+    if request.getfixturevalue("version") == "v2":
         yield client.archive_v2
 
 
@@ -23,37 +21,6 @@ def versioned_archive_client(request, client):
 @mark.parametrize(
     ["version", "api_path", "versioned_archive_client", "kwargs", "payload"],
     (
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {},
-            {"limit": 10},
-        ),
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {"limit": 50},
-            {"limit": 50},
-        ),
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {
-                "date_from": datetime(2022, 9, 10, 0, 0, 0),
-                "date_to": datetime(2022, 10, 10, 0, 0, 0),
-            },
-            {"limit": 10, "datetime": "2022-09-10T00:00:00/2022-10-10T00:00:00"},
-        ),
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {"bbox": [0, 0, 1, 1]},
-            {"bbox": [0, 0, 1, 1], "limit": 10},
-        ),
         (
             "v2",
             "archive/v2/contract-id/",
@@ -104,11 +71,7 @@ def test_search(
         "POST", client._gateway_url + f"{api_path}search", "mock-stac-response"
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_archive_client.api_path
-        response = versioned_archive_client.search(**kwargs)
-    else:
-        response = versioned_archive_client.search(contract_id=contract_id, **kwargs)
+    response = versioned_archive_client.search(contract_id=contract_id, **kwargs)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -126,24 +89,6 @@ def test_search(
 @mark.parametrize(
     "version, api_path, versioned_archive_client, kwargs, payload, status, exception",
     (
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {},
-            {"limit": 10},
-            401,
-            Api401Error,
-        ),
-        (
-            "v1",
-            "archive/v1/",
-            "versioned_archive_client",
-            {"limit": 50},
-            {"limit": 50},
-            403,
-            Api403Error,
-        ),
         (
             "v2",
             "archive/v2/contract-id/",
@@ -187,10 +132,7 @@ def test_unauthorized_search(
     )
 
     with pytest.raises(exception):
-        if version == "v1":
-            versioned_archive_client.search(**kwargs)
-        else:
-            versioned_archive_client.search(contract_id=contract_id, **kwargs)
+        versioned_archive_client.search(contract_id=contract_id, **kwargs)
 
     requests = Mocket.request_list()
     assert len(requests) == 2

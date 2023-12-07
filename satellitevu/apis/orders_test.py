@@ -16,9 +16,7 @@ from satellitevu.auth.exc import Api401Error, Api403Error
 
 @fixture()
 def versioned_orders_client(request, client):
-    if request.getfixturevalue("version") == "v1":
-        yield client.orders_v1
-    else:
+    if request.getfixturevalue("version") == "v2":
         yield client.orders_v2
 
 
@@ -26,18 +24,6 @@ def versioned_orders_client(request, client):
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "item_ids"],
     (
-        (
-            "v1",
-            "orders/v1/",
-            "versioned_orders_client",
-            "20221005T214049000_basic_0_TABI",
-        ),
-        (
-            "v1",
-            "orders/v1/",
-            "versioned_orders_client",
-            "20220923T222227000_basic_0_TABI",
-        ),
         (
             "v2",
             "orders/v2/contract-id/",
@@ -67,13 +53,9 @@ def test_submit_single_item(
         status=201,
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_orders_client.api_path
-        response = versioned_orders_client.submit(item_ids)
-    else:
-        response = versioned_orders_client.submit(
-            contract_id=contract_id, item_ids=item_ids
-        )
+    response = versioned_orders_client.submit(
+        contract_id=contract_id, item_ids=item_ids
+    )
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -92,18 +74,6 @@ def test_submit_single_item(
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "item_ids"],
     (
-        (
-            "v1",
-            "orders/v1/",
-            "versioned_orders_client",
-            ["20221005T214049000_basic_0_TABI", "20220923T222227000_basic_0_TABI"],
-        ),
-        (
-            "v1",
-            "orders/v1/",
-            "versioned_orders_client",
-            ["20220923T222227000_basic_0_TABI"],
-        ),
         (
             "v2",
             "orders/v2/contract-id/",
@@ -138,13 +108,9 @@ def test_submit_multiple_items(
         status=201,
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_orders_client.api_path
-        response = versioned_orders_client.submit(item_ids)
-    else:
-        response = versioned_orders_client.submit(
-            contract_id=contract_id, item_ids=item_ids
-        )
+    response = versioned_orders_client.submit(
+        contract_id=contract_id, item_ids=item_ids
+    )
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -161,48 +127,8 @@ def test_submit_multiple_items(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    "item_ids, status, exception",
-    (
-        ("20221005T214049000_basic_0_TABI", 401, Api401Error),
-        (
-            ["20221005T214049000_basic_0_TABI", "20220923T222227000_basic_0_TABI"],
-            403,
-            Api403Error,
-        ),
-    ),
-)
-def test_cannot_submit_unauthorized_order_v1(
-    client, oauth_token_entry, item_ids, status, exception
-):
-    if isinstance(item_ids, str):
-        item_ids = [item_ids]
-    payload = dumps({"item_id": item_ids})
-
-    Entry.single_register(
-        "POST", client._gateway_url + "orders/v1/", body=payload, status=status
-    )
-
-    with pytest.raises(exception):
-        client.orders_v1.submit(item_ids)
-
-    requests = Mocket.request_list()
-    assert len(requests) == 2
-
-    api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
-    assert api_request.path == "/orders/v1/"
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
-    assert api_request.body == payload
-
-
-@mocketize(strict_mode=True)
-@mark.parametrize(
     ["version", "api_path", "versioned_orders_client"],
-    (
-        ("v1", "orders/v1/", "versioned_orders_client"),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
-    ),
+    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
     indirect=["versioned_orders_client"],
 )
 def test_item_download_url(
@@ -224,13 +150,9 @@ def test_item_download_url(
         body=dumps(redirect_response),
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_orders_client.api_path
-        response = versioned_orders_client.item_download_url(order_id, item_id)
-    else:
-        response = versioned_orders_client.item_download_url(
-            contract_id=contract_id, order_id=order_id, item_id=item_id
-        )
+    response = versioned_orders_client.item_download_url(
+        contract_id=contract_id, order_id=order_id, item_id=item_id
+    )
 
     requests = Mocket.request_list()
 
@@ -248,8 +170,6 @@ def test_item_download_url(
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "status", "exception"],
     (
-        ("v1", "orders/v1/", "versioned_orders_client", 401, Api401Error),
-        ("v1", "orders/v1/", "versioned_orders_client", 403, Api403Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
     ),
@@ -278,12 +198,9 @@ def test_no_access_to_download_if_unauthorized(
     )
 
     with pytest.raises(exception):
-        if version == "v1":
-            versioned_orders_client.item_download_url(order_id, item_id)
-        else:
-            versioned_orders_client.item_download_url(
-                contract_id=contract_id, order_id=order_id, item_id=item_id
-            )
+        versioned_orders_client.item_download_url(
+            contract_id=contract_id, order_id=order_id, item_id=item_id
+        )
 
     requests = Mocket.request_list()
 
@@ -297,10 +214,7 @@ def test_no_access_to_download_if_unauthorized(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client"],
-    (
-        ("v1", "orders/v1/", "versioned_orders_client"),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
-    ),
+    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
     indirect=["versioned_orders_client"],
 )
 def test_download_order_item(
@@ -328,18 +242,12 @@ def test_download_order_item(
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
         mock_file_dl.return_value = "Downloads/image.zip"
 
-        if version == "v1":
-            assert contract_id not in versioned_orders_client.api_path
-            response = versioned_orders_client.download_item(
-                order_id, item_id, "Downloads"
-            )
-        else:
-            response = versioned_orders_client.download_item(
-                contract_id=contract_id,
-                order_id=order_id,
-                item_id=item_id,
-                destdir="Downloads",
-            )
+        response = versioned_orders_client.download_item(
+            contract_id=contract_id,
+            order_id=order_id,
+            item_id=item_id,
+            destdir="Downloads",
+        )
 
     assert len(requests) == 3
 
@@ -357,10 +265,7 @@ def test_download_order_item(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client"],
-    (
-        ("v1", "orders/v1/", "versioned_orders_client"),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
-    ),
+    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
     indirect=["versioned_orders_client"],
 )
 def test_get_order_details(
@@ -381,13 +286,9 @@ def test_get_order_details(
         body=dumps(order_details_response),
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_orders_client.api_path
-        response = versioned_orders_client.get_order_details(fake_uuid)
-    else:
-        response = versioned_orders_client.get_order_details(
-            contract_id=contract_id, order_id=fake_uuid
-        )
+    response = versioned_orders_client.get_order_details(
+        contract_id=contract_id, order_id=fake_uuid
+    )
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -403,10 +304,7 @@ def test_get_order_details(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client"],
-    (
-        ("v1", "orders/v1/", "versioned_orders_client"),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
-    ),
+    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
     indirect=["versioned_orders_client"],
 )
 def test_get_orders(
@@ -426,11 +324,7 @@ def test_get_orders(
         body=dumps(order_details_response),
     )
 
-    if version == "v1":
-        assert contract_id not in versioned_orders_client.api_path
-        response = versioned_orders_client.get_orders()
-    else:
-        response = versioned_orders_client.get_orders(contract_id=contract_id)
+    response = versioned_orders_client.get_orders(contract_id=contract_id)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -447,8 +341,6 @@ def test_get_orders(
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "status", "exception"],
     (
-        ("v1", "orders/v1/", "versioned_orders_client", 401, Api401Error),
-        ("v1", "orders/v1/", "versioned_orders_client", 403, Api403Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
     ),
@@ -477,12 +369,9 @@ def test_cannot_get_order_details_if_unauthorized(
     )
 
     with pytest.raises(exception):
-        if version == "v1":
-            versioned_orders_client.get_order_details(fake_uuid)
-        else:
-            versioned_orders_client.get_order_details(
-                contract_id=contract_id, order_id=fake_uuid
-            )
+        versioned_orders_client.get_order_details(
+            contract_id=contract_id, order_id=fake_uuid
+        )
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -496,10 +385,7 @@ def test_cannot_get_order_details_if_unauthorized(
 @mocketize(strict_mode=True)
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client"],
-    (
-        ("v1", "orders/v1/", "versioned_orders_client"),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client"),
-    ),
+    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
     indirect=["versioned_orders_client"],
 )
 def test_download_order(
@@ -527,22 +413,12 @@ def test_download_order(
         body=dumps({**order_details_response, **{"access_token": None}}),
     )
 
-    with patch(
-        "satellitevu.apis.orders.OrdersV1._save_order_to_zip"
-    ) as mock_zip_v1, patch(
-        "satellitevu.apis.orders.OrdersV2._save_order_to_zip"
-    ) as mock_zip_v2:
-        mock_zip_v1.return_value = f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
+    with patch("satellitevu.apis.orders.OrdersV2._save_order_to_zip") as mock_zip_v2:
         mock_zip_v2.return_value = f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
 
-        if version == "v1":
-            assert contract_id not in versioned_orders_client.api_path
-            response = versioned_orders_client.download_order(fake_uuid, download_dir)
-
-        else:
-            response = versioned_orders_client.download_order(
-                contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
-            )
+        response = versioned_orders_client.download_order(
+            contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
+        )
 
     requests = Mocket.request_list()
 
@@ -553,12 +429,8 @@ def test_download_order(
     assert api_request.path == f"/{api_path}{fake_uuid}"
     assert api_request.headers["Authorization"] == "Bearer None"
 
-    if version == "v1":
-        mock_zip_v1.assert_called_once()
-        assert response == mock_zip_v1()
-    else:
-        mock_zip_v2.assert_called_once()
-        assert response == mock_zip_v2()
+    mock_zip_v2.assert_called_once()
+    assert response == mock_zip_v2()
 
     assert isinstance(response, str)
 
@@ -569,8 +441,6 @@ def test_download_order(
 @mark.parametrize(
     ["version", "api_path", "versioned_orders_client", "status", "exception"],
     (
-        ("v1", "orders/v1/", "versioned_orders_client", 401, Api401Error),
-        ("v1", "orders/v1/", "versioned_orders_client", 403, Api403Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
         ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
     ),
@@ -606,12 +476,9 @@ def test_download_order_unauthorized(
     )
 
     with pytest.raises(exception):
-        if version == "v1":
-            versioned_orders_client.download_order(fake_uuid, download_dir)
-        else:
-            versioned_orders_client.download_order(
-                contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
-            )
+        versioned_orders_client.download_order(
+            contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
+        )
 
     requests = Mocket.request_list()
 
