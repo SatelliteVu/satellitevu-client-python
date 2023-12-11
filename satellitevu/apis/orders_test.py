@@ -8,43 +8,26 @@ from uuid import uuid4
 import pytest
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
-from pytest import fixture, mark
+from pytest import mark
 
 from satellitevu.apis.orders import bytes_to_file
 from satellitevu.auth.exc import Api401Error, Api403Error
 
-
-@fixture()
-def versioned_orders_client(request, client):
-    if request.getfixturevalue("version") == "v2":
-        yield client.orders_v2
+API_PATH = "orders/v2/contract-id/"
 
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_orders_client", "item_ids"],
+    "item_ids",
     (
-        (
-            "v2",
-            "orders/v2/contract-id/",
-            "versioned_orders_client",
-            "20221005T214049000_basic_0_TABI",
-        ),
-        (
-            "v2",
-            "orders/v2/contract-id/",
-            "versioned_orders_client",
-            "20220923T222227000_basic_0_TABI",
-        ),
+        ("20221005T214049000_basic_0_TABI"),
+        ("20220923T222227000_basic_0_TABI"),
     ),
-    indirect=["versioned_orders_client"],
 )
-def test_submit_single_item(
-    client, oauth_token_entry, item_ids, version, versioned_orders_client, api_path
-):
+def test_submit_single_item(client, oauth_token_entry, item_ids):
     payload = dumps({"item_id": [item_ids]})
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -53,9 +36,7 @@ def test_submit_single_item(
         status=201,
     )
 
-    response = versioned_orders_client.submit(
-        contract_id=contract_id, item_ids=item_ids
-    )
+    response = client.orders_v2.submit(contract_id=contract_id, item_ids=item_ids)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -72,34 +53,20 @@ def test_submit_single_item(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_orders_client", "item_ids"],
+    "item_ids",
     (
-        (
-            "v2",
-            "orders/v2/contract-id/",
-            "versioned_orders_client",
-            ["20221005T214049000_basic_0_TABI", "20220923T222227000_basic_0_TABI"],
-        ),
-        (
-            "v2",
-            "orders/v2/contract-id/",
-            "versioned_orders_client",
-            ["20220923T222227000_basic_0_TABI"],
-        ),
+        (["20221005T214049000_basic_0_TABI", "20220923T222227000_basic_0_TABI"]),
+        (["20220923T222227000_basic_0_TABI"]),
     ),
-    indirect=["versioned_orders_client"],
 )
 def test_submit_multiple_items(
     client,
     oauth_token_entry,
     item_ids,
-    version,
-    versioned_orders_client,
-    api_path,
 ):
     payload = dumps({"item_id": item_ids})
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -108,9 +75,7 @@ def test_submit_multiple_items(
         status=201,
     )
 
-    response = versioned_orders_client.submit(
-        contract_id=contract_id, item_ids=item_ids
-    )
+    response = client.orders_v2.submit(contract_id=contract_id, item_ids=item_ids)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -126,23 +91,15 @@ def test_submit_multiple_items(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_orders_client"],
-    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
-    indirect=["versioned_orders_client"],
-)
 def test_item_download_url(
     client,
     oauth_token_entry,
-    version,
-    api_path,
-    versioned_orders_client,
     redirect_response,
 ):
     order_id = "uuid"
     item_id = "image"
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -150,7 +107,7 @@ def test_item_download_url(
         body=dumps(redirect_response),
     )
 
-    response = versioned_orders_client.item_download_url(
+    response = client.orders_v2.item_download_url(
         contract_id=contract_id, order_id=order_id, item_id=item_id
     )
 
@@ -168,12 +125,11 @@ def test_item_download_url(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_orders_client", "status", "exception"],
+    ["status", "exception"],
     (
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
+        (401, Api401Error),
+        (403, Api403Error),
     ),
-    indirect=["versioned_orders_client"],
 )
 def test_no_access_to_download_if_unauthorized(
     client,
@@ -181,14 +137,11 @@ def test_no_access_to_download_if_unauthorized(
     status,
     exception,
     redirect_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     order_id = "uuid"
     item_id = "image"
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -198,7 +151,7 @@ def test_no_access_to_download_if_unauthorized(
     )
 
     with pytest.raises(exception):
-        versioned_orders_client.item_download_url(
+        client.orders_v2.item_download_url(
             contract_id=contract_id, order_id=order_id, item_id=item_id
         )
 
@@ -212,23 +165,15 @@ def test_no_access_to_download_if_unauthorized(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_orders_client"],
-    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
-    indirect=["versioned_orders_client"],
-)
 def test_download_order_item(
     client,
     oauth_token_entry,
     redirect_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     order_id = "uuid"
     item_id = "image"
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -242,7 +187,7 @@ def test_download_order_item(
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
         mock_file_dl.return_value = "Downloads/image.zip"
 
-        response = versioned_orders_client.download_item(
+        response = client.orders_v2.download_item(
             contract_id=contract_id,
             order_id=order_id,
             item_id=item_id,
@@ -263,22 +208,14 @@ def test_download_order_item(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_orders_client"],
-    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
-    indirect=["versioned_orders_client"],
-)
 def test_get_order_details(
     client,
     oauth_token_entry,
     order_details_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -286,7 +223,7 @@ def test_get_order_details(
         body=dumps(order_details_response),
     )
 
-    response = versioned_orders_client.get_order_details(
+    response = client.orders_v2.get_order_details(
         contract_id=contract_id, order_id=fake_uuid
     )
 
@@ -302,21 +239,13 @@ def test_get_order_details(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_orders_client"],
-    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
-    indirect=["versioned_orders_client"],
-)
 def test_get_orders(
     client,
     oauth_token_entry,
     order_details_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -324,7 +253,7 @@ def test_get_orders(
         body=dumps(order_details_response),
     )
 
-    response = versioned_orders_client.get_orders(contract_id=contract_id)
+    response = client.orders_v2.get_orders(contract_id=contract_id)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -339,12 +268,11 @@ def test_get_orders(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_orders_client", "status", "exception"],
+    ["status", "exception"],
     (
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
+        (401, Api401Error),
+        (403, Api403Error),
     ),
-    indirect=["versioned_orders_client"],
 )
 def test_cannot_get_order_details_if_unauthorized(
     client,
@@ -352,12 +280,9 @@ def test_cannot_get_order_details_if_unauthorized(
     status,
     exception,
     order_details_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
 
@@ -369,9 +294,7 @@ def test_cannot_get_order_details_if_unauthorized(
     )
 
     with pytest.raises(exception):
-        versioned_orders_client.get_order_details(
-            contract_id=contract_id, order_id=fake_uuid
-        )
+        client.orders_v2.get_order_details(contract_id=contract_id, order_id=fake_uuid)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -383,21 +306,13 @@ def test_cannot_get_order_details_if_unauthorized(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_orders_client"],
-    (("v2", "orders/v2/contract-id/", "versioned_orders_client"),),
-    indirect=["versioned_orders_client"],
-)
 def test_download_order(
     client,
     order_details_response,
     redirect_response,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
     download_dir = "downloads"
 
@@ -416,7 +331,7 @@ def test_download_order(
     with patch("satellitevu.apis.orders.OrdersV2._save_order_to_zip") as mock_zip_v2:
         mock_zip_v2.return_value = f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
 
-        response = versioned_orders_client.download_order(
+        response = client.orders_v2.download_order(
             contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
         )
 
@@ -439,12 +354,11 @@ def test_download_order(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_orders_client", "status", "exception"],
+    ["status", "exception"],
     (
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 401, Api401Error),
-        ("v2", "orders/v2/contract-id/", "versioned_orders_client", 403, Api403Error),
+        (401, Api401Error),
+        (403, Api403Error),
     ),
-    indirect=["versioned_orders_client"],
 )
 def test_download_order_unauthorized(
     client,
@@ -452,12 +366,9 @@ def test_download_order_unauthorized(
     redirect_response,
     status,
     exception,
-    version,
-    api_path,
-    versioned_orders_client,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
     download_dir = "downloads"
@@ -476,7 +387,7 @@ def test_download_order_unauthorized(
     )
 
     with pytest.raises(exception):
-        versioned_orders_client.download_order(
+        client.orders_v2.download_order(
             contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
         )
 
