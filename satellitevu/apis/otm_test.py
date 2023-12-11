@@ -4,46 +4,30 @@ from uuid import uuid4
 
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
-from pytest import fixture, mark, raises
+from pytest import mark, raises
 
-
-@fixture()
-def versioned_otm_client(request, client):
-    if request.getfixturevalue("version") == "v2":
-        yield client.otm_v2
+API_PATH_FEASIBILITY = "otm/v2/contract-id/tasking/feasibilities/"
+API_PATH_ORDERS = "otm/v2/contract-id/tasking/orders/"
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "versioned_otm_client"],
-    (("v2", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
-def test_cannot_use_v2_without_contract_id(version, versioned_otm_client):
+def test_cannot_use_v2_without_contract_id(client):
     error_message = "missing 1 required keyword-only argument: 'contract_id'"
     with raises(TypeError) as exc:
-        versioned_otm_client.get_order(order_id=uuid4())
+        client.otm_v2.get_order(order_id=uuid4())
 
     assert error_message in str(exc.value)
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_post_feasibility(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH_FEASIBILITY.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -52,7 +36,7 @@ def test_post_feasibility(
         status=202,
     )
 
-    response = versioned_otm_client.post_feasibility(**otm_request_parameters)
+    response = client.otm_v2.post_feasibility(**otm_request_parameters)
     assert isinstance(response, dict)
 
     requests = Mocket.request_list()
@@ -88,23 +72,15 @@ def test_post_feasibility(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_get_feasibility(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     feasibility_id = uuid4()
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH_FEASIBILITY.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -113,9 +89,7 @@ def test_get_feasibility(
         body=dumps(otm_response),
     )
 
-    response = versioned_otm_client.get_feasibility(
-        contract_id=contract_id, id=feasibility_id
-    )
+    response = client.otm_v2.get_feasibility(contract_id=contract_id, id=feasibility_id)
 
     assert isinstance(response, dict)
 
@@ -129,23 +103,15 @@ def test_get_feasibility(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/tasking/feasibilities/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_get_feasibility_response(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     feasibility_id = uuid4()
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH_FEASIBILITY.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -154,7 +120,7 @@ def test_get_feasibility_response(
         body=dumps(otm_response),
     )
 
-    response = versioned_otm_client.get_feasibility_response(
+    response = client.otm_v2.get_feasibility_response(
         contract_id=contract_id, id=feasibility_id
     )
 
@@ -171,36 +137,21 @@ def test_get_feasibility_response(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "per_page", "versioned_otm_client"],
-    (
-        (
-            "v2",
-            "otm/v2/contract-id/tasking/feasibilities/",
-            None,
-            "versioned_otm_client",
-        ),
-        (
-            "v2",
-            "otm/v2/contract-id/tasking/feasibilities/",
-            10,
-            "versioned_otm_client",
-        ),
-    ),
-    indirect=["versioned_otm_client"],
+    "per_page",
+    (None, 10),
 )
 def test_list_feasibilities(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
     per_page,
-    versioned_otm_client,
 ):
     contract_id = otm_request_parameters["contract_id"]
     per_page = per_page if not None else 25
-    api_path = api_path.replace("contract-id", str(contract_id)) + f"?{per_page=}"
+    api_path = (
+        API_PATH_FEASIBILITY.replace("contract-id", str(contract_id)) + f"?{per_page=}"
+    )
 
     Entry.single_register(
         "GET",
@@ -209,7 +160,7 @@ def test_list_feasibilities(
         body=dumps(otm_response),
     )
 
-    response = versioned_otm_client.list_feasibility_requests(
+    response = client.otm_v2.list_feasibility_requests(
         contract_id=contract_id, per_page=per_page
     )
 
@@ -225,22 +176,14 @@ def test_list_feasibilities(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_post_order(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -249,7 +192,7 @@ def test_post_order(
         status=201,
     )
 
-    response = versioned_otm_client.create_order(**otm_request_parameters)
+    response = client.otm_v2.create_order(**otm_request_parameters)
     assert isinstance(response, dict)
 
     requests = Mocket.request_list()
@@ -286,36 +229,21 @@ def test_post_order(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "per_page", "versioned_otm_client"],
-    (
-        (
-            "v2",
-            "otm/v2/contract-id/tasking/orders/",
-            None,
-            "versioned_otm_client",
-        ),
-        (
-            "v2",
-            "otm/v2/contract-id/tasking/orders/",
-            10,
-            "versioned_otm_client",
-        ),
-    ),
-    indirect=["versioned_otm_client"],
+    "per_page",
+    (None, 10),
 )
 def test_list_tasking_orders(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
     per_page,
-    versioned_otm_client,
 ):
     contract_id = otm_request_parameters["contract_id"]
     per_page = per_page if not None else 25
-    api_path = api_path.replace("contract-id", str(contract_id)) + f"?{per_page=}"
+    api_path = (
+        API_PATH_ORDERS.replace("contract-id", str(contract_id)) + f"?{per_page=}"
+    )
 
     Entry.single_register(
         "GET",
@@ -324,9 +252,7 @@ def test_list_tasking_orders(
         body=dumps(otm_response),
     )
 
-    response = versioned_otm_client.list_orders(
-        contract_id=contract_id, per_page=per_page
-    )
+    response = client.otm_v2.list_orders(contract_id=contract_id, per_page=per_page)
 
     assert isinstance(response, dict)
 
@@ -340,23 +266,15 @@ def test_list_tasking_orders(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/tasking/orders/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_get_tasking_order(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     order_id = uuid4()
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "GET",
@@ -365,9 +283,7 @@ def test_get_tasking_order(
         body=dumps(otm_response),
     )
 
-    response = versioned_otm_client.get_order(
-        contract_id=contract_id, order_id=order_id
-    )
+    response = client.otm_v2.get_order(contract_id=contract_id, order_id=order_id)
 
     assert isinstance(response, dict)
 
@@ -381,22 +297,14 @@ def test_get_tasking_order(
 
 
 @mocketize(strict_mode=True)
-@mark.parametrize(
-    ["version", "api_path", "versioned_otm_client"],
-    (("v2", "otm/v2/contract-id/search/", "versioned_otm_client"),),
-    indirect=["versioned_otm_client"],
-)
 def test_post_search(
     oauth_token_entry,
     client,
     otm_request_parameters,
     search_response,
-    version,
-    api_path,
-    versioned_otm_client,
 ):
     contract_id = otm_request_parameters["contract_id"]
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = "otm/v2/contract-id/search/".replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -414,7 +322,7 @@ def test_post_search(
         "sort_by": [{"field": "min_gsd", "direction": "asc"}],
     }
 
-    response = versioned_otm_client.search(contract_id=contract_id, **search_parameters)
+    response = client.otm_v2.search(contract_id=contract_id, **search_parameters)
 
     assert isinstance(response, dict)
 

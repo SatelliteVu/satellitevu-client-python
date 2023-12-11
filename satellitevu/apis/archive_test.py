@@ -6,39 +6,26 @@ from uuid import uuid4
 import pytest
 from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
-from pytest import fixture, mark
+from pytest import mark
 
 from satellitevu.auth.exc import Api401Error, Api403Error
 
-
-@fixture()
-def versioned_archive_client(request, client):
-    if request.getfixturevalue("version") == "v2":
-        yield client.archive_v2
+API_PATH = "archive/v2/contract-id/"
 
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    ["version", "api_path", "versioned_archive_client", "kwargs", "payload"],
+    ["kwargs", "payload"],
     (
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {},
             {"limit": 10},
         ),
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {"limit": 50},
             {"limit": 50},
         ),
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {
                 "date_from": datetime(2022, 9, 10, 0, 0, 0),
                 "date_to": datetime(2022, 10, 10, 0, 0, 0),
@@ -46,32 +33,25 @@ def versioned_archive_client(request, client):
             {"limit": 10, "datetime": "2022-09-10T00:00:00/2022-10-10T00:00:00"},
         ),
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {"bbox": [0, 0, 1, 1]},
             {"bbox": [0, 0, 1, 1], "limit": 10},
         ),
     ),
-    indirect=["versioned_archive_client"],
 )
 def test_search(
     client,
     oauth_token_entry,
-    version,
-    api_path,
-    versioned_archive_client,
     kwargs,
     payload,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST", client._gateway_url + f"{api_path}search", "mock-stac-response"
     )
 
-    response = versioned_archive_client.search(contract_id=contract_id, **kwargs)
+    response = client.archive_v2.search(contract_id=contract_id, **kwargs)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
@@ -87,42 +67,32 @@ def test_search(
 
 @mocketize(strict_mode=True)
 @mark.parametrize(
-    "version, api_path, versioned_archive_client, kwargs, payload, status, exception",
+    "kwargs, payload, status, exception",
     (
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {},
             {"limit": 10},
             401,
             Api401Error,
         ),
         (
-            "v2",
-            "archive/v2/contract-id/",
-            "versioned_archive_client",
             {"limit": 50},
             {"limit": 50},
             403,
             Api403Error,
         ),
     ),
-    indirect=["versioned_archive_client"],
 )
 def test_unauthorized_search(
     client,
     oauth_token_entry,
-    version,
-    api_path,
-    versioned_archive_client,
     kwargs,
     payload,
     status,
     exception,
 ):
     contract_id = str(uuid4())
-    api_path = api_path.replace("contract-id", str(contract_id))
+    api_path = API_PATH.replace("contract-id", str(contract_id))
 
     Entry.single_register(
         "POST",
@@ -132,7 +102,7 @@ def test_unauthorized_search(
     )
 
     with pytest.raises(exception):
-        versioned_archive_client.search(contract_id=contract_id, **kwargs)
+        client.archive_v2.search(contract_id=contract_id, **kwargs)
 
     requests = Mocket.request_list()
     assert len(requests) == 2
