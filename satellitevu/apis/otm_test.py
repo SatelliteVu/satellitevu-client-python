@@ -20,11 +20,13 @@ def test_cannot_use_v2_without_contract_id(client):
 
 
 @mocketize(strict_mode=True)
+@mark.parametrize("product", ("standard", "assured"))
 def test_post_feasibility(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
+    product,
 ):
     contract_id = otm_request_parameters["contract_id"]
     api_path = API_PATH_FEASIBILITY.replace("contract-id", str(contract_id))
@@ -36,7 +38,10 @@ def test_post_feasibility(
         status=202,
     )
 
-    response = client.otm_v2.post_feasibility(**otm_request_parameters)
+    response = client.otm_v2.post_feasibility(
+        **otm_request_parameters,
+        product=product,
+    )
     assert isinstance(response, dict)
 
     requests = Mocket.request_list()
@@ -53,18 +58,16 @@ def test_post_feasibility(
         "type": "Point",
         "coordinates": otm_request_parameters["coordinates"],
     }
-    assert (
-        api_request_body["properties"]["max_cloud_cover"]
-        == otm_request_parameters["max_cloud_cover"]
-    )
-    assert (
-        api_request_body["properties"]["min_off_nadir"]
-        == otm_request_parameters["min_off_nadir"]
-    )
-    assert (
-        api_request_body["properties"]["max_off_nadir"]
-        == otm_request_parameters["max_off_nadir"]
-    )
+
+    properties_keys = ["max_cloud_cover", "min_off_nadir", "max_off_nadir"]
+
+    if product == "assured":
+        for key in properties_keys:
+            assert not api_request_body["properties"].get(key)
+    else:
+        for key in properties_keys:
+            assert api_request_body["properties"][key] == otm_request_parameters[key]
+
     assert (
         api_request_body["properties"]["datetime"]
         == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
