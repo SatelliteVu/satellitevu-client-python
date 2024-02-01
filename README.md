@@ -41,7 +41,7 @@ from satellitevu import Client
 
 
 client = Client(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
-contract_id = Client(os.getenv("CONTRACT_ID"))
+contract_id = os.getenv("CONTRACT_ID")
 print(client.archive_v2.search(contract_id=contract_id).json())
 ```
 
@@ -61,7 +61,7 @@ import os
 from satellitevu import Auth
 
 
-auth = Auth(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
+auth = Auth(client_id=os.getenv("CLIENT_ID"), client_secret=os.getenv("CLIENT_SECRET"))
 print(auth.token())
 ```
 
