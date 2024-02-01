@@ -22,6 +22,7 @@ class OtmV2(AbstractApi):
         date_from: datetime,
         date_to: datetime,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
+        product: Literal["standard", "assured"] = "standard",
         **kwargs,
     ):
         """
@@ -40,6 +41,10 @@ class OtmV2(AbstractApi):
 
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
+
+            product: String representing a tasking option. Selecting "assured"
+            allows visibility of all passes within the datetime interval. The
+            user must accept all cloud cover risk.
 
 
         Kwargs:
@@ -79,10 +84,17 @@ class OtmV2(AbstractApi):
             },
             "properties": {
                 "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
-                "satvu:day_night_mode": day_night_mode,
-                **kwargs,
+                "product": product,
             },
         }
+
+        if product == "standard":
+            payload["properties"].update(
+                {
+                    "satvu:day_night_mode": day_night_mode,
+                    **kwargs,
+                }
+            )
 
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
