@@ -1,4 +1,5 @@
 from json import dumps, loads
+from secrets import token_urlsafe
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -179,14 +180,19 @@ def test_list_feasibilities(
 
 
 @mocketize(strict_mode=True)
+@mark.parametrize("product", ("standard", "assured"))
 def test_post_order(
     oauth_token_entry,
     client,
     otm_request_parameters,
     otm_response,
+    product,
 ):
     contract_id = otm_request_parameters["contract_id"]
     api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
+
+    otm_request_parameters["product"] = product
+    otm_request_parameters["signature"] = token_urlsafe(16)
 
     Entry.single_register(
         "POST",
@@ -212,22 +218,38 @@ def test_post_order(
         "type": "Point",
         "coordinates": otm_request_parameters["coordinates"],
     }
-    assert (
-        api_request_body["properties"]["max_cloud_cover"]
-        == otm_request_parameters["max_cloud_cover"]
-    )
-    assert (
-        api_request_body["properties"]["min_off_nadir"]
-        == otm_request_parameters["min_off_nadir"]
-    )
-    assert (
-        api_request_body["properties"]["max_off_nadir"]
-        == otm_request_parameters["max_off_nadir"]
-    )
+
+    properties_keys = ["max_cloud_cover", "min_off_nadir", "max_off_nadir"]
+
+    if product == "assured":
+        assert "signature" in api_request_body["properties"].keys()
+        for key in properties_keys:
+            assert not api_request_body["properties"].get(key)
+    else:
+        assert "signature" not in api_request_body["properties"].keys()
+        for key in properties_keys:
+            assert api_request_body["properties"][key] == otm_request_parameters[key]
+
     assert (
         api_request_body["properties"]["datetime"]
         == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
     )
+
+
+@mocketize(strict_mode=True)
+def test_post_assured_order_without_signature(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    otm_response,
+):
+    otm_request_parameters["product"] = "assured"
+
+    with raises(
+        Exception,
+        match="Orders with assured priority must also have a signature token.",
+    ):
+        client.otm_v2.create_order(**otm_request_parameters)
 
 
 @mocketize(strict_mode=True)

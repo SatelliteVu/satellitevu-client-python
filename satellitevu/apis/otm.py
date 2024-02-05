@@ -187,6 +187,8 @@ class OtmV2(AbstractApi):
         date_from: datetime,
         date_to: datetime,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
+        product: Literal["standard", "assured"] = "standard",
+        signature: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -205,6 +207,13 @@ class OtmV2(AbstractApi):
 
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
+
+            product: String representing a tasking option. Selecting "assured"
+            allows visibility of all passes within the datetime interval. The
+            user must accept all cloud cover risk.
+
+            signature: String representing a signature token required for orders
+            with assured priority. Defaults to None.
 
         Kwargs:
             max_cloud_cover: Optional integer representing the maximum threshold
@@ -243,10 +252,24 @@ class OtmV2(AbstractApi):
             },
             "properties": {
                 "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
-                "satvu:day_night_mode": day_night_mode,
-                **kwargs,
+                "product": product,
             },
         }
+
+        if product == "assured":
+            if not signature:
+                raise Exception(
+                    "Orders with assured priority must also have a signature token."
+                )
+            payload["properties"].update({"signature": signature})
+
+        else:
+            payload["properties"].update(
+                {
+                    "satvu:day_night_mode": day_night_mode,
+                    **kwargs,
+                }
+            )
 
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
