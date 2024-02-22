@@ -432,7 +432,7 @@ class OtmV2(AbstractApi):
             ids: List of strings specifying the ids within which
             to search.
 
-            datetime: Optional string specifying a closed datetime range within
+            date_range: Optional string specifying a closed datetime range within
             which to search e.g. "2023-03-22T12:50:24+01:00/2023-03-29T12:50:24+01:00"
             Assumed to be UTC if timezone offset is not given. This datetime range
             corresponds directly to the datetime property associated with the
@@ -459,7 +459,7 @@ class OtmV2(AbstractApi):
             "MultiPolygon". For example:
             intersects = {"coordinates":[-1.065151, 51.163899], "type" : "Point"}.
 
-            sortby: List of parameters specifying the field and direction
+            sort_by: List of parameters specifying the field and direction
             ('asc', 'desc') the results are sorted by. Currently only the 'status'
             field is sortable e.g. [{"field": "status", "direction": "desc"}].
         """
