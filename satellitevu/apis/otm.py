@@ -178,6 +178,9 @@ class OtmV2(AbstractApi):
 
             per_page: Number of results (defaults to 25) to be returned per page.
 
+            page_token: Optional string key used to return specific page of results.
+            Defaults to None -> assumes page 0.
+
         Returns:
             A dictionary containing a list of feasibility requests and their properties.
         """
@@ -341,6 +344,9 @@ class OtmV2(AbstractApi):
             orders will be listed.
 
             per_page: Number of results (defaults to 25) to be returned per page.
+
+            page_token: Optional string key used to return specific page of results.
+            Defaults to None -> assumes page 0.
 
         Returns:
             A dictionary containing a list of orders and their properties.
