@@ -1,8 +1,9 @@
-from uuid import UUID
 from typing import Union
+from uuid import UUID
 
-from satellitevu.http import AbstractClient
 from satellitevu.auth import Auth
+from satellitevu.http import AbstractClient
+
 from .base import AbstractApi
 
 
