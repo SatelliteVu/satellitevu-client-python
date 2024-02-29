@@ -322,6 +322,39 @@ def test_get_tasking_order(
 
 
 @mocketize(strict_mode=True)
+@mark.parametrize("status_code", (204, 404, 409))
+def test_cancel_tasking_order(
+    oauth_token_entry, client, otm_request_parameters, status_code
+):
+    order_id = uuid4()
+    contract_id = otm_request_parameters["contract_id"]
+    api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
+
+    Entry.single_register(
+        "POST",
+        client._gateway_url + api_path + str(order_id) + "/cancel",
+        status=status_code,
+    )
+
+    if status_code == 204:
+        response = client.otm_v2.cancel_order(
+            contract_id=contract_id, order_id=order_id
+        )
+        assert not response
+    else:
+        with raises(Exception):
+            client.otm_v2.cancel_order(contract_id=contract_id, order_id=order_id)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path + f"{order_id}" + "/cancel"
+    assert api_request.headers["Authorization"] == "Bearer mock-token"
+
+
+@mocketize(strict_mode=True)
 def test_post_search(
     oauth_token_entry,
     client,
