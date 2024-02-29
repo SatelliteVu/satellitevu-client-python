@@ -328,6 +328,29 @@ class OtmV2(AbstractApi):
         )
         return response.json()
 
+    def cancel_order(
+        self, *, contract_id: Union[UUID, str], order_id: Union[UUID, str]
+    ):
+        """
+        Cancel an order with a given order_id.
+
+        Args:
+            contract_id: Associated ID of the Contract under which the tasking
+            order is stored.
+
+            order_id: UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+        Returns:
+            None
+        """
+        response = self.make_request(
+            method="POST",
+            url=self.url(f"{str(contract_id)}/tasking/orders/{str(order_id)}/cancel"),
+        )
+        if response.status != 204:
+            raise Exception(f"Error - {response.status} : {response.text}")
+
     def list_orders(
         self,
         *,
