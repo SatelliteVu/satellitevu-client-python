@@ -7,6 +7,8 @@ from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import mark, raises
 
+from satellitevu.apis.exceptions import OTMCancellationError
+
 API_PATH_FEASIBILITY = "otm/v2/contract-id/tasking/feasibilities/"
 API_PATH_ORDERS = "otm/v2/contract-id/tasking/orders/"
 
@@ -342,7 +344,7 @@ def test_cancel_tasking_order(
         )
         assert not response
     else:
-        with raises(Exception):
+        with raises(OTMCancellationError):
             client.otm_v2.cancel_order(contract_id=contract_id, order_id=order_id)
 
     requests = Mocket.request_list()
