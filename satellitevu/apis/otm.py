@@ -3,6 +3,7 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
+from .exceptions import OTMCancellationError, OTMFeasibilityError
 
 
 class OtmV2(AbstractApi):
@@ -113,7 +114,7 @@ class OtmV2(AbstractApi):
         )
 
         if response.status != 202:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise OTMFeasibilityError(response.status, response.text)
 
         return response.json()
 
@@ -332,7 +333,8 @@ class OtmV2(AbstractApi):
         self, *, contract_id: Union[UUID, str], order_id: Union[UUID, str]
     ):
         """
-        Cancel an order with a given order_id.
+        Cancel an order with a given order_id. Raises Exception if returned status
+        code is not 204.
 
         Args:
             contract_id: Associated ID of the Contract under which the tasking
@@ -349,7 +351,7 @@ class OtmV2(AbstractApi):
             url=self.url(f"{str(contract_id)}/tasking/orders/{str(order_id)}/cancel"),
         )
         if response.status != 204:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise OTMCancellationError(response.status, response.text)
 
     def list_orders(
         self,
