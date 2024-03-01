@@ -3,7 +3,7 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
-from .exceptions import OTMCancellationError, OTMFeasibilityError
+from .exceptions import OTMOrderCancellationError, OTMFeasibilityError, OTMOrderError
 
 
 class OtmV2(AbstractApi):
@@ -305,7 +305,7 @@ class OtmV2(AbstractApi):
         )
 
         if response.status != 201:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise OTMOrderError(response.status, response.text)
 
         return response.json()
 
@@ -351,7 +351,7 @@ class OtmV2(AbstractApi):
             url=self.url(f"{str(contract_id)}/tasking/orders/{str(order_id)}/cancel"),
         )
         if response.status != 204:
-            raise OTMCancellationError(response.status, response.text)
+            raise OTMOrderCancellationError(response.status, response.text)
 
     def list_orders(
         self,

@@ -4,6 +4,10 @@ class OTMError(Exception):
         super().__init__(self.message)
 
 
+class OTMOrderError(OTMError):
+    pass
+
+
 class OTMOrderCancellationError(OTMError):
     pass
 
