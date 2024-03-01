@@ -8,6 +8,7 @@ from uuid import UUID
 from satellitevu.http.base import ResponseWrapper
 
 from .base import AbstractApi
+from .exceptions import OrdersAPIError
 
 
 def raw_response_to_bytes(response: ResponseWrapper) -> BytesIO:
@@ -70,7 +71,7 @@ class OrdersV2(AbstractApi):
         response = self.make_request(method="GET", url=url)
 
         if response.status != 200:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise OrdersAPIError(response.status, response.text)
 
         return response.json()
 
@@ -94,7 +95,7 @@ class OrdersV2(AbstractApi):
         response = self.make_request(method="GET", url=url)
 
         if response.status != 200:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise OrdersAPIError(response.status, response.text)
 
         return response.json()
 
