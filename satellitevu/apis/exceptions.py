@@ -4,19 +4,25 @@ class ContractAccessError(Exception):
         super().__init__(self.message)
 
 
-class OTMError(Exception):
+class OrdersAPIError:
+    def __init__(self, status_code: int, detail: str) -> None:
+        self.message = f"Orders API Error - {status_code} : {detail}"
+        super().__init__(self.message)
+
+
+class OTMAPIError(Exception):
     def __init__(self, status_code: int, detail: str) -> None:
         self.message = f"OTM API Error - {status_code} : {detail}"
         super().__init__(self.message)
 
 
-class OTMOrderError(OTMError):
+class OTMOrderError(OTMAPIError):
     pass
 
 
-class OTMOrderCancellationError(OTMError):
+class OTMOrderCancellationError(OTMAPIError):
     pass
 
 
-class OTMFeasibilityError(OTMError):
+class OTMFeasibilityError(OTMAPIError):
     pass
