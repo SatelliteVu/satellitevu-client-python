@@ -333,8 +333,8 @@ class OtmV2(AbstractApi):
         self, *, contract_id: Union[UUID, str], order_id: Union[UUID, str]
     ):
         """
-        Cancel an order with a given order_id. Raises Exception if returned status
-        code is not 204.
+        Cancel an order with a given order_id. Raises OTMOrderCancellationError
+        if returned status code is not 204.
 
         Args:
             contract_id: Associated ID of the Contract under which the tasking
