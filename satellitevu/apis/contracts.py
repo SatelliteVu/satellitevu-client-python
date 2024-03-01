@@ -5,6 +5,7 @@ from satellitevu.auth import Auth
 from satellitevu.http import AbstractClient
 
 from .base import AbstractApi
+from .exceptions import ContractAccessError
 
 
 class ContractsV1(AbstractApi):
@@ -28,7 +29,7 @@ class ContractsV1(AbstractApi):
         )
 
         if response.status != 200:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise ContractAccessError(response.status, response.text)
 
         return response.json()["result"]
 
@@ -41,6 +42,6 @@ class ContractsV1(AbstractApi):
         )
 
         if response.status != 200:
-            raise Exception(f"Error - {response.status} : {response.text}")
+            raise ContractAccessError(response.status, response.text)
 
         return response.json()["result"]
