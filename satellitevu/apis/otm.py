@@ -124,12 +124,18 @@ class OtmV2(AbstractApi):
                 {
                     "satvu:day_night_mode": day_night_mode,
                     "max_cloud_cover": max_cloud_cover,
-                    "min_off_nadir": min_off_nadir,
-                    "max_off_nadir": max_off_nadir,
-                    "min_gsd": min_gsd,
-                    "max_gsd": max_gsd,
                 }
             )
+
+            for k, v in {
+                "min_off_nadir": min_off_nadir,
+                "max_off_nadir": max_off_nadir,
+                "min_gsd": min_gsd,
+                "max_gsd": max_gsd,
+            }.items():
+                if v is None:
+                    continue
+                payload["properties"].update({k: v})
 
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
@@ -326,12 +332,18 @@ class OtmV2(AbstractApi):
                 {
                     "satvu:day_night_mode": day_night_mode,
                     "max_cloud_cover": max_cloud_cover,
-                    "min_off_nadir": min_off_nadir,
-                    "max_off_nadir": max_off_nadir,
-                    "min_gsd": min_gsd,
-                    "max_gsd": max_gsd,
                 }
             )
+
+            for k, v in {
+                "min_off_nadir": min_off_nadir,
+                "max_off_nadir": max_off_nadir,
+                "min_gsd": min_gsd,
+                "max_gsd": max_gsd,
+            }.items():
+                if v is None:
+                    continue
+                payload["properties"].update({k: v})
 
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
