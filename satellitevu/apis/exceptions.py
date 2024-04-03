@@ -26,3 +26,7 @@ class OTMOrderCancellationError(OTMAPIError):
 
 class OTMFeasibilityError(OTMAPIError):
     pass
+
+
+class OTMParametersError(Exception):
+    pass

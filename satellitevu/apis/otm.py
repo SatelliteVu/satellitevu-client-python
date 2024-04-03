@@ -3,7 +3,12 @@ from typing import Any, List, Literal, Optional, Tuple, Union
 from uuid import UUID
 
 from .base import AbstractApi
-from .exceptions import OTMOrderCancellationError, OTMFeasibilityError, OTMOrderError
+from .exceptions import (
+    OTMOrderCancellationError,
+    OTMFeasibilityError,
+    OTMOrderError,
+    OTMParametersError,
+)
 
 MAX_CLOUD_COVER_DEFAULT = 15
 
@@ -101,9 +106,12 @@ class OtmV2(AbstractApi):
         """
         url = self.url(f"{str(contract_id)}/tasking/feasibilities/")
 
-        if all([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
-            raise OTMFeasibilityError(
-                "One pair of Off Nadir or GSD values must be specified"
+        if product == "standard" and not any(
+            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
+        ):
+            raise OTMParametersError(
+                "One pair of Off Nadir or GSD values must be specified for a "
+                "standard priority feasibility request."
             )
 
         payload = {
@@ -293,9 +301,12 @@ class OtmV2(AbstractApi):
         """
         url = self.url(f"{str(contract_id)}/tasking/orders/")
 
-        if all([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
-            raise OTMFeasibilityError(
-                "One pair of Off Nadir or GSD values must be specified."
+        if product == "standard" and not any(
+            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
+        ):
+            raise OTMParametersError(
+                "One pair of Off Nadir or GSD values must be specified for a "
+                "standard priority order."
             )
 
         payload = {
