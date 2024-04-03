@@ -5,6 +5,20 @@ from uuid import UUID
 from .base import AbstractApi
 from .exceptions import OTMOrderCancellationError, OTMFeasibilityError, OTMOrderError
 
+MAX_CLOUD_COVER_DEFAULT = 15
+
+MIN_OFF_NADIR_RANGE = [0, 45]
+MAX_OFF_NADIR_RANGE = MIN_OFF_NADIR_RANGE
+
+MIN_OFF_NADIR_DEFAULT = 0
+MAX_OFF_NADIR_DEFAULT = 30
+
+MIN_GSD_RANGE = [3.5, 6.8]
+MAX_GSD_RANGE = MIN_GSD_RANGE
+
+MIN_GSD_DEFAULT = 3.5
+MAX_GSD_DEFAULT = 6.8
+
 
 class OtmV2(AbstractApi):
     """
@@ -24,14 +38,14 @@ class OtmV2(AbstractApi):
         date_to: datetime,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         product: Literal["standard", "assured"] = "standard",
-        max_cloud_cover: Optional[int] = None,
+        max_cloud_cover: Optional[int] = MAX_CLOUD_COVER_DEFAULT,
         min_off_nadir: Optional[int] = None,
         max_off_nadir: Optional[int] = None,
         min_gsd: Optional[float] = None,
         max_gsd: Optional[float] = None,
         **kwargs,
     ):
-        """
+        f"""
         Creates a tasking feasibility request.
 
         Args:
@@ -52,26 +66,28 @@ class OtmV2(AbstractApi):
             allows visibility of all passes within the datetime interval. The
             user must accept all cloud cover risk.
 
-            max_cloud_cover: Optional integer representing the maximum threshold
-            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+            max_cloud_cover: Optional integer, ranging from [0,100] representing
+            the maximum threshold of acceptable cloud coverage. Measured in percent.
+            Defaults to {MAX_CLOUD_COVER_DEFAULT}.
 
-            min_off_nadir: Optional integer representing the minimum angle from
-            the sensor between nadir and the scene center. Measured in decimal
-            degrees. Defaults to 0.
+            min_off_nadir: Optional integer, ranging from {MIN_OFF_NADIR_RANGE},
+            representing the minimum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Defaults to None.
 
-            max_off_nadir: Optional integer representing the maximum angle from
-            the sensor between nadir and the scene center. Measured in decimal
-            degrees. Must be larger than min_off_nadir. Defaults to 45.
+            max_off_nadir: Optional integer, ranging from {MAX_OFF_NADIR_RANGE},
+            representing the maximum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Must be larger than
+            min_off_nadir. Defaults to None.
 
             min_gsd: Optional float representing the minimum ground sample
             distance value. Measured in metres, this value reflects the square
             root of the area of the pixel size projected onto the earth. Defaults
-            to 3.5.
+            to None.
 
-            max_gsd: Optional float representing the minimum ground sample
-            distance value. Measured in metres, this value reflects the square
-            root of the area of the pixel size projected onto the earth. Defaults
-            to 6.8.
+            max_gsd: Optional float, ranging from {MAX_GSD_RANGE},
+            representing the minimum ground sample distance value. Measured in
+            metres, this value reflects the square root of the area of the pixel
+            size projected onto the earth. Defaults to None.
 
             Please note that min/max off nadir and min/max gsd are mutually exclusive.
             You must pick either the off nadir angle or gsd as parameters.
@@ -84,6 +100,12 @@ class OtmV2(AbstractApi):
             A dictionary containing properties of the feasibility request.
         """
         url = self.url(f"{str(contract_id)}/tasking/feasibilities/")
+
+        if all([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
+            raise OTMFeasibilityError(
+                "One pair of Off Nadir or GSD values must be specified"
+            )
+
         payload = {
             "type": "Feature",
             "geometry": {
@@ -212,7 +234,7 @@ class OtmV2(AbstractApi):
         signature: Optional[str] = None,
         **kwargs,
     ):
-        """
+        f"""
         Creates a tasking order request.
 
         Args:
@@ -236,26 +258,28 @@ class OtmV2(AbstractApi):
             signature: String representing a signature token required for orders
             with assured priority. Defaults to None.
 
-            max_cloud_cover: Optional integer representing the maximum threshold
-            of acceptable cloud coverage. Measured in percent. Defaults to 100.
+            max_cloud_cover: Optional integer, ranging from [0,100] representing
+            the maximum threshold of acceptable cloud coverage. Measured in percent.
+            Defaults to {MAX_CLOUD_COVER_DEFAULT}.
 
-            min_off_nadir: Optional integer representing the minimum angle from
-            the sensor between nadir and the scene center. Measured in decimal
-            degrees. Defaults to 0.
+            min_off_nadir: Optional integer, ranging from {MIN_OFF_NADIR_RANGE},
+            representing the minimum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Defaults to None.
 
-            max_off_nadir: Optional integer representing the maximum angle from
-            the sensor between nadir and the scene center. Measured in decimal
-            degrees. Must be larger than min_off_nadir. Defaults to 45.
+            max_off_nadir: Optional integer, ranging from {MAX_OFF_NADIR_RANGE},
+            representing the maximum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Must be larger than
+            min_off_nadir. Defaults to None.
 
-            min_gsd: Optional integer representing the minimum ground sample
+            min_gsd: Optional float representing the minimum ground sample
             distance value. Measured in metres, this value reflects the square
             root of the area of the pixel size projected onto the earth. Defaults
-            to 3.5.
+            to None.
 
-            max_gsd: Optional integer representing the minimum ground sample
-            distance value. Measured in metres, this value reflects the square
-            root of the area of the pixel size projected onto the earth. Defaults
-            to 6.8.
+            max_gsd: Optional float, ranging from {MAX_GSD_RANGE},
+            representing the minimum ground sample distance value. Measured in
+            metres, this value reflects the square root of the area of the pixel
+            size projected onto the earth. Defaults to None.
 
             Please note that min/max off nadir and min/max gsd are mutually exclusive.
             You must pick either the off nadir angle or gsd as parameters.
@@ -268,6 +292,12 @@ class OtmV2(AbstractApi):
             A dictionary containing properties of the order created.
         """
         url = self.url(f"{str(contract_id)}/tasking/orders/")
+
+        if all([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
+            raise OTMFeasibilityError(
+                "One pair of Off Nadir or GSD values must be specified."
+            )
+
         payload = {
             "type": "Feature",
             "geometry": {
