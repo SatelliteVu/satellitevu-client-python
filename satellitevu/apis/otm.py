@@ -63,15 +63,15 @@ class OtmV2(AbstractApi):
             allows visibility of all passes within the datetime interval. The
             user must accept all cloud cover risk.
 
-            max_cloud_cover: Optional integer, ranging from [0,100] representing
+            max_cloud_cover: Optional integer, ranging between [0,100] representing
             the maximum threshold of acceptable cloud coverage. Measured in percent.
             Defaults to {MAX_CLOUD_COVER_DEFAULT}.
 
-            min_off_nadir: Optional integer, ranging from {MIN_OFF_NADIR_RANGE},
+            min_off_nadir: Optional integer, ranging between {MIN_OFF_NADIR_RANGE},
             representing the minimum angle from the sensor between nadir and the
             scene center. Measured in decimal degrees. Defaults to None.
 
-            max_off_nadir: Optional integer, ranging from {MAX_OFF_NADIR_RANGE},
+            max_off_nadir: Optional integer, ranging between {MAX_OFF_NADIR_RANGE},
             representing the maximum angle from the sensor between nadir and the
             scene center. Measured in decimal degrees. Must be larger than
             min_off_nadir. Defaults to None.
@@ -81,7 +81,7 @@ class OtmV2(AbstractApi):
             root of the area of the pixel size projected onto the earth. Defaults
             to None.
 
-            max_gsd: Optional float, ranging from {MAX_GSD_RANGE},
+            max_gsd: Optional float, ranging between {MAX_GSD_RANGE},
             representing the minimum ground sample distance value. Measured in
             metres, this value reflects the square root of the area of the pixel
             size projected onto the earth. Defaults to None.
@@ -258,15 +258,15 @@ class OtmV2(AbstractApi):
             signature: String representing a signature token required for orders
             with assured priority. Defaults to None.
 
-            max_cloud_cover: Optional integer, ranging from [0,100] representing
+            max_cloud_cover: Optional integer, ranging between [0,100] representing
             the maximum threshold of acceptable cloud coverage. Measured in percent.
             Defaults to {MAX_CLOUD_COVER_DEFAULT}.
 
-            min_off_nadir: Optional integer, ranging from {MIN_OFF_NADIR_RANGE},
+            min_off_nadir: Optional integer, ranging between {MIN_OFF_NADIR_RANGE},
             representing the minimum angle from the sensor between nadir and the
             scene center. Measured in decimal degrees. Defaults to None.
 
-            max_off_nadir: Optional integer, ranging from {MAX_OFF_NADIR_RANGE},
+            max_off_nadir: Optional integer, ranging between {MAX_OFF_NADIR_RANGE},
             representing the maximum angle from the sensor between nadir and the
             scene center. Measured in decimal degrees. Must be larger than
             min_off_nadir. Defaults to None.
@@ -276,7 +276,7 @@ class OtmV2(AbstractApi):
             root of the area of the pixel size projected onto the earth. Defaults
             to None.
 
-            max_gsd: Optional float, ranging from {MAX_GSD_RANGE},
+            max_gsd: Optional float, ranging between {MAX_GSD_RANGE},
             representing the minimum ground sample distance value. Measured in
             metres, this value reflects the square root of the area of the pixel
             size projected onto the earth. Defaults to None.
