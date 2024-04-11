@@ -437,7 +437,14 @@ class OtmV2(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
+        day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         product: Literal["standard", "assured"] = "standard",
+        max_cloud_cover: Optional[int] = None,
+        min_off_nadir: Optional[int] = None,
+        max_off_nadir: Optional[int] = None,
+        min_gsd: Optional[float] = None,
+        max_gsd: Optional[float] = None,
+        **kwargs,
     ):
         """
         Returns the price for a set of ordering parameters.
@@ -452,9 +459,42 @@ class OtmV2(AbstractApi):
 
             date_to: datetime representing the end date of the order.
 
+            day_night_mode: String representing the mode of data capture. Allowed
+            values are ["day", "night", "day-night"]. Defaults to "day-night".
+
             product: String representing a tasking option. Selecting "assured"
             allows visibility of all passes within the datetime interval. The
             user must accept all cloud cover risk.
+
+            max_cloud_cover: Optional integer, ranging between [0,100] representing
+            the maximum threshold of acceptable cloud coverage. Measured in percent.
+            Defaults to {MAX_CLOUD_COVER_DEFAULT}.
+
+            min_off_nadir: Optional integer, ranging between {MIN_OFF_NADIR_RANGE},
+            representing the minimum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Defaults to None.
+
+            max_off_nadir: Optional integer, ranging between {MAX_OFF_NADIR_RANGE},
+            representing the maximum angle from the sensor between nadir and the
+            scene center. Measured in decimal degrees. Must be larger than
+            min_off_nadir. Defaults to None.
+
+            min_gsd: Optional float representing the minimum ground sample
+            distance value. Measured in metres, this value reflects the square
+            root of the area of the pixel size projected onto the earth. Defaults
+            to None.
+
+            max_gsd: Optional float, ranging between {MAX_GSD_RANGE},
+            representing the minimum ground sample distance value. Measured in
+            metres, this value reflects the square root of the area of the pixel
+            size projected onto the earth. Defaults to None.
+
+            Please note that min/max off nadir and min/max gsd are mutually exclusive.
+            You must pick either the off nadir angle or gsd as parameters.
+
+        Kwargs:
+            Allows sending additional parameters that are supported by the API but not
+            added to this SDK yet.
 
         Returns:
             A dictionary containing keys: price, created_at where the price field
@@ -463,6 +503,15 @@ class OtmV2(AbstractApi):
 
         """
         url = self.url(f"{str(contract_id)}/tasking/price/")
+
+        if product == "standard" and not any(
+            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
+        ):
+            raise OTMParametersError(
+                "One pair of Off Nadir or GSD values must be specified for a "
+                "standard priority order."
+            )
+
         payload = {
             "type": "Feature",
             "geometry": {
@@ -472,8 +521,27 @@ class OtmV2(AbstractApi):
             "properties": {
                 "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
                 "product": product,
+                **kwargs,
             },
         }
+
+        if product == "standard":
+            payload["properties"].update(
+                {
+                    "satvu:day_night_mode": day_night_mode,
+                    "max_cloud_cover": max_cloud_cover,
+                }
+            )
+
+            for k, v in {
+                "min_off_nadir": min_off_nadir,
+                "max_off_nadir": max_off_nadir,
+                "min_gsd": min_gsd,
+                "max_gsd": max_gsd,
+            }.items():
+                if v is None:
+                    continue
+                payload["properties"].update({k: v})
 
         response = self.make_request(
             method="POST", url=url, json={k: v for k, v in payload.items() if v}
