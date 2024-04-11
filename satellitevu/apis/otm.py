@@ -437,6 +437,7 @@ class OtmV2(AbstractApi):
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
         date_from: datetime,
         date_to: datetime,
+        product: Literal["standard", "assured"] = "standard",
     ):
         """
         Returns the price for a set of ordering parameters.
@@ -450,6 +451,10 @@ class OtmV2(AbstractApi):
             date_from: datetime representing the start date of the order.
 
             date_to: datetime representing the end date of the order.
+
+            product: String representing a tasking option. Selecting "assured"
+            allows visibility of all passes within the datetime interval. The
+            user must accept all cloud cover risk.
 
         Returns:
             A dictionary containing keys: price, created_at where the price field
@@ -465,7 +470,8 @@ class OtmV2(AbstractApi):
                 "coordinates": coordinates,
             },
             "properties": {
-                "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}"
+                "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
+                "product": product,
             },
         }
 
