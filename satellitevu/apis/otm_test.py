@@ -223,8 +223,9 @@ def test_post_order(
     contract_id = otm_request_parameters["contract_id"]
     api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
 
-    otm_request_parameters["product"] = product
-    otm_request_parameters["signature"] = token_urlsafe(16)
+    if product == "assured":
+        otm_request_parameters["product"] = product
+        otm_request_parameters["signature"] = token_urlsafe(16)
 
     Entry.single_register(
         "POST",
@@ -261,11 +262,10 @@ def test_post_order(
         assert "signature" not in api_request_body["properties"].keys()
         for key in properties_keys:
             assert api_request_body["properties"][key] == otm_request_parameters[key]
-
-    assert (
-        api_request_body["properties"]["datetime"]
-        == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
-    )
+        assert (
+            api_request_body["properties"]["datetime"]
+            == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
+        )
 
 
 @mocketize(strict_mode=True)
