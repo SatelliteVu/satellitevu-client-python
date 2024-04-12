@@ -228,8 +228,8 @@ class OtmV2(AbstractApi):
         *,
         contract_id: Union[UUID, str],
         coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
-        date_from: datetime,
-        date_to: datetime,
+        date_from: Optional[datetime] = None,
+        date_to: Optional[datetime] = None,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         product: Literal["standard", "assured"] = "standard",
         max_cloud_cover: Optional[int] = None,
@@ -250,9 +250,11 @@ class OtmV2(AbstractApi):
             coordinates: An array of coordinates - (longitude, latitude) or
             (longitude, latitude, altitude).
 
-            date_from: datetime representing the start date of the order.
+            date_from: Datetime representing the start date of the order. Required
+            for orders with standard priority. Defaults to None.
 
-            date_to: datetime representing the end date of the order.
+            date_to: Datetime representing the end date of the order. Required for
+            orders with standard priority. Defaults to None
 
             day_night_mode: String representing the mode of data capture. Allowed
             values are ["day", "night", "day-night"]. Defaults to "day-night".
@@ -299,13 +301,18 @@ class OtmV2(AbstractApi):
         """
         url = self.url(f"{str(contract_id)}/tasking/orders/")
 
-        if product == "standard" and not any(
-            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
-        ):
-            raise OTMParametersError(
-                "One pair of Off Nadir or GSD values must be specified for a "
-                "standard priority order."
-            )
+        if product == "standard":
+            if not date_from or not date_to:
+                raise OTMParametersError(
+                    "`date_to` and `date_from` must be specified for a standard "
+                    "priority order"
+                )
+
+            if not any([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
+                raise OTMParametersError(
+                    "One pair of Off Nadir or GSD values must be specified for a "
+                    "standard priority order."
+                )
 
         payload = {
             "type": "Feature",
@@ -314,7 +321,6 @@ class OtmV2(AbstractApi):
                 "coordinates": coordinates,
             },
             "properties": {
-                "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
                 "product": product,
                 **kwargs,
             },
@@ -330,6 +336,7 @@ class OtmV2(AbstractApi):
         else:
             payload["properties"].update(
                 {
+                    "datetime": f"{date_from.isoformat()}/{date_to.isoformat()}",
                     "satvu:day_night_mode": day_night_mode,
                     "max_cloud_cover": max_cloud_cover,
                 }
