@@ -232,7 +232,7 @@ class OtmV2(AbstractApi):
         date_to: Optional[datetime] = None,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
         product: Literal["standard", "assured"] = "standard",
-        max_cloud_cover: Optional[int] = None,
+        max_cloud_cover: Optional[int] = MAX_CLOUD_COVER_DEFAULT,
         min_off_nadir: Optional[int] = None,
         max_off_nadir: Optional[int] = None,
         min_gsd: Optional[float] = None,
