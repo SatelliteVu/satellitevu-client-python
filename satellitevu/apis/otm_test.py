@@ -7,7 +7,7 @@ from mocket import Mocket, mocketize
 from mocket.mockhttp import Entry
 from pytest import mark, raises
 
-from satellitevu.apis.exceptions import OTMOrderCancellationError, OTMParametersError
+from satellitevu.apis.exceptions import OTMOrderCancellationError
 
 API_PATH_FEASIBILITY = "otm/v2/contract-id/tasking/feasibilities/"
 API_PATH_ORDERS = "otm/v2/contract-id/tasking/orders/"
@@ -75,36 +75,6 @@ def test_post_feasibility(
         api_request_body["properties"]["datetime"]
         == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
     )
-
-
-@mocketize(strict_mode=True)
-@mark.parametrize("product", ("standard", "assured"))
-def test_post_feasibility_off_nadir_gsd_values(
-    oauth_token_entry, client, otm_request_parameters, product, otm_response
-):
-    contract_id = otm_request_parameters["contract_id"]
-    api_path = API_PATH_FEASIBILITY.replace("contract-id", str(contract_id))
-
-    otm_request_parameters["product"] = product
-    for param in ["min_off_nadir", "max_off_nadir", "min_gsd", "max_gsd"]:
-        otm_request_parameters[param] = None
-
-    if product == "assured":
-        Entry.single_register(
-            "POST",
-            client._gateway_url + api_path,
-            body=dumps(otm_response),
-            status=202,
-        )
-
-        response = client.otm_v2.post_feasibility(
-            **otm_request_parameters,
-        )
-        assert isinstance(response, dict)
-
-    else:
-        with raises(OTMParametersError):
-            client.otm_v2.post_feasibility(**otm_request_parameters)
 
 
 @mocketize(strict_mode=True)
@@ -266,38 +236,6 @@ def test_post_order(
             api_request_body["properties"]["datetime"]
             == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
         )
-
-
-@mocketize(strict_mode=True)
-@mark.parametrize("product", ("standard", "assured"))
-def test_create_order_off_nadir_gsd_values(
-    oauth_token_entry,
-    client,
-    otm_request_parameters,
-    product,
-    otm_response,
-):
-    contract_id = otm_request_parameters["contract_id"]
-    api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
-
-    otm_request_parameters["product"] = product
-    otm_request_parameters["signature"] = token_urlsafe(16)
-    for param in ["min_off_nadir", "max_off_nadir", "min_gsd", "max_gsd"]:
-        otm_request_parameters[param] = None
-
-    if product == "assured":
-        Entry.single_register(
-            "POST",
-            client._gateway_url + api_path,
-            body=dumps(otm_response),
-            status=201,
-        )
-
-        response = client.otm_v2.create_order(**otm_request_parameters)
-        assert isinstance(response, dict)
-    else:
-        with raises(OTMParametersError):
-            client.otm_v2.create_order(**otm_request_parameters)
 
 
 @mocketize(strict_mode=True)

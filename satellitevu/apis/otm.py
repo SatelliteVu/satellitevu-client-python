@@ -98,14 +98,6 @@ class OtmV2(AbstractApi):
         """
         url = self.url(f"{str(contract_id)}/tasking/feasibilities/")
 
-        if product == "standard" and not any(
-            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
-        ):
-            raise OTMParametersError(
-                "One pair of Off Nadir or GSD values must be specified for a "
-                "standard priority feasibility request."
-            )
-
         payload = {
             "type": "Feature",
             "geometry": {
@@ -308,12 +300,6 @@ class OtmV2(AbstractApi):
                     "priority order"
                 )
 
-            if not any([min_gsd, max_gsd, min_off_nadir, max_off_nadir]):
-                raise OTMParametersError(
-                    "One pair of Off Nadir or GSD values must be specified for a "
-                    "standard priority order."
-                )
-
         payload = {
             "type": "Feature",
             "geometry": {
@@ -510,14 +496,6 @@ class OtmV2(AbstractApi):
 
         """
         url = self.url(f"{str(contract_id)}/tasking/price/")
-
-        if product == "standard" and not any(
-            [min_gsd, max_gsd, min_off_nadir, max_off_nadir]
-        ):
-            raise OTMParametersError(
-                "One pair of Off Nadir or GSD values must be specified for a "
-                "standard priority order."
-            )
 
         payload = {
             "type": "Feature",
