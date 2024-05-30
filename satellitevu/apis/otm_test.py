@@ -247,18 +247,19 @@ def test_post_order(
     assert api_request.headers["Authorization"] == "Bearer mock-token"
 
     api_request_body = loads(api_request.body)
-    assert api_request_body["geometry"] == {
-        "type": "Point",
-        "coordinates": otm_request_parameters["coordinates"],
-    }
 
     properties_keys = ["max_cloud_cover", "min_off_nadir", "max_off_nadir"]
 
     if product == "assured":
+        assert "geometry" not in api_request_body.keys()
         assert "signature" in api_request_body["properties"].keys()
         for key in properties_keys:
             assert not api_request_body["properties"].get(key)
     else:
+        assert api_request_body["geometry"] == {
+            "type": "Point",
+            "coordinates": otm_request_parameters["coordinates"],
+        }
         assert "signature" not in api_request_body["properties"].keys()
         for key in properties_keys:
             assert api_request_body["properties"][key] == otm_request_parameters[key]
@@ -311,7 +312,7 @@ def test_post_assured_order_without_signature(
 
     with raises(
         Exception,
-        match="Orders with assured priority must also have a signature token.",
+        match="Orders with assured priority must have a signature token.",
     ):
         client.otm_v2.create_order(**otm_request_parameters)
 

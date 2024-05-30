@@ -227,7 +227,9 @@ class OtmV2(AbstractApi):
         self,
         *,
         contract_id: Union[UUID, str],
-        coordinates: Union[Tuple[float, float], Tuple[float, float, float]],
+        coordinates: Optional[
+            Union[Tuple[float, float], Tuple[float, float, float]]
+        ] = None,
         date_from: Optional[datetime] = None,
         date_to: Optional[datetime] = None,
         day_night_mode: Literal["day", "night", "day-night"] = "day-night",
@@ -248,7 +250,8 @@ class OtmV2(AbstractApi):
             order will be submitted.
 
             coordinates: An array of coordinates - (longitude, latitude) or
-            (longitude, latitude, altitude).
+            (longitude, latitude, altitude). Only required for orders with
+            standard priority. Defaults to None.
 
             date_from: Datetime representing the start date of the order. Required
             for orders with standard priority. Defaults to None.
@@ -301,7 +304,13 @@ class OtmV2(AbstractApi):
         """
         url = self.url(f"{str(contract_id)}/tasking/orders/")
 
+        payload = {"properties": {"product": product}}
+
         if product == "standard":
+            if not "coordinates":
+                raise OTMParametersError(
+                    "`coordinates` must be specified for a standard priority order"
+                )
             if not date_from or not date_to:
                 raise OTMParametersError(
                     "`date_to` and `date_from` must be specified for a standard "
@@ -314,22 +323,10 @@ class OtmV2(AbstractApi):
                     "standard priority order."
                 )
 
-        payload = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": coordinates,
-            },
-            "properties": {
-                "product": product,
-                **kwargs,
-            },
-        }
-
         if product == "assured":
             if not signature:
                 raise Exception(
-                    "Orders with assured priority must also have a signature token."
+                    "Orders with assured priority must have a signature token."
                 )
             payload["properties"].update({"signature": signature})
 
@@ -341,6 +338,17 @@ class OtmV2(AbstractApi):
                     "max_cloud_cover": max_cloud_cover,
                 }
             )
+
+            payload.update(
+                {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": coordinates,
+                    },
+                }
+            )
+            payload["properties"].update(kwargs)
 
             for k, v in {
                 "min_off_nadir": min_off_nadir,
