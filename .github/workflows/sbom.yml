@@ -1,0 +1,11 @@
+name: SBOM Recording
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  record-sbom:
+    uses: satellitevu/sbom/.github/workflows/sbom-recording.reusable.yml@main
+    secrets: inherit # pragma: allowlist secret
