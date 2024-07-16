@@ -19,6 +19,9 @@ def tests(session):
         "pytest-cov",
         "requests",
         "httpx",
+        "cryptography",
+        "josepy",
+        "python-jose",
         ".",
     )
     session.run("pytest")

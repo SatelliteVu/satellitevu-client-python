@@ -45,7 +45,7 @@ def test_submit_single_item(client, oauth_token_entry, item_ids):
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
     assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
     assert api_request.body == payload
 
     assert response.status == 201
@@ -84,7 +84,7 @@ def test_submit_multiple_items(
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
     assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
     assert api_request.body == payload
 
     assert response.status == 201
@@ -117,7 +117,7 @@ def test_item_download_url(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
     assert response["url"] == "https://image.test"
@@ -161,7 +161,7 @@ def test_no_access_to_download_if_unauthorized(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -199,7 +199,7 @@ def test_download_order_item(
     api_request = requests[1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     mock_file_dl.assert_called_once()
     assert response == mock_file_dl()
@@ -233,7 +233,7 @@ def test_get_order_details(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{fake_uuid}"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
 
@@ -261,7 +261,7 @@ def test_get_orders(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
 
@@ -302,13 +302,14 @@ def test_cannot_get_order_details_if_unauthorized(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{fake_uuid}"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
 def test_download_order(
     client,
     order_details_response,
+    oauth_token_entry,
     redirect_response,
 ):
     contract_id = str(uuid4())
@@ -343,6 +344,7 @@ def test_download_order(
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{fake_uuid}"
     assert api_request.headers["Authorization"] == "Bearer None"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     mock_zip_v2.assert_called_once()
     assert response == mock_zip_v2()
