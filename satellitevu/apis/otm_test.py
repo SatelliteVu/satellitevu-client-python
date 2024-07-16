@@ -54,7 +54,7 @@ def test_post_feasibility(
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
     assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
     assert api_request_body["geometry"] == {
@@ -135,7 +135,7 @@ def test_get_feasibility(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{feasibility_id}"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -168,7 +168,7 @@ def test_get_feasibility_response(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{feasibility_id}/response"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -208,7 +208,7 @@ def test_list_feasibilities(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -244,7 +244,7 @@ def test_post_order(
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
     assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
 
@@ -352,7 +352,7 @@ def test_list_tasking_orders(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -383,7 +383,7 @@ def test_get_tasking_order(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{order_id}"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -416,7 +416,7 @@ def test_cancel_tasking_order(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{order_id}" + "/cancel"
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -455,4 +455,4 @@ def test_post_search(
     api_request = requests[-1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == "Bearer mock-token"
+    assert api_request.headers["Authorization"] == oauth_token_entry

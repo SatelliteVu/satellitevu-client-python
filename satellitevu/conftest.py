@@ -1,10 +1,21 @@
+from calendar import timegm
 from datetime import datetime, timedelta
 from importlib import import_module
 from json import dumps
-from typing import Dict, Optional
+from typing import Dict, Optional, Callable
 from urllib.parse import urljoin
 from uuid import uuid4
 
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    PrivateFormat,
+    NoEncryption,
+)
+from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
+from jose.jwt import encode
+from josepy import JWKRSA
+from mocket import mocketize
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, param
 
@@ -67,12 +78,71 @@ def memory_cache():
 
 
 @fixture
-def oauth_token_entry(client):
-    return Entry.single_register(
+def oauth_token_entry(client, auth0_token_factory) -> str:
+    token = auth0_token_factory("John Doe")
+    Entry.single_register(
         "POST",
         urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": "mock-token"}),
+        body=dumps({"access_token": token}),
     )
+    return f"Bearer {token}"
+
+
+@fixture(scope="session")
+def jwk():
+    key = generate_private_key(
+        backend=default_backend,
+        public_exponent=65537,
+        key_size=1024,
+    ).private_bytes(
+        Encoding.PEM,
+        PrivateFormat.PKCS8,
+        NoEncryption(),
+    )
+    return JWKRSA.load(key).to_json()
+
+
+@fixture(scope="session")
+def auth_url() -> str:
+    return "http://auth.example.com"
+
+
+@mocketize(strict_mode=True)
+@fixture(scope="function")
+def generic_token_factory(
+    jwk,
+    auth_url,
+) -> Callable[..., str]:
+    def factory(ttl=300, **claims):
+        """
+        Generate JWT for given claims with a given TTL, signed with the provider's RSA
+        key.
+        """
+        now = timegm(datetime.utcnow().utctimetuple())
+        payload = {
+            **claims,
+            "iat": now,
+            "exp": now + ttl,
+        }
+        return encode(payload, jwk, algorithm="RS256")
+
+    return factory
+
+
+@fixture(scope="function")
+def auth0_token_factory(generic_token_factory):
+    def factory(name: str, *, ttl=300, **access_claims):
+        given, family = name.split(" ")
+        return generic_token_factory(
+            ttl=ttl,
+            iss=access_claims.pop("iss", "test"),
+            azp="test",
+            sub=f"{given.lower()}_{family.lower()}",
+            scope=access_claims.pop("scope", "openid"),
+            **access_claims,
+        )
+
+    return factory
 
 
 @fixture
