@@ -7,7 +7,7 @@ from uuid import uuid4
 
 import pytest
 from mocket import Mocket, mocketize
-from mocket.mockhttp import Entry
+from mocket.mockhttp import Entry, Response
 from pytest import mark
 
 from satellitevu.apis.orders import bytes_to_file
@@ -174,35 +174,38 @@ def test_download_order_item(
     item_id = "image"
     contract_id = str(uuid4())
     api_path = API_PATH.replace("contract-id", str(contract_id))
+    download_dir = "downloads"
 
-    Entry.single_register(
+    Entry.register(
         "GET",
         client._gateway_url + f"{api_path}{order_id}/{item_id}/download?redirect=False",
-        body=dumps(redirect_response),
+        Response(headers={"Retry-After": "1"}, status=202),
+        Response(body=dumps(redirect_response), status=200),
     )
-    Entry.single_register("GET", uri="https://image.test")
-
-    requests = Mocket.request_list()
+    Entry.single_register("GET", uri=redirect_response["url"])
 
     with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
-        mock_file_dl.return_value = "Downloads/image.zip"
+        mock_file_dl.return_value = f"{download_dir}/image.zip"
 
         response = client.orders_v2.download_item(
             contract_id=contract_id,
             order_id=order_id,
             item_id=item_id,
-            destdir="Downloads",
+            destdir=download_dir,
         )
 
-    assert len(requests) == 3
+    requests = Mocket.request_list()
 
-    api_request = requests[1]
+    assert len(requests) == 4
+
+    api_request = requests[2]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
     assert api_request.headers["Authorization"] == oauth_token_entry
 
     mock_file_dl.assert_called_once()
     assert response == mock_file_dl()
+    assert isinstance(response, str)
 
     Mocket.assert_fail_if_entries_not_served()
 

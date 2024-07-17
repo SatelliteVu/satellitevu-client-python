@@ -1,7 +1,6 @@
 import os
-import shutil
-import tempfile
 from io import BytesIO
+from time import sleep
 from typing import Dict, List, Union
 from uuid import UUID
 
@@ -124,12 +123,31 @@ class OrdersV2(AbstractApi):
 
         return self.make_request(method="POST", url=url, json={"item_id": item_ids})
 
+    def _download_request(
+        self,
+        url: str,
+        retry_factor: float,
+    ):
+        """
+        Request download, handling retries.
+        """
+        while True:
+            response = self.make_request(method="GET", url=url)
+
+            if response.status == 202:
+                sleep(retry_factor * int(response.headers["Retry-After"]))
+            elif response.status == 200:
+                break
+
+        return response.json()
+
     def item_download_url(
         self,
         *,
         contract_id: Union[UUID, str],
         order_id: Union[UUID, str],
         item_id: str,
+        retry_factor: float = 1.0,
     ) -> Dict:
         """
         Finds the download url for an item in a submitted imagery order.
@@ -144,13 +162,18 @@ class OrdersV2(AbstractApi):
             item_id: A string representing the specific image identifiers e.g.
             "20221010T222611000_basic_0_TABI".
 
+            retry_factor: A float that determines how retries will be handled.
+            A factor of 0.5 means that only half the time specified by the
+            "Retry-After" header will be observed before the download request
+            is retried again. Defaults to 1.0.
+
         Returns:
             A dictionary containing the url which the image can be downloaded from.
         """
         url = self.url(f"/{contract_id}/{order_id}/{item_id}/download?redirect=False")
 
-        response = self.make_request(method="GET", url=url)
-        return response.json()
+        return self._download_request(url, retry_factor=retry_factor)
+
 
     def download_item(
         self,
@@ -159,6 +182,7 @@ class OrdersV2(AbstractApi):
         order_id: UUID,
         item_id: str,
         destdir: str,
+        retry_factor: float = 1.0,
     ) -> str:
         """
         Download a submitted imagery order.
@@ -173,15 +197,23 @@ class OrdersV2(AbstractApi):
             item_id: A string representing the specific image identifiers e.g.
             "20221010T222611000_basic_0_TABI".
 
-            destfile: A string (file path) representing the directory to which
+            destdir: A string (file path) representing the directory to which
             the imagery will be downloaded.
+
+            retry_factor: A float that determines how retries will be handled.
+            A factor of 0.5 means that only half the time specified by the
+            "Retry-After" header will be observed before the download request
+            is retried again. Defaults to 1.0.
 
         Returns:
             A string specifying the path the imagery has been downloaded to.
 
         """
         item_url = self.item_download_url(
-            contract_id=contract_id, order_id=order_id, item_id=item_id
+            contract_id=contract_id,
+            order_id=order_id,
+            item_id=item_id,
+            retry_factor=retry_factor,
         )["url"]
 
         response = self.make_request(method="GET", url=item_url)
