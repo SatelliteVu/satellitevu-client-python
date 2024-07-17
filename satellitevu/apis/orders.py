@@ -174,6 +174,34 @@ class OrdersV2(AbstractApi):
 
         return self._download_request(url, retry_factor=retry_factor)
 
+    def order_download_url(
+        self,
+        *,
+        contract_id: Union[UUID, str],
+        order_id: Union[UUID, str],
+        retry_factor: float = 1.0,
+    ) -> Dict:
+        """
+        Finds the download url for a submitted imagery order.
+
+        Args:
+            contract_id: String or UUID representing the ID of the Contract
+            which an item in the order is associated with.
+
+            order_id: String or UUID representing the order id e.g.
+            "2009466e-cccc-4712-a489-b09aeb772296".
+
+            retry_factor: A float that determines how retries will be handled.
+            A factor of 0.5 means that only half the time specified by the
+            "Retry-After" header will be observed before the download request
+            is retried again. Defaults to 1.0.
+
+        Returns:
+            A dictionary containing the url which the image can be downloaded from.
+        """
+        url = self.url(f"/{contract_id}/{order_id}/download?redirect=False")
+
+        return self._download_request(url, retry_factor=retry_factor)
 
     def download_item(
         self,
@@ -229,9 +257,10 @@ class OrdersV2(AbstractApi):
         contract_id: Union[UUID, str],
         order_id: UUID,
         destdir: str,
+        retry_factor: float = 1.0,
     ) -> str:
         """
-        Downloads entire imagery order into one ZIP file.
+        Downloads entire imagery order.
 
         Args:
             contract_id: String or UUID representing the ID of the Contract
@@ -240,39 +269,25 @@ class OrdersV2(AbstractApi):
             order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
 
-            destdir: String specifying path of the directory where imagery will
-            be downloaded to
+            destdir: A string (file path) representing the directory to which
+            the imagery will be downloaded.
+
+            retry_factor: A float that determines how retries will be handled.
+            A factor of 0.5 means that only half the time specified by the
+            "Retry-After" header will be observed before the download request
+            is retried again. Defaults to 1.0.
 
         Returns:
             A string specifying the path the imagery has been downloaded to.
             All items will be downloaded into one ZIP file.
         """
-        order_details = self.get_order_details(
-            contract_id=contract_id, order_id=order_id
-        )
+        order_url = self.order_download_url(
+            contract_id=contract_id, order_id=order_id, retry_factor=retry_factor
+        )["url"]
 
-        order_id = order_details["id"]
-        item_ids = [i["properties"]["item_id"] for i in order_details["features"]]
+        response = self.make_request(method="GET", url=order_url)
 
-        return self._save_order_to_zip(destdir, contract_id, order_id, item_ids)
+        destfile = os.path.join(destdir, f"{order_id}.zip")
+        data = raw_response_to_bytes(response)
 
-    def _save_order_to_zip(
-        self,
-        destdir: str,
-        contract_id: Union[UUID, str],
-        order_id: UUID,
-        item_ids: List[str],
-    ):
-        destzip = os.path.join(destdir, f"SatVu_{order_id}")
-        with tempfile.TemporaryDirectory(dir=destdir) as tmpdir:
-            for item_id in item_ids:
-                self.download_item(
-                    contract_id=contract_id,
-                    order_id=order_id,
-                    item_id=item_id,
-                    destdir=tmpdir,
-                )
-
-            zipfile = shutil.make_archive(destzip, "zip", tmpdir)
-
-        return zipfile
+        return bytes_to_file(data, destfile)

@@ -311,47 +311,40 @@ def test_cannot_get_order_details_if_unauthorized(
 @mocketize(strict_mode=True)
 def test_download_order(
     client,
-    order_details_response,
     oauth_token_entry,
     redirect_response,
 ):
     contract_id = str(uuid4())
     api_path = API_PATH.replace("contract-id", str(contract_id))
-    fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
+    order_id = "528b0f77-5df1-4ed7-9224-502817170613"
     download_dir = "downloads"
 
-    Entry.single_register(
-        "POST",
-        urljoin(client.auth.auth_url, "oauth/token"),
-        body=dumps({"access_token": None}),
-    )
-
-    Entry.single_register(
+    Entry.register(
         "GET",
-        client._gateway_url + f"{api_path}{fake_uuid}",
-        body=dumps({**order_details_response, **{"access_token": None}}),
+        client._gateway_url + f"{api_path}{order_id}/download?redirect=False",
+        Response(headers={"Retry-After": "1"}, status=202),
+        Response(body=dumps(redirect_response), status=200),
     )
+    Entry.single_register("GET", uri=redirect_response["url"])
 
-    with patch("satellitevu.apis.orders.OrdersV2._save_order_to_zip") as mock_zip_v2:
-        mock_zip_v2.return_value = f"{download_dir}/SatelliteVu_{fake_uuid}.zip"
+    with patch("satellitevu.apis.orders.bytes_to_file") as mock_file_dl:
+        mock_file_dl.return_value = f"{download_dir}/{order_id}.zip"
 
         response = client.orders_v2.download_order(
-            contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
+            contract_id=contract_id, order_id=order_id, destdir=download_dir
         )
 
     requests = Mocket.request_list()
 
-    assert len(requests) == 2
+    assert len(requests) == 4
 
     api_request = requests[1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
-    assert api_request.path == f"/{api_path}{fake_uuid}"
-    assert api_request.headers["Authorization"] == "Bearer None"
+    assert api_request.path == f"/{api_path}{order_id}/download?redirect=False"
     assert api_request.headers["Authorization"] == oauth_token_entry
 
-    mock_zip_v2.assert_called_once()
-    assert response == mock_zip_v2()
-
+    mock_file_dl.assert_called_once()
+    assert response == mock_file_dl()
     assert isinstance(response, str)
 
     Mocket.assert_fail_if_entries_not_served()
@@ -367,7 +360,6 @@ def test_download_order(
 )
 def test_download_order_unauthorized(
     client,
-    order_details_response,
     redirect_response,
     status,
     exception,
@@ -375,7 +367,7 @@ def test_download_order_unauthorized(
     contract_id = str(uuid4())
     api_path = API_PATH.replace("contract-id", str(contract_id))
 
-    fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
+    order_id = "528b0f77-5df1-4ed7-9224-502817170613"
     download_dir = "downloads"
 
     Entry.single_register(
@@ -386,14 +378,14 @@ def test_download_order_unauthorized(
 
     Entry.single_register(
         "GET",
-        client._gateway_url + f"{api_path}{fake_uuid}",
-        body=dumps({**order_details_response, **{"access_token": None}}),
+        client._gateway_url + f"{api_path}{order_id}/download?redirect=False",
+        body=dumps(redirect_response),
         status=status,
     )
 
     with pytest.raises(exception):
         client.orders_v2.download_order(
-            contract_id=contract_id, order_id=fake_uuid, destdir=download_dir
+            contract_id=contract_id, order_id=order_id, destdir=download_dir
         )
 
     requests = Mocket.request_list()
@@ -402,7 +394,7 @@ def test_download_order_unauthorized(
 
     api_request = requests[1]
     assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
-    assert api_request.path == f"/{api_path}{fake_uuid}"
+    assert api_request.path == f"/{api_path}{order_id}/download?redirect=False"
     assert api_request.headers["Authorization"] == "Bearer None"
 
 
