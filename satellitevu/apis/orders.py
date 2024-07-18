@@ -1,49 +1,12 @@
 import os
-from io import BytesIO
 from time import sleep
 from typing import Dict, List, Union
 from uuid import UUID
 
-from satellitevu.http.base import ResponseWrapper
 
 from .base import AbstractApi
 from .exceptions import OrdersAPIError
-
-
-def raw_response_to_bytes(response: ResponseWrapper) -> BytesIO:
-    """
-    Converts the raw response data from a request into a bytes object.
-    """
-    raw_response = response.raw
-
-    if isinstance(raw_response, bytes):
-        data = BytesIO(raw_response)
-    elif hasattr(raw_response, "read"):
-        data = BytesIO(raw_response.read())
-    elif hasattr(raw_response, "iter_content"):
-        data = BytesIO()
-        for chunk in raw_response.iter_content():
-            data.write(chunk)
-        data.seek(0)
-    else:
-        raise Exception(
-            (
-                "Cannot convert response object with raw type"
-                f"{type(raw_response)} into byte stream."
-            )
-        )
-
-    return data
-
-
-def bytes_to_file(data: BytesIO, destfile: str) -> str:
-    """
-    Converts bytes into a file object at the specified location.
-    """
-    with open(destfile, "wb+") as f:
-        f.write(data.getbuffer())
-
-    return destfile
+from .helpers import raw_response_to_bytes, bytes_to_file
 
 
 class OrdersV2(AbstractApi):
@@ -186,7 +149,7 @@ class OrdersV2(AbstractApi):
 
         Args:
             contract_id: String or UUID representing the ID of the Contract
-            which an item in the order is associated with.
+            which the order is associated with.
 
             order_id: String or UUID representing the order id e.g.
             "2009466e-cccc-4712-a489-b09aeb772296".
