@@ -5,10 +5,9 @@ PYTHON_VERSIONS = ("3.10", "3.8", "3.11.0")
 
 @session()
 def lint(session):
-    session.install("flake8", "black", "isort")
-    session.run("black", ".")
-    session.run("flake8", "--max-line-length", "88", "--extend-ignore", "E203", ".")
-    session.run("isort", ".")
+    session.install("ruff")
+    session.run("ruff", "check", "--fix")
+    session.run("ruff", "format")
 
 
 @session(python=PYTHON_VERSIONS)
