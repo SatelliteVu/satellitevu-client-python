@@ -5,17 +5,6 @@ on:
       - main
 
 jobs:
-  lint-branch:
-    name: Lint Branch Name
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Validate branch name
-        env:
-          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
-          BRANCH_PATTERN: '(major|minor|patch)\/.*'
-        run: |
-          echo "${BRANCH_NAME}" | grep -E "${BRANCH_PATTERN}"
-
   lint:
     name: Lint Code
     runs-on: ubuntu-20.04
