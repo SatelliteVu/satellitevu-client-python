@@ -1,3 +1,9 @@
+## v4.8.3 (2024-08-02)
+
+### Fix
+
+- **ci**: id-token write permissions for release job
+
 ## v4.8.2 (2024-08-02)
 
 ### Fix
