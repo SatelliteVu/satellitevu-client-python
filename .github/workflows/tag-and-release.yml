@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.bump.outputs.version }}
-      changes: ${{ steps.bump.outputs.changes }}
-      is_new_version: ${{ steps.bump.outputs.is_new_version }}
+      changes: ${{ steps.details.outputs.changes }}
+      is_new_version: ${{ steps.details.outputs.is_new_version }}
     steps:
       - id: app-token
         uses: actions/create-github-app-token@v1
@@ -72,3 +72,6 @@ jobs:
               tag_name: TAG,
               body: CHANGES,
             })
+      - name: Build package
+        run: poetry build
+      - name: Publish package to PyPI
