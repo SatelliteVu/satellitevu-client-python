@@ -1,3 +1,10 @@
+## v4.8.1 (2024-08-02)
+
+### Fix
+
+- **ci**: fix pypi publish step
+- restore poetry build and publish to pypi steps in the ci
+
 ## v4.8.0 (2024-08-02)
 
 ### Feat
