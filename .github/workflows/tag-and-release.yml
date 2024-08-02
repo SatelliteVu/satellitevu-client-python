@@ -59,6 +59,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
       - uses: actions/github-script@v7
         env:
           CHANGES: ${{ needs.tag.outputs.changes }}
