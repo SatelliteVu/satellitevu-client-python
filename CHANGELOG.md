@@ -1,3 +1,9 @@
+## v4.8.2 (2024-08-02)
+
+### Fix
+
+- **ci**: install poetry before attempting to publish
+
 ## v4.8.1 (2024-08-02)
 
 ### Fix
