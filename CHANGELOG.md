@@ -1,3 +1,9 @@
+## v4.8.0 (2024-08-02)
+
+### Feat
+
+- add deprecation warning to `ArchiveV2`
+
 ## v4.7.0 (2024-07-31)
 
 ### Feat
