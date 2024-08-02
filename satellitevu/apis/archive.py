@@ -3,6 +3,7 @@ from typing import Any, Optional, Union
 from uuid import UUID
 
 from .base import AbstractApi
+from .catalog import CatalogV1
 
 
 class ArchiveV2(AbstractApi):
@@ -65,6 +66,8 @@ class ArchiveV2(AbstractApi):
             criteria.
 
         """
+        self.deprecation_warning(CatalogV1)
+
         url = self.url(f"/{contract_id}/search")
         payload = {
             **kwargs,
