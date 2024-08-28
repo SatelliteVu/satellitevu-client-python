@@ -1,4 +1,5 @@
 from json import dumps, loads
+from itertools import product
 from secrets import token_urlsafe
 from unittest.mock import patch
 from urllib.parse import urlparse
@@ -300,6 +301,67 @@ def test_create_order_off_nadir_gsd_values(
     else:
         with raises(OTMParametersError):
             client.otm_v2.create_order(**otm_request_parameters)
+
+
+@mocketize(strict_mode=True)
+@mark.parametrize(
+    "product, withhold",
+    product(
+        ("standard", "assured"),
+        (
+            None,
+            "0d",
+            "7d",
+            "1y",
+        ),
+    ),
+)
+def test_create_order_with_addons(
+    oauth_token_entry,
+    client,
+    otm_request_parameters,
+    product,
+    withhold,
+    otm_response,
+):
+    contract_id = otm_request_parameters["contract_id"]
+    api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
+
+    otm_request_parameters["product"] = product
+    otm_request_parameters["signature"] = token_urlsafe(16)
+    if withhold:
+        otm_request_parameters["addon_withhold"] = withhold
+
+    if product == "assured":
+        Entry.single_register(
+            "POST",
+            client._gateway_url + api_path,
+            body=dumps(otm_response),
+            status=201,
+        )
+
+    Entry.single_register(
+        "POST",
+        client._gateway_url + api_path,
+        body=dumps(otm_response),
+        status=201,
+    )
+
+    response = client.otm_v2.create_order(**otm_request_parameters)
+    assert isinstance(response, dict)
+
+    requests = Mocket.request_list()
+    assert len(requests) == 2
+
+    api_request = requests[-1]
+    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.path == "/" + api_path
+    assert api_request.headers["Content-Type"] == "application/json"
+    assert api_request.headers["Authorization"] == oauth_token_entry
+
+    api_request_body = loads(api_request.body)
+    print(api_request_body)
+    assert "geometry" not in api_request_body.keys()
 
 
 @mocketize(strict_mode=True)
