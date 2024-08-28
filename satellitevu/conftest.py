@@ -1,5 +1,5 @@
 from calendar import timegm
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from importlib import import_module
 from json import dumps
 from typing import Dict, Optional, Callable
@@ -171,11 +171,11 @@ def order_details_response():
 
 @fixture
 def otm_request_parameters():
-    now = datetime.now().utcnow()
+    now = datetime.now(timezone.utc)
     return {
         "coordinates": [0, 0],
         "date_from": now,
-        "date_to": (now + timedelta(hours=24)).utcnow(),
+        "date_to": (now + timedelta(hours=24)),
         "day_night_mode": "night",
         "max_cloud_cover": 100,
         "min_off_nadir": 20,
