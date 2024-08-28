@@ -329,8 +329,7 @@ def test_create_order_with_addons(
 
     otm_request_parameters["product"] = product
     otm_request_parameters["signature"] = token_urlsafe(16)
-    if withhold:
-        otm_request_parameters["addon_withhold"] = withhold
+    otm_request_parameters["addon_withhold"] = withhold
 
     if product == "assured":
         Entry.single_register(
@@ -360,8 +359,12 @@ def test_create_order_with_addons(
     assert api_request.headers["Authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
-    print(api_request_body)
-    assert "geometry" not in api_request_body.keys()
+    assert api_request_body["properties"]["product"] == product
+
+    if withhold:
+        assert api_request_body["properties"]["addon:withhold"] == withhold
+    else:
+        assert "addon:withhold" not in api_request_body["properties"].keys()
 
 
 @mocketize(strict_mode=True)
