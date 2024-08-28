@@ -242,6 +242,7 @@ class OtmV2(AbstractApi):
         max_off_nadir: Optional[int] = None,
         min_gsd: Optional[float] = None,
         max_gsd: Optional[float] = None,
+        addon_withhold: Optional[str] = None,
         signature: Optional[str] = None,
         **kwargs,
     ):
@@ -298,6 +299,11 @@ class OtmV2(AbstractApi):
             Please note that min/max off nadir and min/max gsd are mutually exclusive.
             You must pick either the off nadir angle or gsd as parameters.
 
+            addon_withhold: Optional ISO8601 string describing the duration that an order
+            will be withheld from the public catalog. Withhold options are specific
+            to the contract. If not specified, the option will be set to the default
+            specified in the relevant contract. Example values are: ["0d", "3m", "1y"]
+
         Kwargs:
             Allows sending additional parameters that are supported by the API but not
             added to this SDK yet.
@@ -308,6 +314,9 @@ class OtmV2(AbstractApi):
         url = self.url(f"{str(contract_id)}/tasking/orders/")
 
         payload = {"properties": {"product": product}}
+
+        if addon_withhold:
+            payload["properties"].update({"addon:withhold": addon_withhold})
 
         if product == "standard":
             if not "coordinates":
