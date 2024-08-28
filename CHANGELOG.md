@@ -1,3 +1,10 @@
+## v4.9.0 (2024-08-28)
+
+### Feat
+
+- add framework test for withhold
+- add withhold option as a property when creating a tasking order
+
 ## v4.8.3 (2024-08-02)
 
 ### Fix
