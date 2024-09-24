@@ -59,3 +59,12 @@ repos:
     - id: commitizen-branch
       stages:
       - pre-push
+  - repo: https://github.com/tweag/FawltyDeps
+    rev: v0.15.0
+    hooks:
+      - id: check-undeclared
+        stages:
+          - pre-commit
+      - id: check-unused
+        stages:
+          - pre-commit

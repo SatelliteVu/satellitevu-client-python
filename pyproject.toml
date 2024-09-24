@@ -47,6 +47,12 @@ version_scheme = "semver2"
 version_provider = "poetry"
 update_changelog_on_bump = true
 
+[tool.fawltydeps]
+ignore_unused = ["pytest-cov", "nox", "ruff"]
+
+[tool.fawltydeps.custom_mapping]
+pyjwt = ["jwt"]
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
