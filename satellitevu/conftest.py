@@ -13,8 +13,8 @@ from cryptography.hazmat.primitives.serialization import (
     NoEncryption,
 )
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
-from jose.jwt import encode
-from josepy import JWKRSA
+from jwt import encode
+from jwcrypto.jwk import JWK
 from mocket import mocketize
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, param
@@ -99,7 +99,7 @@ def jwk():
         PrivateFormat.PKCS8,
         NoEncryption(),
     )
-    return JWKRSA.load(key).to_json()
+    return JWK.from_pem(key)
 
 
 @fixture(scope="session")
