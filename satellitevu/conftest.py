@@ -118,7 +118,7 @@ def generic_token_factory(
         Generate JWT for given claims with a given TTL, signed with the provider's RSA
         key.
         """
-        now = timegm(datetime.utcnow().utctimetuple())
+        now = timegm(datetime.now(timezone.utc).utctimetuple())
         payload = {
             **claims,
             "iat": now,
