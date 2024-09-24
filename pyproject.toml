@@ -18,7 +18,7 @@ pyfakefs = "^4.7.0"
 pytest-cov = "^4.0.0"
 ruff = "^0.5.2"
 jwcrypto = "^1.5.6"
-pyjwt = {version = "^2.9.0", extras = ["crypto"]}
+pyjwt = "^2.9.0"
 
 [tool.poetry.group.requests]
 optional = true
