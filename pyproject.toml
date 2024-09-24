@@ -17,8 +17,8 @@ nox-poetry = "^1.0.1"
 pyfakefs = "^4.7.0"
 pytest-cov = "^4.0.0"
 ruff = "^0.5.2"
-pyjwt = "^2.9.0"
 jwcrypto = "^1.5.6"
+pyjwt = {version = "^2.9.0", extras = ["crypto"]}
 
 [tool.poetry.group.requests]
 optional = true
