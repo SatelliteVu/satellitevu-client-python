@@ -30,3 +30,9 @@ class OTMFeasibilityError(OTMAPIError):
 
 class OTMParametersError(Exception):
     pass
+
+
+class IDAPIError(Exception):
+    def __init__(self, status_code: int, detail: str) -> None:
+        self.message = f"ID API Error - {status_code} : {detail}"
+        super().__init__(self.message)
