@@ -44,7 +44,7 @@ class AbstractClient(ABC):
         method: str,
         url: str,
         *,
-        scopes: Iterable[str] = [],
+        scopes: Optional[Iterable[str]] = None,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
         json: Optional[Any] = None,
@@ -55,8 +55,13 @@ class AbstractClient(ABC):
         self._auth[base_url] = auth
 
     def _set_auth(
-        self, url: str, headers: Mapping[str, str], scopes: Iterable[str] = []
+        self,
+        url: str,
+        headers: Mapping[str, str],
+        scopes: Optional[Iterable[str]] = None,
     ):
+        if not scopes:
+            scopes = []
         auth = next((v for k, v in self._auth.items() if url.startswith(k)), None)
         has_auth = next(
             (True for k in headers.keys() if k.lower() == "authorization"), False
@@ -68,7 +73,7 @@ class AbstractClient(ABC):
         self,
         url: str,
         headers: Mapping[str, str],
-        scopes: Iterable[str] = [],
+        scopes: Optional[Iterable[str]] = None,
     ):
         _headers = {**(headers or {})}
 
