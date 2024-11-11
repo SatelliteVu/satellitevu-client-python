@@ -12,11 +12,13 @@ appdirs = "^1.4.4"
 
 [tool.poetry.group.dev.dependencies]
 cryptography = "^43.0.3"
+fawltydeps = "^0.17.0"
 josepy = "^1.14.0"
 mocket = "^3.11.1"
 nox = "^2022.8.7"
 nox-poetry = "^1.0.1"
 pyfakefs = "^4.7.0"
+pytest = "^8.3.3"
 pytest-cov = "^4.0.0"
 python-jose="^3.3.0"
 ruff = "^0.5.2"
@@ -51,3 +53,14 @@ update_changelog_on_bump = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.fawltydeps]
+ignore_unused = [
+    "fawltydeps",
+    "nox",
+    "pytest-cov",
+    "ruff",
+]
+
+[tool.fawltydeps.custom_mapping]
+python-jose = ["jose"]
