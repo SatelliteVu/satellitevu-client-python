@@ -23,7 +23,7 @@ def test_scopes(kwargs, http_client_class, memory_cache):
     client: AbstractClient = http_client_class()
     auth = Auth(
         client_id="test",
-        client_secret="test",
+        client_secret="test",  # pragma: allowlist secret
         auth_url="http://auth.example.com",
         cache=memory_cache,
     )
