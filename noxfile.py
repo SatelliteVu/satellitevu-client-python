@@ -21,7 +21,7 @@ def tests(session):
         "httpx",
         "cryptography",
         "josepy",
-        "python-jose",
+        "pyjwt",
         ".",
     )
     session.run("pytest")
