@@ -3,7 +3,7 @@ from datetime import datetime
 from hashlib import sha1
 from json import loads
 from logging import getLogger
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urljoin
 
 from satellitevu.config import AUDIENCE, AUTH_URL
@@ -53,7 +53,9 @@ class Auth:
         self.auth_url = auth_url or AUTH_URL
         self.client = client or UrllibClient()
 
-    def token(self, scopes=[]) -> str:
+    def token(self, scopes: Optional[List] = None) -> str:
+        if not scopes:
+            scopes = []
         cache_key = sha1(self.client_id.encode("utf-8"))  # nosec B324
         cache_key.update("".join(scopes).encode("utf-8"))
 
@@ -65,7 +67,9 @@ class Auth:
 
         return token
 
-    def _auth(self, scopes=[]) -> str:
+    def _auth(self, scopes: Optional[List] = None) -> str:
+        if not scopes:
+            scopes = []
         logger.info("Performing client_credential authentication")
         token_url = urljoin(self.auth_url, "oauth/token")
         response = self.client.post(

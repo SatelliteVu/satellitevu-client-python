@@ -36,7 +36,7 @@ class RequestsSession(AbstractClient):
         method: str,
         url: str,
         *,
-        scopes: Iterable[str] = [],
+        scopes: Optional[Iterable[str]] = None,
         headers: Optional[Dict] = None,
         data: Optional[Dict] = None,
         json: Optional[Any] = None,
