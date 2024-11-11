@@ -13,8 +13,8 @@ from cryptography.hazmat.primitives.serialization import (
     NoEncryption,
 )
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
-from jose.jwt import encode
 from josepy import JWKRSA
+from jwt import PyJWK, encode
 from mocket import mocketize
 from mocket.mockhttp import Entry
 from pytest import fixture, mark, param
@@ -124,7 +124,8 @@ def generic_token_factory(
             "iat": now,
             "exp": now + ttl,
         }
-        return encode(payload, jwk, algorithm="RS256")
+        jwk_obj = PyJWK(jwk, algorithm="RS256")
+        return encode(payload, jwk_obj.key, algorithm=jwk_obj.algorithm_name)
 
     return factory
 

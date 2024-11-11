@@ -20,7 +20,7 @@ nox-poetry = "^1.0.1"
 pyfakefs = "^4.7.0"
 pytest = "^8.3.3"
 pytest-cov = "^4.0.0"
-python-jose="^3.3.0"
+pyjwt = "^2.9.0"
 ruff = "^0.5.2"
 
 [tool.poetry.group.requests]
@@ -63,4 +63,4 @@ ignore_unused = [
 ]
 
 [tool.fawltydeps.custom_mapping]
-python-jose = ["jose"]
+pyjwt = ["jwt"]
