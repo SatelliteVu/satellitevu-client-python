@@ -54,7 +54,7 @@ class Auth:
         self.client = client or UrllibClient()
 
     def token(self, scopes=[]) -> str:
-        cache_key = sha1(self.client_id.encode("utf-8"))
+        cache_key = sha1(self.client_id.encode("utf-8"))  # nosec B324
         cache_key.update("".join(scopes).encode("utf-8"))
 
         token = self.cache.load(cache_key.hexdigest())
