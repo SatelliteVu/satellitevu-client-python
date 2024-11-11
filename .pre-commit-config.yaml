@@ -52,6 +52,15 @@ repos:
         args: ["--no-update", "--no-cache"]
         stages:
           - pre-commit
+  - repo: https://github.com/tweag/FawltyDeps
+    rev: v0.17.0
+    hooks:
+      - id: check-undeclared
+        stages:
+          - pre-commit
+      - id: check-unused
+        stages:
+          - pre-commit
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.28.0
     hooks:
