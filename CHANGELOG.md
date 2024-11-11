@@ -1,3 +1,9 @@
+## v4.10.0 (2024-11-11)
+
+### Feat
+
+- **IdV2**: add partial support for ID API
+
 ## v4.9.0 (2024-08-28)
 
 ### Feat
