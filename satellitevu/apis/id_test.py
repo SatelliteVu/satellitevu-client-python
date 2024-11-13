@@ -36,9 +36,9 @@ def test_get_user_details(oauth_token_entry, client):
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -64,9 +64,9 @@ def test_rotate_client_secret(oauth_token_entry, client):
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -91,10 +91,10 @@ def test_edit_user_settings(oauth_token_entry, client):
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -124,10 +124,10 @@ def test_edit_user_settings_invalid_notifications_payload(oauth_token_entry, cli
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -154,6 +154,6 @@ def test_get_credit_balance(oauth_token_entry, client):
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry

@@ -42,10 +42,10 @@ def test_submit_single_item(client, oauth_token_entry, item_ids):
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
     assert api_request.body == payload
 
     assert response.status == 201
@@ -81,10 +81,10 @@ def test_submit_multiple_items(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
     assert api_request.body == payload
 
     assert response.status == 201
@@ -115,9 +115,9 @@ def test_item_download_url(
 
     assert len(requests) == 2
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
     assert response["url"] == "https://image.test"
@@ -159,9 +159,9 @@ def test_no_access_to_download_if_unauthorized(
 
     assert len(requests) == 2
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -199,9 +199,9 @@ def test_download_order_item(
     assert len(requests) == 4
 
     api_request = requests[2]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     mock_file_dl.assert_called_once()
     assert response == mock_file_dl()
@@ -234,9 +234,9 @@ def test_get_order_details(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{fake_uuid}"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
 
@@ -262,9 +262,9 @@ def test_get_orders(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     assert isinstance(response, dict)
 
@@ -303,9 +303,9 @@ def test_cannot_get_order_details_if_unauthorized(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{fake_uuid}"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -339,9 +339,9 @@ def test_download_order(
     assert len(requests) == 4
 
     api_request = requests[1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{order_id}/download?redirect=False"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     mock_file_dl.assert_called_once()
     assert response == mock_file_dl()
@@ -393,9 +393,9 @@ def test_download_order_unauthorized(
     assert len(requests) == 2
 
     api_request = requests[1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{order_id}/download?redirect=False"
-    assert api_request.headers["Authorization"] == "Bearer None"
+    assert api_request.headers["authorization"] == "Bearer None"
 
 
 def test_bytes_to_file():
