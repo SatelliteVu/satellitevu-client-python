@@ -1,3 +1,9 @@
+## v4.11.0 (2024-11-13)
+
+### Feat
+
+- migrate from python-jose to pyjwt
+
 ## v4.10.0 (2024-11-11)
 
 ### Feat
