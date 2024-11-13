@@ -1,7 +1,7 @@
 import argparse
 import os
 import pprint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from common import setup_logging
 
@@ -12,8 +12,8 @@ EXAMPLES = {
     "london": {"bbox": [-1.065151, 51.163899, 0.457906, 51.802226]},
     "recent": {"sortby": [{"field": "datetime", "direction": "desc"}], "limit": 5},
     "last-month": {
-        "date_from": datetime.utcnow() - timedelta(days=30),
-        "date_to": datetime.utcnow(),
+        "date_from": datetime.now(tz=timezone.utc) - timedelta(days=30),
+        "date_to": datetime.now(tz=timezone.utc),
     },
 }
 
