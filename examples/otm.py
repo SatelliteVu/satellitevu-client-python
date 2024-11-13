@@ -1,6 +1,6 @@
 import argparse
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pprint import pprint
 from time import sleep
 
@@ -25,7 +25,7 @@ def _setup_client():
 
 def feasibility(contract_id):
     client = _setup_client()
-    now = datetime.utcnow()
+    now = datetime.now(tz=timezone.utc)
     response = client.otm_v2.post_feasibility(
         contract_id=contract_id,
         coordinates=[12, 52],
