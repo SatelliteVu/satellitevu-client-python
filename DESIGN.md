@@ -50,7 +50,7 @@ user. This is the reason for our only required dependency,
 ### Platform API classes
 
 Classes for each available API are maintained in
-[satellitevu.apis](./satellitevu/apis/), i.e. for the Archive API and Orders API. They
+[satellitevu.apis](./satellitevu/apis/), i.e. for the Catalog API and Orders API. They
 use the [satellitevu.apis.base.AbstractApi](./satellitevu/apis/base.py) base class for
 building URLs, sending requests and raising exceptions.
 
@@ -59,4 +59,4 @@ building URLs, sending requests and raising exceptions.
 Using all of the above, the main client [satellitevu.Client](./satellitevu/client.py),
 provides the central entry point to interacting with our platform APIs.
 
-See [examples/archive.py](./examples/archive.py) for an example of how to use it.
+See [examples/catalog.py](./examples/catalog.py) for an example of how to use it.

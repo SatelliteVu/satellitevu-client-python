@@ -63,7 +63,7 @@ class OrdersV2(AbstractApi):
 
     def submit(self, *, contract_id: Union[UUID, str], item_ids: Union[List[str], str]):
         """
-        Submit an imagery order for items present in the SatVu archive.
+        Submit an imagery order for items present in the SatVu catalog.
 
         Args:
             contract_id: String or UUID representing the ID of the Contract
