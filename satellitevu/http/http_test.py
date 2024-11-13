@@ -38,7 +38,7 @@ def test_http_client_user_agent(http_client_class):
 
     sv_version = version("satellitevu")
     sv_comment = f"(satellitevu/{sv_version})"
-    assert requests[0].headers.get("User-Agent").endswith(sv_comment)
+    assert requests[0].headers.get("user-agent").endswith(sv_comment)
 
 
 def test_http_custom_actor(http_client_class):
@@ -62,7 +62,7 @@ def test_http_custom_actor(http_client_class):
         ("http://api.example.com/authed/subpath", None, True),
         (
             "http://api.example.com/authed/subpath",
-            {"Authorization": "some-other"},
+            {"authorization": "some-other"},
             False,
         ),
     ),
@@ -81,7 +81,7 @@ def test_http_set_auth(http_client_class, url, headers, uses_injected_auth):
 
     assert len(requests) == 1
     assert (
-        requests[0].headers.get("Authorization") == "Bearer mock-token"
+        requests[0].headers.get("authorization") == "Bearer mock-token"
     ) == uses_injected_auth
 
 
@@ -105,5 +105,5 @@ def test_payload(http_client_class, data, json, body, content_type):
     with Mocketizer():
         client.request("POST", "http://api.example.com", data=data, json=json)
         request = Mocket.last_request()
-    assert request.headers["Content-Type"] == content_type
+    assert request.headers["content-type"] == content_type
     assert request.body == body

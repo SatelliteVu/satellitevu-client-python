@@ -57,10 +57,10 @@ def test_search(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}search"
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
     assert api_request.body == dumps(payload)
     assert response.text == "mock-stac-response"
 
@@ -108,10 +108,10 @@ def test_unauthorized_search(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}search"
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
     assert api_request.body == dumps(payload)
 
     Mocket.assert_fail_if_entries_not_served()

@@ -53,10 +53,10 @@ def test_post_feasibility(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
     assert api_request_body["geometry"] == {
@@ -135,9 +135,9 @@ def test_get_feasibility(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{feasibility_id}"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -168,9 +168,9 @@ def test_get_feasibility_response(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{feasibility_id}/response"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -208,9 +208,9 @@ def test_list_feasibilities(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -243,10 +243,10 @@ def test_post_order(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
 
@@ -353,10 +353,10 @@ def test_create_order_with_addons(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Content-Type"] == "application/json"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["content-type"] == "application/json"
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     api_request_body = loads(api_request.body)
     assert api_request_body["properties"]["product"] == product
@@ -416,9 +416,9 @@ def test_list_tasking_orders(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -447,9 +447,9 @@ def test_get_tasking_order(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{order_id}"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -480,9 +480,9 @@ def test_cancel_tasking_order(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path + f"{order_id}" + "/cancel"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -519,9 +519,9 @@ def test_post_search(
     assert len(requests) == 2
 
     api_request = requests[-1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == "/" + api_path
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
 
 @mocketize(strict_mode=True)
@@ -555,9 +555,9 @@ def test_download_order(
     assert len(requests) == 4
 
     api_request = requests[1]
-    assert api_request.headers["Host"] == urlparse(client._gateway_url).hostname
+    assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
     assert api_request.path == f"/{api_path}{order_id}/download?redirect=False"
-    assert api_request.headers["Authorization"] == oauth_token_entry
+    assert api_request.headers["authorization"] == oauth_token_entry
 
     mock_file_dl.assert_called_once()
     assert response == mock_file_dl()
