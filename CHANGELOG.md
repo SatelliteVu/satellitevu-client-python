@@ -1,3 +1,9 @@
+## v4.12.0 (2024-11-14)
+
+### Feat
+
+- add catalog api examples
+
 ## v4.11.0 (2024-11-13)
 
 ### Feat
