@@ -1,3 +1,13 @@
+## v5.0.0 (2024-11-20)
+
+### BREAKING CHANGE
+
+- the Archive API has been retired - please use the Catalog API instead
+
+### Feat
+
+- **ArchiveV2**: remove support for archive api
+
 ## v4.13.0 (2024-11-18)
 
 ### Feat
