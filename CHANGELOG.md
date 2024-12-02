@@ -1,3 +1,9 @@
+## v5.1.0 (2024-12-02)
+
+### Feat
+
+- **IdV2**: support ID API webhook endpoints
+
 ## v5.0.0 (2024-11-20)
 
 ### BREAKING CHANGE
