@@ -35,20 +35,6 @@ jobs:
           commit: true
           push: false
           no_raise: 21
-      - id: details
-        shell: bash
-        run: |
-          {
-            echo 'changes<<EOF'
-            cat .changes.md
-            echo EOF
-          } >> "$GITHUB_OUTPUT"
-
-          if [ "$REVISION" != "$PREVIOUS_REVISION" ]; then
-            echo "is_new_version=1" >> "$GITHUB_OUTPUT"
-            # pushing seperately to use correct auth set up during actions/checkout
-            git push --atomic --tags origin HEAD:${GITHUB_REF_NAME}
-          fi
 
   release:
     name: create new release
