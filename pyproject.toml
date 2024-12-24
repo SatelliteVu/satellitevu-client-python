@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 appdirs = "^1.4.4"
 
 [tool.poetry.group.dev.dependencies]
@@ -22,6 +22,7 @@ pytest = "^8.3.3"
 pytest-cov = "^5.0.0"
 pyjwt = "^2.9.0"
 ruff = "^0.7.3"
+pact-python = "^2.2.2"
 
 [tool.poetry.group.requests]
 optional = true
@@ -60,7 +61,9 @@ ignore_unused = [
     "nox",
     "pytest-cov",
     "ruff",
+    "pact-python",
 ]
 
 [tool.fawltydeps.custom_mapping]
 pyjwt = ["jwt"]
+pact-python = ["pact"]
