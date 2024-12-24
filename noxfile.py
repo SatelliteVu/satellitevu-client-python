@@ -1,6 +1,6 @@
 from nox_poetry import session
 
-PYTHON_VERSIONS = ("3.10", "3.8", "3.11.0")
+PYTHON_VERSIONS = ("3.9", "3.10", "3.11", "3.12")
 
 
 @session()
@@ -22,6 +22,7 @@ def tests(session):
         "cryptography",
         "josepy",
         "pyjwt",
+        "pact-python",
         ".",
     )
     session.run("pytest")

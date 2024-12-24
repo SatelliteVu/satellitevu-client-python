@@ -5,7 +5,7 @@ from json import dumps
 from typing import Dict, Optional, Callable
 from urllib.parse import urljoin
 from uuid import uuid4
-
+from collections.abc import Generator
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -15,8 +15,9 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from josepy import JWKRSA
 from jwt import PyJWK, encode
-from mocket import mocketize
+from mocket import mocketize, Mocketizer
 from mocket.mockhttp import Entry
+from pact.v3 import Pact
 from pytest import fixture, mark, param
 
 try:
@@ -247,3 +248,27 @@ def search_response(otm_request_parameters):
         "context": {"limit": 25, "matched": 1, "returned": 1},
         "links": [],
     }
+
+
+@fixture(autouse=True)
+def mocketize_fixture():
+    with Mocketizer():
+        yield
+
+
+@fixture(scope="session", autouse=True)
+def _setup_pact_logging() -> None:
+    """
+    Set up logging for the pact package.
+    """
+    from pact.v3 import ffi
+
+    ffi.log_to_stderr("INFO")
+
+
+@fixture
+def pact(request) -> Generator[Pact, None, None]:
+    pact_dir = "./pacts"
+    pact = Pact("python-sdk", request.param)
+    yield pact.with_specification("V4")
+    pact.write_file(pact_dir)

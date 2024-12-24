@@ -5,6 +5,10 @@ on:
     types:
       - closed
 
+env:
+  PACT_BROKER_BASE_URL: ${{ vars.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
 jobs:
   tag:
     name: create git tag
@@ -83,3 +87,15 @@ jobs:
         run: poetry build
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Get latest pact version
+        id: latest_pact_version
+        run: >
+          echo "version_num=$(curl -H 'Authorization: Bearer ${{secrets.PACT_BROKER_TOKEN}}'
+          https://satellitevu.pactflow.io/pacticipants/python-sdk/latest-version | jq .number)" >> $GITHUB_OUTPUT
+      - name: Record release in Pactflow  🚀
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+          GIT_COMMIT: ${{ steps.latest_pact_version.outputs.version_num }}
+          ENVIRONMENT: production
+          VERSION_TAG: ${{ steps.bump.outputs.version }}
+        run: make -f pact.mk release
