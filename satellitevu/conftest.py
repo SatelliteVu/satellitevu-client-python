@@ -1,3 +1,4 @@
+import allure
 from calendar import timegm
 from datetime import datetime, timedelta, timezone
 from importlib import import_module
@@ -272,3 +273,10 @@ def pact(request) -> Generator[Pact, None, None]:
     pact = Pact("python-sdk", request.param)
     yield pact.with_specification("V4")
     pact.write_file(pact_dir)
+
+
+@fixture(autouse=True)
+def allure_metadata():
+    """Allure labels to be added at runtime"""
+    allure.dynamic.label("layer", "sdk")
+    allure.dynamic.feature("Python SDK")
