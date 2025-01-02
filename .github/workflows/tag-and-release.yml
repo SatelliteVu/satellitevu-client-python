@@ -85,8 +85,6 @@ jobs:
             })
       - name: Build package
         run: poetry build
-      - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
       - name: Get latest pact version
         id: latest_pact_version
         run: >
@@ -99,3 +97,5 @@ jobs:
           ENVIRONMENT: production
           VERSION_TAG: ${{ needs.tag.outputs.tag }}
         run: make -f pact.mk release
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
