@@ -13,6 +13,7 @@ def lint(session):
 @session(python=PYTHON_VERSIONS)
 def tests(session):
     session.install(
+        "allure-pytest",
         "pytest",
         "pyfakefs",
         "mocket",
@@ -25,4 +26,4 @@ def tests(session):
         "pact-python",
         ".",
     )
-    session.run("pytest")
+    session.run("pytest", "--alluredir=allure-results")

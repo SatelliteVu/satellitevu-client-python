@@ -9,8 +9,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.9"
 appdirs = "^1.4.4"
+allure-pytest = "^2.13.5"
 
 [tool.poetry.group.dev.dependencies]
+allure-pytest = "^2.13.5"
 cryptography = "^43.0.3"
 fawltydeps = "^0.17.0"
 josepy = "^1.14.0"
@@ -65,5 +67,6 @@ ignore_unused = [
 ]
 
 [tool.fawltydeps.custom_mapping]
+allure-pytest = ["allure"]
 pyjwt = ["jwt"]
 pact-python = ["pact"]
