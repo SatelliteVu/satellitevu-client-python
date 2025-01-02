@@ -1,3 +1,9 @@
+## v5.2.1 (2025-01-02)
+
+### Fix
+
+- record pactflow release before publish
+
 ## v5.2.0 (2025-01-02)
 
 ### Feat
