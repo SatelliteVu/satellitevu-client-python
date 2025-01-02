@@ -231,8 +231,6 @@ class TestID:
                 "active": True,
                 "event_types": [
                     {
-                        # "description": "Receive notifications for all tasking order updates",
-                        # "name": "Tasking order status updates",
                         "topic": "tasking:order_status",
                     }
                 ],
@@ -402,8 +400,6 @@ class TestID:
                         "active": True,
                         "event_types": [
                             {
-                                # "description": "Receive notifications for all tasking order updates",
-                                # "name": "Tasking order status updates",
                                 "topic": "tasking:order_status",
                             }
                         ],
@@ -489,8 +485,6 @@ class TestID:
                 "active": True,
                 "event_types": [
                     {
-                        # "description": "Receive notifications for all tasking order updates",
-                        # "name": "Tasking order status updates",
                         "topic": "tasking:order_status",
                     }
                 ],
@@ -646,8 +640,6 @@ class TestID:
                 "active": True,
                 "event_types": [
                     {
-                        # "description": "Receive notifications for all tasking order updates",
-                        # "name": "Tasking order status updates",
                         "topic": "tasking:order_status",
                     }
                 ],
@@ -722,8 +714,6 @@ class TestID:
                 "active": True,
                 "event_types": [
                     {
-                        # "description": "Receive notifications for all tasking order updates",
-                        # "name": "Tasking order status updates",
                         "topic": "tasking:order_status",
                     }
                 ],

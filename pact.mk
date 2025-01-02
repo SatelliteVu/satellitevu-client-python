@@ -66,7 +66,7 @@ record_deployment:
 	@"${PACT_CLI}" broker record-deployment --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
 
 record_release:
-	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
+	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${VERSION_TAG} --environment ${ENVIRONMENT}
 
 release: deploy record_release
 
