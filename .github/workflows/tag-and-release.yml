@@ -97,5 +97,5 @@ jobs:
           GIT_BRANCH: ${{ github.ref }}
           GIT_COMMIT: ${{ steps.latest_pact_version.outputs.version_num }}
           ENVIRONMENT: production
-          VERSION_TAG: ${{ steps.bump.outputs.version }}
+          VERSION_TAG: ${{ needs.tag.outputs.tag }}
         run: make -f pact.mk release
