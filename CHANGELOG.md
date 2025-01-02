@@ -1,3 +1,13 @@
+## v5.2.0 (2025-01-02)
+
+### Feat
+
+- add id-service pact integration
+
+### Fix
+
+- remove extraneous event_type properties, python 3.12
+
 ## v5.1.0 (2024-12-02)
 
 ### Feat
