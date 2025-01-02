@@ -31,6 +31,9 @@ jobs:
         run: nox --session=lint
 
   test:
+    env:
+      ALLURE_RESULTS: allure-results
+      ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
     name: Test Code
     runs-on: ubuntu-20.04
     steps:
@@ -51,6 +54,12 @@ jobs:
         with:
           python-version: 3.11.11
           architecture: x64
+      - name: Install allurectl
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: ${{ secrets.ALLURE_ENDPOINT }}
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: 34
       - name: Install nox
         run: |
           pipx install poetry
@@ -58,11 +67,16 @@ jobs:
           pipx inject nox nox-poetry
       - name: Run tests
         id: test
-        run: nox --session=tests
+        run: allurectl watch -- nox --session=tests
       - name: Build package wheel
         run: poetry build
       - name: Publish pact
         run: make -f pact.mk publish_pacts
+      - name: get allure_run_id
+        if: always()
+        run: |
+          export ALLURE_LAUNCH_ID=$(allurectl job-run env | grep 'ALLURE_LAUNCH_ID' | cut -d '=' -f 2)
+          echo ALLURE_LAUNCH_ID=$ALLURE_LAUNCH_ID >> $GITHUB_ENV
 
   can-i-deploy:
     runs-on: ubuntu-latest

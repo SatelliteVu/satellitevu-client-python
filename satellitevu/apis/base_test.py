@@ -1,3 +1,4 @@
+from allure import description, story, title
 from json import dumps
 from typing import List
 from urllib.parse import parse_qs
@@ -18,6 +19,9 @@ class TestApi(AbstractApi):
     scopes = ["test"]
 
 
+@story("Base")
+@title("Scopes")
+@description("Test that the correct scopes are sent in the request")
 @mark.parametrize("kwargs", ({}, {"scopes": ["foo"]}))
 def test_scopes(kwargs, http_client_class, memory_cache):
     client: AbstractClient = http_client_class()

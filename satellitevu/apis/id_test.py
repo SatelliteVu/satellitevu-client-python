@@ -1,3 +1,4 @@
+from allure import description, story, title
 import json
 import re
 from urllib.parse import urlparse
@@ -12,7 +13,10 @@ from satellitevu.apis.exceptions import IDAPIError
 
 @mark.parametrize("pact", ["id-service"], indirect=True)
 @mark.usefixtures("mocketize_fixture")
+@story("ID")
 class TestID:
+    @title("Get user details")
+    @description("Retrieve the details of a user.")
     def test_get_user_details(self, oauth_token_entry, client, pact):
         api_path = "id/v2/user/details"
 
@@ -53,6 +57,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Rotate client secret")
+    @description("Rotate the client secret.")
     def test_rotate_client_secret(self, oauth_token_entry, client, pact):
         api_path = "id/v2/client/reset"
         id_response_body = json.dumps(
@@ -85,6 +91,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Edit user settings")
+    @description("Edit the user settings.")
     def test_edit_user_settings(self, oauth_token_entry, client, pact):
         api_path = "id/v2/user/settings"
         id_response_body = json.dumps(
@@ -132,6 +140,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Edit user settings with invalid payload")
+    @description("Edit the user settings with an invalid payload.")
     def test_edit_user_settings_invalid_notifications_payload(
         self, oauth_token_entry, client, pact
     ):
@@ -185,6 +195,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Get credit balance")
+    @description("Retrieve the credit balance for a contract.")
     def test_get_credit_balance(self, oauth_token_entry, client, pact):
         contract_id = str(uuid4())
         api_path = f"id/v2/{contract_id}/wallet/credit"
@@ -221,6 +233,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Create webhook")
+    @description("Create a webhook with a given payload.")
     def test_create_webhook(self, oauth_token_entry, client, pact):
         api_path = "id/v2/webhooks/"
 
@@ -272,6 +286,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Create webhook with invalid payload")
+    @description("Create a webhook with an invalid payload.")
     def test_create_webhook_invalid_payload(self, oauth_token_entry, client, pact):
         api_path = "id/v2/webhooks/"
 
@@ -313,6 +329,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Get webhook")
+    @description("Retrieve the details of a webhook.")
     def test_get_webhook(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -358,6 +376,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Get webhook (not found)")
+    @description("Retrieve the details of a webhook that does not exist.")
     def test_get_webhook_not_found(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -390,6 +410,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("List webhooks")
+    @description("Retrieve a list of webhooks.")
     def test_list_webhooks(self, oauth_token_entry, client, pact):
         token = "token"
         api_path = f"id/v2/webhooks/?per_page=25&token={token}"
@@ -439,6 +461,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("List webhooks (invalid token)")
+    @description("Retrieve a list of webhooks with an invalid token.")
     def test_list_webhooks_invalid_token(self, oauth_token_entry, client, pact):
         token = "invalid-token"
         api_path = f"id/v2/webhooks/?per_page=25&token={token}"
@@ -474,6 +498,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Edit webhook")
+    @description("Edit a webhook with a given payload.")
     def test_edit_webhook(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -526,6 +552,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Edit webhook with invalid payload")
+    @description("Edit a webhook with an invalid payload.")
     def test_edit_webhook_invalid_payload(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -572,6 +600,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Delete webhook")
+    @description("Delete a webhook")
     def test_delete_webhook(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -600,6 +630,8 @@ class TestID:
             .will_respond_with(204)
         )
 
+    @title("Delete webhook (not found)")
+    @description("Delete a webhook that does not exist.")
     def test_delete_webhook_not_found(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/"
@@ -632,6 +664,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Rotate webhook signing key")
+    @description("Rotate the webhook signing key.")
     def test_rotate_webhook_signing_key(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/rotate/"
@@ -673,6 +707,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Rotate webhook signing key (not found)")
+    @description("Rotate the signing key of a webhook that does not exist.")
     def test_rotate_webhook_signing_key_not_found(
         self, oauth_token_entry, client, pact
     ):
@@ -706,6 +742,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Test webhook")
+    @description("Test an existing webhook.")
     def test_test_webhook(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/test/"
@@ -751,6 +789,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Test webhook (not found)")
+    @description("Test a webhook that does not exist.")
     def test_test_webhook_not_found(self, oauth_token_entry, client, pact):
         webhook_id = str(uuid4())
         api_path = f"id/v2/webhooks/{webhook_id}/test/"
@@ -784,6 +824,8 @@ class TestID:
             .with_body(id_response_body)
         )
 
+    @title("Get webhook events")
+    @description("Retrieve a list of webhook events.")
     def test_get_webhook_events(self, oauth_token_entry, client, pact):
         api_path = "id/v2/webhooks/events/"
         id_response_body = json.dumps(
