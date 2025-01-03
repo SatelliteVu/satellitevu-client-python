@@ -68,6 +68,7 @@ record_deployment:
 record_release:
 	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
 
+release: deploy record_release
 ## =====================
 ## PactFlow set up tasks
 ## =====================
