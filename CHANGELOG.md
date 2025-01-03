@@ -1,3 +1,9 @@
+## v5.3.2 (2025-01-03)
+
+### Fix
+
+- tag release with version
+
 ## v5.3.1 (2025-01-03)
 
 ### Fix
