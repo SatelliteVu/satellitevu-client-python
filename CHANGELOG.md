@@ -1,3 +1,9 @@
+## v5.3.1 (2025-01-03)
+
+### Fix
+
+- fix Pactflow deployment
+
 ## v5.3.0 (2025-01-03)
 
 ### Feat
