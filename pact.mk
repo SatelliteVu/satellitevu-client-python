@@ -41,7 +41,7 @@ create_qa_environment:
 create_prod_environment:
 	@"${PACT_CLI}" broker create-environment --name qa --production
 
-deploy: deploy_app create_version_tag record_deployment
+deploy: deploy_app record_deployment
 
 no_deploy:
 	@echo "Not deploying as not on main"
@@ -59,11 +59,8 @@ deploy_app:
 	@echo "\n========== STAGE: deploy ==========\n"
 	@echo "Deploying to ${ENVIRONMENT}"
 
-create_version_tag:
-	@"${PACT_CLI}" broker create-version-tag --pacticipant ${PACTICIPANT} --tag ${VERSION_TAG} --version ${GIT_COMMIT}
-
 record_deployment:
-	@"${PACT_CLI}" broker record-deployment --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
+	@"${PACT_CLI}" broker record-deployment --pacticipant ${PACTICIPANT} --version ${VERSION_TAG} --environment ${ENVIRONMENT}
 
 record_release:
 	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${VERSION_TAG} --environment ${ENVIRONMENT}

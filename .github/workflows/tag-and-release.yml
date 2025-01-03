@@ -96,7 +96,7 @@ jobs:
           GIT_BRANCH: ${{ github.ref }}
           GIT_COMMIT: ${{ steps.latest_pact_version.outputs.version_num }}
           ENVIRONMENT: production
-          VERSION_TAG: ${{ needs.tag.outputs.tag }}
+          VERSION_TAG: ${{ env.GIT_TAG }}
         run: make -f pact.mk release
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
