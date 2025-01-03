@@ -1,3 +1,10 @@
+## v5.3.0 (2025-01-03)
+
+### Feat
+
+- add Allure test report integration
+- add Allure test report integration
+
 ## v5.2.1 (2025-01-02)
 
 ### Fix
