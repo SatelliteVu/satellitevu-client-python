@@ -41,7 +41,7 @@ create_qa_environment:
 create_prod_environment:
 	@"${PACT_CLI}" broker create-environment --name qa --production
 
-deploy: deploy_app record_deployment
+deploy: deploy_app create_version_tag record_deployment
 
 no_deploy:
 	@echo "Not deploying as not on main"
@@ -55,17 +55,18 @@ can_i_deploy:
 	  --retry-while-unknown 6 \
 	  --retry-interval 10
 
+create_version_tag:
+	@"${PACT_CLI}" broker create-version-tag --pacticipant ${PACTICIPANT} --tag ${VERSION_TAG} --version ${GIT_COMMIT}
+
 deploy_app:
 	@echo "\n========== STAGE: deploy ==========\n"
 	@echo "Deploying to ${ENVIRONMENT}"
 
 record_deployment:
-	@"${PACT_CLI}" broker record-deployment --pacticipant ${PACTICIPANT} --version ${VERSION_TAG} --environment ${ENVIRONMENT}
+	@"${PACT_CLI}" broker record-deployment --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
 
 record_release:
-	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${VERSION_TAG} --environment ${ENVIRONMENT}
-
-release: deploy record_release
+	@"${PACT_CLI}" broker record-release --pacticipant ${PACTICIPANT} --version ${GIT_COMMIT} --environment ${ENVIRONMENT}
 
 ## =====================
 ## PactFlow set up tasks
