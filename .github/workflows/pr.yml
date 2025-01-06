@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker pull pactfoundation/pact-cli:latest
-      - name: Check compatibility with ID service QA
+      - name: Check compatibility with SatVu APIs
         env:
           ENVIRONMENT: production
         run: make -f pact.mk can_i_deploy

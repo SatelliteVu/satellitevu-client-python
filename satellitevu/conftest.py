@@ -488,9 +488,10 @@ def order_details_response():
 
 
 @fixture
-def otm_request_parameters():
+def otm_request_parameters(withhold="0d"):
     now = datetime.now(timezone.utc)
     return {
+        "addon_withhold": withhold,
         "coordinates": [0, 0],
         "date_from": now,
         "date_to": (now + timedelta(hours=24)),
@@ -527,6 +528,164 @@ def otm_response(otm_request_parameters):
         "id": str(uuid4()),
         "contract_id": str(otm_request_parameters["contract_id"]),
         "links": [],
+    }
+
+
+@fixture
+def withhold(request):
+    return request.param
+
+
+@fixture
+def otm_order_confirmation(otm_request_parameters):
+    return {
+        "type": "Feature",
+        "geometry": {
+            "bbox": [0, 0, 0, 0],
+            "type": "Point",
+            "coordinates": otm_request_parameters["coordinates"],
+        },
+        "properties": {
+            "addon:withhold": otm_request_parameters["addon_withhold"],
+            "product": "standard",
+            "datetime": (
+                f"{otm_request_parameters['date_from']}/"
+                f"{otm_request_parameters['date_to']}"
+            ),
+            "satvu:day_night_mode": "day",
+            "max_cloud_cover": otm_request_parameters["max_cloud_cover"],
+            "min_off_nadir": otm_request_parameters["min_off_nadir"],
+            "max_off_nadir": otm_request_parameters["min_off_nadir"],
+            "min_gsd": 3.5,
+            "max_gsd": 6.8,
+        },
+    }
+
+
+@fixture
+def otm_order_response(otm_request_parameters):
+    return {
+        "type": "Feature",
+        "geometry": {"bbox": [0, 0, 0, 0], "type": "Point", "coordinates": [0, 0]},
+        "properties": {
+            "addon:withhold": "0d",
+            "product": "standard",
+            "datetime": "2023-03-22T12:50:24+01:00/2023-03-23T12:50:24+01:00",
+            "satvu:day_night_mode": "day",
+            "max_cloud_cover": 15,
+            "min_off_nadir": 0,
+            "max_off_nadir": 30,
+            "min_gsd": 3.5,
+            "max_gsd": 6.8,
+            "status": "committed",
+            "created_at": "2019-08-24T14:15:22Z",
+            "updated_at": "2019-08-24T14:15:22Z",
+        },
+        "id": "1ed44bb9-064e-4973-b15a-c5cc460d6677",
+        "links": [
+            {
+                "href": "http://example.com",
+                "rel": "string",
+                "method": "GET",
+                "body": {},
+                "merge": False,
+                "type": "string",
+                "title": "string",
+            }
+        ],
+        "contract_id": otm_request_parameters["contract_id"],
+        "price": {
+            "currency": "GBP",
+            "base": 100000,
+            "addon:withhold": 10000,
+            "total": 110000,
+            "value": 110000,
+        },
+    }
+
+
+@fixture()
+def otm_feasibility_body(otm_request_parameters):
+    return {
+        "bbox": [0, 0, 0, 0],
+        "type": "Feature",
+        "geometry": {"bbox": [0, 0, 0, 0], "type": "Point", "coordinates": [0, 0]},
+        "properties": {
+            "product": "standard",
+            "datetime": "2023-03-22T12:50:24+01:00/2023-03-23T12:50:24+01:00",
+            "satvu:day_night_mode": "day",
+            "max_cloud_cover": 15,
+            "min_off_nadir": 0,
+            "max_off_nadir": 30,
+            "min_gsd": 3.5,
+            "max_gsd": 6.8,
+            "status": "pending",
+            "created_at": "2019-08-24T14:15:22Z",
+            "updated_at": "2019-08-24T14:15:22Z",
+            "price": {"value": 100000, "currency": "GBP"},
+        },
+        "id": "1ed44bb9-064e-4973-b15a-c5cc460d6677",
+        "links": [
+            {
+                "href": "http://example.com",
+                "rel": "string",
+                "method": "GET",
+                "body": {},
+                "merge": False,
+                "type": "string",
+                "title": "string",
+            }
+        ],
+        "contract_id": otm_request_parameters["contract_id"],
+    }
+
+
+@fixture
+def otm_feasibility_response_body(otm_request_parameters):
+    return {
+        "bbox": [0, 0, 0, 0],
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "bbox": [0, 0, 0, 0],
+                "type": "Feature",
+                "geometry": {
+                    "bbox": [0, 0, 0, 0],
+                    "type": "Point",
+                    "coordinates": [0, 0],
+                },
+                "properties": {
+                    "product": "standard",
+                    "datetime": "2023-03-22T12:50:24+01:00/2023-03-23T12:50:24+01:00",
+                    "satvu:day_night_mode": "day",
+                    "max_cloud_cover": 15,
+                    "min_off_nadir": 0,
+                    "max_off_nadir": 30,
+                    "min_gsd": 3.5,
+                    "max_gsd": 6.8,
+                    "created_at": "2019-08-24T14:15:22Z",
+                    "updated_at": "2019-08-24T14:15:22Z",
+                    "price": {"value": 100000, "currency": "GBP"},
+                    "min_sun_el": 0,
+                    "max_sun_el": 0,
+                },
+                "id": "1ed44bb9-064e-4973-b15a-c5cc460d6677",
+            }
+        ],
+        "id": "1ed44bb9-064e-4973-b15a-c5cc460d6677",
+        "links": [
+            {
+                "href": "http://example.com",
+                "rel": "string",
+                "method": "GET",
+                "body": {},
+                "merge": False,
+                "type": "string",
+                "title": "string",
+            }
+        ],
+        "status": "pending",
+        "contract_id": otm_request_parameters["contract_id"],
     }
 
 
@@ -593,5 +752,5 @@ def pact(request) -> Generator[Pact, None, None]:
 @fixture(autouse=True)
 def allure_metadata():
     """Allure labels to be added at runtime"""
-    allure.dynamic.label("layer", "sdk")
+    allure.dynamic.label("layer", "unit")
     allure.dynamic.feature("Python SDK")
