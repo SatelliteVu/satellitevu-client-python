@@ -75,7 +75,7 @@ class TestTasking:
         if product == "assured":
             for key in properties_keys:
                 assert not api_request_body["properties"].get(key)
-        else:
+        elif product == "standard":
             for key in properties_keys:
                 assert (
                     api_request_body["properties"][key] == otm_request_parameters[key]
@@ -117,13 +117,15 @@ class TestTasking:
                 client.otm_v2.post_feasibility(**otm_request_parameters)
 
     @title("Feasibility GET request")
-    @description("Test the GET request for feasibility")
+    @description("Get details about a feasibility request")
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_get_feasibility(
         self,
         oauth_token_entry,
         client,
         otm_request_parameters,
-        otm_response,
+        otm_feasibility_body,
+        pact,
     ):
         feasibility_id = uuid4()
         contract_id = otm_request_parameters["contract_id"]
@@ -133,7 +135,7 @@ class TestTasking:
             "GET",
             client._gateway_url + api_path + str(feasibility_id),
             status=200,
-            body=dumps(otm_response),
+            body=dumps(otm_feasibility_body),
         )
 
         response = client.otm_v2.get_feasibility(
@@ -150,14 +152,27 @@ class TestTasking:
         assert api_request.path == "/" + api_path + f"{feasibility_id}"
         assert api_request.headers["authorization"] == oauth_token_entry
 
+        (
+            pact.upon_receiving("Retrieve details of a feasibility request")
+            .given("the feasibility request exists")
+            .with_request(
+                method="GET",
+                path=f"/{contract_id}/tasking/feasibilities/{feasibility_id}",
+            )
+            .will_respond_with(200)
+            .with_body(otm_feasibility_body)
+        )
+
     @title("Get feasibility response")
     @description("Test the GET request for feasibility response")
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_get_feasibility_response(
         self,
         oauth_token_entry,
         client,
         otm_request_parameters,
-        otm_response,
+        otm_feasibility_response_body,
+        pact,
     ):
         feasibility_id = uuid4()
         contract_id = otm_request_parameters["contract_id"]
@@ -167,7 +182,7 @@ class TestTasking:
             "GET",
             client._gateway_url + api_path + str(feasibility_id) + "/response",
             status=200,
-            body=dumps(otm_response),
+            body=dumps(otm_feasibility_response_body),
         )
 
         response = client.otm_v2.get_feasibility_response(
@@ -183,6 +198,17 @@ class TestTasking:
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
         assert api_request.path == "/" + api_path + f"{feasibility_id}/response"
         assert api_request.headers["authorization"] == oauth_token_entry
+
+        (
+            pact.upon_receiving("Retrieve details of a feasibility request response")
+            .given("the feasibility request exists")
+            .with_request(
+                method="GET",
+                path=f"/{contract_id}/tasking/feasibilities/{feasibility_id}/response",
+            )
+            .will_respond_with(200)
+            .with_body(otm_feasibility_response_body)
+        )
 
     @title("List feasibilities")
     @description("Test the GET request for listing feasibilities")
@@ -229,13 +255,15 @@ class TestTasking:
     @title("Create a tasking order")
     @description("Test the POST request for creating a tasking order")
     @mark.parametrize("product", ("standard", "assured"))
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_post_order(
         self,
         oauth_token_entry,
         client,
         otm_request_parameters,
-        otm_response,
+        otm_order_confirmation,
         product,
+        pact,
     ):
         contract_id = otm_request_parameters["contract_id"]
         api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
@@ -247,7 +275,7 @@ class TestTasking:
         Entry.single_register(
             "POST",
             client._gateway_url + api_path,
-            body=dumps(otm_response),
+            body=dumps(otm_order_confirmation),
             status=201,
         )
 
@@ -264,7 +292,7 @@ class TestTasking:
         assert api_request.headers["authorization"] == oauth_token_entry
 
         api_request_body = loads(api_request.body)
-
+        print(api_request_body)
         properties_keys = ["max_cloud_cover", "min_off_nadir", "max_off_nadir"]
 
         if product == "assured":
@@ -285,6 +313,15 @@ class TestTasking:
             assert (
                 api_request_body["properties"]["datetime"]
                 == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
+            )
+
+            (
+                pact.upon_receiving(f"A tasking order ({product})")
+                .given("contract has credit")
+                .with_request(method="POST", path=f"/{contract_id}/tasking/orders")
+                .with_body(api_request_body)
+                .will_respond_with(201)
+                .with_body(otm_order_confirmation)
             )
 
     @title("Create a tasking order")
@@ -326,13 +363,13 @@ class TestTasking:
         product(
             ("standard", "assured"),
             (
-                None,
                 "0d",
                 "7d",
                 "1y",
             ),
         ),
     )
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_create_order_with_addons(
         self,
         oauth_token_entry,
@@ -340,7 +377,8 @@ class TestTasking:
         otm_request_parameters,
         product,
         withhold,
-        otm_response,
+        otm_order_confirmation,
+        pact,
     ):
         contract_id = otm_request_parameters["contract_id"]
         api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
@@ -353,14 +391,14 @@ class TestTasking:
             Entry.single_register(
                 "POST",
                 client._gateway_url + api_path,
-                body=dumps(otm_response),
+                body=dumps(otm_order_confirmation),
                 status=201,
             )
 
         Entry.single_register(
             "POST",
             client._gateway_url + api_path,
-            body=dumps(otm_response),
+            body=dumps(otm_order_confirmation),
             status=201,
         )
 
@@ -377,12 +415,22 @@ class TestTasking:
         assert api_request.headers["authorization"] == oauth_token_entry
 
         api_request_body = loads(api_request.body)
+
         assert api_request_body["properties"]["product"] == product
 
         if withhold:
             assert api_request_body["properties"]["addon:withhold"] == withhold
         else:
             assert "addon:withhold" not in api_request_body["properties"].keys()
+
+        (
+            pact.upon_receiving(f"A tasking order with addons ({product})")
+            .given("contract has credit")
+            .with_request(method="POST", path=f"/{contract_id}/tasking/orders")
+            .with_body(api_request_body)
+            .will_respond_with(201)
+            .with_body(otm_order_confirmation)
+        )
 
     @title("Create a tasking order without signature")
     @description(
@@ -444,12 +492,14 @@ class TestTasking:
 
     @title("Get tasking order")
     @description("Retrieve a specific tasking order")
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_get_tasking_order(
         self,
         oauth_token_entry,
         client,
         otm_request_parameters,
-        otm_response,
+        otm_order_response,
+        pact,
     ):
         order_id = uuid4()
         contract_id = otm_request_parameters["contract_id"]
@@ -459,7 +509,7 @@ class TestTasking:
             "GET",
             client._gateway_url + api_path + str(order_id),
             status=200,
-            body=dumps(otm_response),
+            body=dumps(otm_order_response),
         )
 
         response = client.otm_v2.get_order(contract_id=contract_id, order_id=order_id)
@@ -474,11 +524,22 @@ class TestTasking:
         assert api_request.path == "/" + api_path + f"{order_id}"
         assert api_request.headers["authorization"] == oauth_token_entry
 
+        (
+            pact.upon_receiving("Retrieve details of a tasking order")
+            .given("the order exists")
+            .with_request(
+                method="GET", path=f"/{contract_id}/tasking/orders/{order_id}"
+            )
+            .will_respond_with(200)
+            .with_body(otm_order_response)
+        )
+
     @title("Cancel tasking order")
     @description("Cancel a specific tasking order")
     @mark.parametrize("status_code", (204, 404, 409))
+    @mark.parametrize("pact", ["otm"], indirect=True)
     def test_cancel_tasking_order(
-        self, oauth_token_entry, client, otm_request_parameters, status_code
+        self, oauth_token_entry, client, otm_request_parameters, status_code, pact
     ):
         order_id = uuid4()
         contract_id = otm_request_parameters["contract_id"]
@@ -507,14 +568,19 @@ class TestTasking:
         assert api_request.path == "/" + api_path + f"{order_id}" + "/cancel"
         assert api_request.headers["authorization"] == oauth_token_entry
 
+        (
+            pact.upon_receiving("Cancel a tasking order")
+            .given("the order exists")
+            .with_request(
+                method="POST", path=f"/{contract_id}/tasking/orders/{order_id}/cancel"
+            )
+            .will_respond_with(204)
+        )
+
     @title("Search for tasking orders")
     @description("Search for tasking orders")
     def test_post_search(
-        self,
-        oauth_token_entry,
-        client,
-        otm_request_parameters,
-        search_response,
+        self, oauth_token_entry, client, otm_request_parameters, search_response
     ):
         contract_id = otm_request_parameters["contract_id"]
         api_path = "otm/v2/contract-id/search/".replace("contract-id", str(contract_id))

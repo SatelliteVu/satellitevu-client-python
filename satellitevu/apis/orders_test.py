@@ -20,6 +20,9 @@ API_PATH = "orders/v2/contract-id/"
 @mark.usefixtures("mocketize_fixture")
 @story("Orders")
 class TestOrders:
+    @title("Submit order (single item)")
+    @description("Submit an order for a single item")
+    @mark.parametrize("pact", ["cos"], indirect=True)
     @mark.parametrize(
         "item_ids",
         (
@@ -27,9 +30,7 @@ class TestOrders:
             ("20220923T222227000_basic_0_TABI"),
         ),
     )
-    @title("Submit order (single item)")
-    @description("Submit an order for a single item")
-    def test_submit_single_item(self, client, oauth_token_entry, item_ids):
+    def test_submit_single_item(self, client, oauth_token_entry, item_ids, pact):
         payload = dumps({"item_id": [item_ids]})
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
@@ -54,7 +55,70 @@ class TestOrders:
         assert api_request.body == payload
 
         assert response.status == 201
+        cos_response_body = dumps(
+            {
+                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        "geometry": {"type": "Point", "coordinates": [0, 0]},
+                        "properties": {
+                            "item_id": "20220923T222227000_basic_0_TABI",
+                            "order_id": "1cfdc8cc-968d-406c-bada-d45c55a26857",
+                            "created_at": "2019-08-24T14:15:22Z",
+                            "stac_metadata": {
+                                "id": "string",
+                                "collection": "string",
+                                "assets": {
+                                    "property1": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                    "property2": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                },
+                                "bbox": [0, 0, 0, 0],
+                                "properties": {
+                                    "eo:cloud_cover": 0,
+                                    "datetime": "2019-08-24T14:15:22Z",
+                                    "gsd": 0,
+                                    "platform": "string",
+                                    "view:azimuth": 0,
+                                    "view:off_nadir": 0,
+                                    "view:sun_azimuth": 0,
+                                    "view:sun_elevation": 0,
+                                },
+                            },
+                            "price": {"value": 100000, "currency": "GBP"},
+                        },
+                    }
+                ],
+                "owned_by": "John Doe",
+                "created_at": "2019-08-24T14:15:22Z",
+                "updated_at": "2019-08-24T14:15:22Z",
+                "contract_id": "9aafc1a8-e497-46c9-ba0b-bd5b03c353e4",
+                "price": {"value": 100000, "currency": "GBP"},
+            }
+        )
 
+        (
+            pact.upon_receiving("An order for a single item")
+            .given("contract has credit")
+            .with_request(method="POST", path=f"/{contract_id}/")
+            .with_body(payload)
+            .will_respond_with(201)
+            .with_body(cos_response_body)
+        )
+
+    @title("Submit order (multiple items)")
+    @description("Submit an order for a single item")
+    @mark.parametrize("pact", ["cos"], indirect=True)
     @mark.parametrize(
         "item_ids",
         (
@@ -62,14 +126,7 @@ class TestOrders:
             (["20220923T222227000_basic_0_TABI"]),
         ),
     )
-    @title("Submit order (multiple items)")
-    @description("Submit an order for multiple items")
-    def test_submit_multiple_items(
-        self,
-        client,
-        oauth_token_entry,
-        item_ids,
-    ):
+    def test_submit_multiple_items(self, client, oauth_token_entry, item_ids, pact):
         payload = dumps({"item_id": item_ids})
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
@@ -95,16 +152,148 @@ class TestOrders:
 
         assert response.status == 201
 
+        cos_response_body = dumps(
+            {
+                "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        "geometry": {"type": "Point", "coordinates": [0, 0]},
+                        "properties": {
+                            "item_id": "20221005T214049000_basic_0_TABI",
+                            "order_id": "1cfdc8cc-968d-406c-bada-d45c55a26857",
+                            "created_at": "2019-08-24T14:15:22Z",
+                            "stac_metadata": {
+                                "id": "string",
+                                "collection": "string",
+                                "assets": {
+                                    "property1": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                    "property2": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                },
+                                "bbox": [0, 0, 0, 0],
+                                "properties": {
+                                    "eo:cloud_cover": 0,
+                                    "datetime": "2019-08-24T14:15:22Z",
+                                    "gsd": 0,
+                                    "platform": "string",
+                                    "view:azimuth": 0,
+                                    "view:off_nadir": 0,
+                                    "view:sun_azimuth": 0,
+                                    "view:sun_elevation": 0,
+                                },
+                            },
+                            "price": {"value": 100000, "currency": "GBP"},
+                        },
+                    },
+                    {
+                        "type": "Feature",
+                        "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        "geometry": {"type": "Point", "coordinates": [0, 0]},
+                        "properties": {
+                            "item_id": "20220923T222227000_basic_0_TABI",
+                            "order_id": "1cfdc8cc-968d-406c-bada-d45c55a26857",
+                            "created_at": "2019-08-24T14:15:22Z",
+                            "stac_metadata": {
+                                "id": "string",
+                                "collection": "string",
+                                "assets": {
+                                    "property1": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                    "property2": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                },
+                                "bbox": [0, 0, 0, 0],
+                                "properties": {
+                                    "eo:cloud_cover": 0,
+                                    "datetime": "2019-08-24T14:15:22Z",
+                                    "gsd": 0,
+                                    "platform": "string",
+                                    "view:azimuth": 0,
+                                    "view:off_nadir": 0,
+                                    "view:sun_azimuth": 0,
+                                    "view:sun_elevation": 0,
+                                },
+                            },
+                            "price": {"value": 100000, "currency": "GBP"},
+                        },
+                    },
+                    {
+                        "type": "Feature",
+                        "id": "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+                        "geometry": {"type": "Point", "coordinates": [0, 0]},
+                        "properties": {
+                            "item_id": "20220923T222227000_basic_0_TABI",
+                            "order_id": "1cfdc8cc-968d-406c-bada-d45c55a26857",
+                            "created_at": "2019-08-24T14:15:22Z",
+                            "stac_metadata": {
+                                "id": "string",
+                                "collection": "string",
+                                "assets": {
+                                    "property1": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                    "property2": {
+                                        "href": "http://example.com",
+                                        "type": "string",
+                                        "roles": ["string"],
+                                    },
+                                },
+                                "bbox": [0, 0, 0, 0],
+                                "properties": {
+                                    "eo:cloud_cover": 0,
+                                    "datetime": "2019-08-24T14:15:22Z",
+                                    "gsd": 0,
+                                    "platform": "string",
+                                    "view:azimuth": 0,
+                                    "view:off_nadir": 0,
+                                    "view:sun_azimuth": 0,
+                                    "view:sun_elevation": 0,
+                                },
+                            },
+                            "price": {"value": 100000, "currency": "GBP"},
+                        },
+                    },
+                ],
+                "owned_by": "John Doe",
+                "created_at": "2019-08-24T14:15:22Z",
+                "updated_at": "2019-08-24T14:15:22Z",
+                "contract_id": "9aafc1a8-e497-46c9-ba0b-bd5b03c353e4",
+                "price": {"value": 100000, "currency": "GBP"},
+            }
+        )
+
+        (
+            pact.upon_receiving("An order for multiple items")
+            .given("contract has credit")
+            .with_request(method="POST", path=f"/{contract_id}/")
+            .with_body(payload)
+            .will_respond_with(201)
+            .with_body(cos_response_body)
+        )
+
     @title("Get order download URL")
     @description("Download order URL")
-    def test_item_download_url(
-        self,
-        client,
-        oauth_token_entry,
-        redirect_response,
-    ):
-        order_id = "uuid"
-        item_id = "image"
+    def test_item_download_url(self, client, oauth_token_entry, redirect_response):
+        order_id = str(uuid4())
+        item_id = "20221005T214049000_basic_0_TABI"
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
 
@@ -124,12 +313,17 @@ class TestOrders:
         assert len(requests) == 2
         api_request = requests[-1]
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
-        assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
+        assert (
+            api_request.path
+            == f"/{api_path}{order_id}/{item_id}/download?redirect=False"
+        )
         assert api_request.headers["authorization"] == oauth_token_entry
 
         assert isinstance(response, dict)
         assert response["url"] == "https://image.test"
 
+    @title("Download an order (unauthorized")
+    @description("Attempt to download an order without authorization")
     @mark.parametrize(
         ["status", "exception"],
         (
@@ -137,18 +331,11 @@ class TestOrders:
             (403, Api403Error),
         ),
     )
-    @title("Download an order (unauthorized")
-    @description("Attempt to download an order without authorization")
     def test_no_access_to_download_if_unauthorized(
-        self,
-        client,
-        oauth_token_entry,
-        status,
-        exception,
-        redirect_response,
+        self, client, oauth_token_entry, status, exception, redirect_response
     ):
-        order_id = "uuid"
-        item_id = "image"
+        order_id = str(uuid4())
+        item_id = "20231110T173102000_visual_30_hotsat"
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
 
@@ -170,19 +357,20 @@ class TestOrders:
         assert len(requests) == 2
         api_request = requests[-1]
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
-        assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
+        assert (
+            api_request.path
+            == f"/{api_path}{order_id}/{item_id}/download?redirect=False"
+        )
         assert api_request.headers["authorization"] == oauth_token_entry
 
     @title("Download order item")
     @description("Download an order")
+    @mark.parametrize("pact", ["cos"], indirect=True)
     def test_download_order_item(
-        self,
-        client,
-        oauth_token_entry,
-        redirect_response,
+        self, client, oauth_token_entry, redirect_response, pact
     ):
-        order_id = "uuid"
-        item_id = "image"
+        order_id = str(uuid4())
+        item_id = "20231110T173102000_visual_30_hotsat"
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
         download_dir = "downloads"
@@ -212,7 +400,10 @@ class TestOrders:
 
         api_request = requests[2]
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
-        assert api_request.path == f"/{api_path}uuid/image/download?redirect=False"
+        assert (
+            api_request.path
+            == f"/{api_path}{order_id}/{item_id}/download?redirect=False"
+        )
         assert api_request.headers["authorization"] == oauth_token_entry
 
         mock_file_dl.assert_called_once()
@@ -221,26 +412,35 @@ class TestOrders:
 
         Mocket.assert_fail_if_entries_not_served()
 
+        (
+            pact.upon_receiving("A Request to download an order item")
+            .given("contract has credit")
+            .with_request(
+                method="GET", path=f"/{contract_id}/{order_id}/{item_id}/download"
+            )
+            .with_query_parameter("redirect", "false")
+            .will_respond_with(200)
+            .with_body(redirect_response)
+        )
+
     @title("Get order details")
     @description("Get the details of an existing order")
+    @mark.parametrize("pact", ["cos"], indirect=True)
     def test_get_order_details(
-        self,
-        client,
-        oauth_token_entry,
-        order_details_response,
+        self, client, oauth_token_entry, order_details_response, pact
     ):
-        fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
         contract_id = str(uuid4())
+        order_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
 
         Entry.single_register(
             "GET",
-            client._gateway_url + f"{api_path}{fake_uuid}",
+            client._gateway_url + f"{api_path}{order_id}",
             body=dumps(order_details_response),
         )
 
         response = client.orders_v2.get_order_details(
-            contract_id=contract_id, order_id=fake_uuid
+            contract_id=contract_id, order_id=order_id
         )
 
         requests = Mocket.request_list()
@@ -248,26 +448,30 @@ class TestOrders:
 
         api_request = requests[-1]
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
-        assert api_request.path == f"/{api_path}{fake_uuid}"
+        assert api_request.path == f"/{api_path}{order_id}"
         assert api_request.headers["authorization"] == oauth_token_entry
 
         assert isinstance(response, dict)
 
+        (
+            pact.upon_receiving("Details for an existing order")
+            .given("order exists")
+            .with_request(method="GET", path=f"/{contract_id}/{order_id}/")
+            .will_respond_with(200)
+            .with_body(order_details_response)
+        )
+
     @title("Get orders")
     @description("Get a list of orders")
-    def test_get_orders(
-        self,
-        client,
-        oauth_token_entry,
-        order_details_response,
-    ):
+    @mark.parametrize("pact", ["cos"], indirect=True)
+    def test_get_orders(self, client, oauth_token_entry, order_list_response, pact):
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
 
         Entry.single_register(
             "GET",
             client._gateway_url + api_path,
-            body=dumps(order_details_response),
+            body=dumps(order_list_response),
         )
 
         response = client.orders_v2.get_orders(contract_id=contract_id)
@@ -282,6 +486,16 @@ class TestOrders:
 
         assert isinstance(response, dict)
 
+        (
+            pact.upon_receiving("Get list of orders")
+            .given("order exists")
+            .with_request(method="GET", path=f"/{contract_id}/")
+            .will_respond_with(200)
+            .with_body(order_list_response)
+        )
+
+    @title("Get order details (unauthorized)")
+    @description("Attempt to get order details without authorization")
     @mark.parametrize(
         ["status", "exception"],
         (
@@ -289,31 +503,24 @@ class TestOrders:
             (403, Api403Error),
         ),
     )
-    @title("Get order details (unauthorized)")
-    @description("Attempt to get order details without authorization")
     def test_cannot_get_order_details_if_unauthorized(
-        self,
-        client,
-        oauth_token_entry,
-        status,
-        exception,
-        order_details_response,
+        self, client, oauth_token_entry, status, exception, order_details_response
     ):
         contract_id = str(uuid4())
         api_path = API_PATH.replace("contract-id", str(contract_id))
 
-        fake_uuid = "528b0f77-5df1-4ed7-9224-502817170613"
+        order_id = str(uuid4())
 
         Entry.single_register(
             "GET",
-            client._gateway_url + f"{api_path}{fake_uuid}",
+            client._gateway_url + f"{api_path}{order_id}",
             body=dumps(order_details_response),
             status=status,
         )
 
         with pytest.raises(exception):
             client.orders_v2.get_order_details(
-                contract_id=contract_id, order_id=fake_uuid
+                contract_id=contract_id, order_id=order_id
             )
 
         requests = Mocket.request_list()
@@ -321,7 +528,7 @@ class TestOrders:
 
         api_request = requests[-1]
         assert api_request.headers["host"] == urlparse(client._gateway_url).hostname
-        assert api_request.path == f"/{api_path}{fake_uuid}"
+        assert api_request.path == f"/{api_path}{order_id}"
         assert api_request.headers["authorization"] == oauth_token_entry
 
     @title("Download order")
