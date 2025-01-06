@@ -1,3 +1,10 @@
+## v5.4.0 (2025-01-06)
+
+### Feat
+
+- add catalog API compatibility tests
+- add catalog API compatibility tests
+
 ## v5.3.3 (2025-01-03)
 
 ### Fix
