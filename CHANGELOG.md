@@ -1,3 +1,9 @@
+## v5.5.0 (2025-01-08)
+
+### Feat
+
+- add catalog API, OTM compatibility tests
+
 ## v5.4.0 (2025-01-06)
 
 ### Feat
