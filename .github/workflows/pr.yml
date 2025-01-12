@@ -5,7 +5,7 @@ on:
       - main
 
 env:
-  PACT_BROKER_BASE_URL: ${{ vars.PACT_BROKER_BASE_URL }}
+  PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
   PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
   GIT_COMMIT: ${{ github.sha }}
   GIT_BRANCH: ${{ github.head_ref }}
@@ -79,12 +79,17 @@ jobs:
           echo ALLURE_LAUNCH_ID=$ALLURE_LAUNCH_ID >> $GITHUB_ENV
 
   can-i-deploy:
+    name: Check compatibility with SatVu APIs
     runs-on: ubuntu-latest
     needs: test
     steps:
       - uses: actions/checkout@v4
       - run: docker pull pactfoundation/pact-cli:latest
-      - name: Check compatibility with SatVu APIs
+      - name: Check compatibility with SatVu qa APIs
+        env:
+          ENVIRONMENT: qa
+        run: make -f pact.mk can_i_deploy
+      - name: Check compatibility with production SatVu APIs
         env:
           ENVIRONMENT: production
         run: make -f pact.mk can_i_deploy
