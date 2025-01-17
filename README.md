@@ -15,15 +15,15 @@ The package is published to [PyPi][pypi] and can be installed with pip:
 ```
 pip install satellitevu
 ```
-
-Currently Python 3.8, 3.10 and 3.11 are supported.
+Currently, versions of Python >=3.9 and above are supported.
 
 ## Usage
 
 A User API Client credential set consisting of an _client id_ and _client secret_ is
 needed and should be set in your script's environment variables.
 
-Check out the [examples][examples] provided. They can for example be run locally with
+Check out the [full API and SDK documentation][api-docs] and the [examples][examples] provided.
+The examples can for example be run locally with
 
 ```
 poetry run python ./examples/catalog.py --example=recent
@@ -101,6 +101,7 @@ underlying implementation, but will provide a default instance if not.
 [pipx]: https://pypa.github.io/pipx/
 [nox]: https://nox.thea.codes/en/stable/
 [nox-poetry]: https://nox-poetry.readthedocs.io/en/stable/
+[api-docs]: https://docs.satellitevu.com/
 [search-api-docs]: https://api.satellitevu.com/catalog/v2/docs#operation/Search_search_post
 [pypi]: https://pypi.org/project/satellitevu/
 [examples]: https://github.com/SatelliteVu/satellitevu-client-python/tree/main/examples
