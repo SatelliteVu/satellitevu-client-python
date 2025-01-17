@@ -91,6 +91,8 @@ jobs:
       - release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
       - name: Mark release in Pactflow  🚀
         env:
           ENVIRONMENT: production
