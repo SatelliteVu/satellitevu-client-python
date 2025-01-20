@@ -25,7 +25,22 @@ class TestID:
                 "user_id": "string",
                 "name": "string",
                 "email": "string",
-                "user_metadata": {},
+                "user_metadata": {
+                    "client_id": "string",
+                    "notifications": [
+                        {
+                            "category": "tasking",
+                            "settings": [
+                                {
+                                    "topic": "tasking:order_status",
+                                    "name": "string",
+                                    "description": "string",
+                                    "email": False,
+                                }
+                            ],
+                        }
+                    ],
+                },
                 "last_login": "string",
             }
         )
@@ -100,14 +115,34 @@ class TestID:
                 "user_id": "string",
                 "name": "string",
                 "email": "string",
-                "user_metadata": {},
+                "user_metadata": {
+                    "client_id": "string",
+                    "notifications": [
+                        {
+                            "category": "tasking",
+                            "settings": [
+                                {
+                                    "topic": "tasking:order_status",
+                                    "name": "string",
+                                    "description": "string",
+                                    "email": False,
+                                }
+                            ],
+                        }
+                    ],
+                },
                 "last_login": "string",
             }
         )
         Entry.single_register(
             "PUT", client._gateway_url + api_path, status=200, body=id_response_body
         )
-        notifications = {"tasking": {"order_status": {"email": True}}}
+        notifications = [
+            {
+                "category": "tasking",
+                "settings": [{"email": False, "topic": "tasking:order_status"}],
+            }
+        ]
 
         response = client.id_v2.edit_user_settings(notifications)
         assert isinstance(response, dict)
@@ -124,18 +159,7 @@ class TestID:
             pact.upon_receiving("Request to edit the user settings")
             .given("user exists")
             .with_request(method="PUT", path="/user/settings")
-            .with_body(
-                {
-                    "notifications": [
-                        {
-                            "category": "tasking",
-                            "settings": [
-                                {"email": False, "topic": "tasking:order_status"}
-                            ],
-                        }
-                    ]
-                }
-            )
+            .with_body(api_request.body)
             .will_respond_with(200)
             .with_body(id_response_body)
         )
@@ -179,18 +203,7 @@ class TestID:
             pact.upon_receiving("Invalid request to edit the user settings")
             .given("user exists")
             .with_request(method="PUT", path="/user/settings")
-            .with_body(
-                {
-                    "notifications": [
-                        {
-                            "category": "tasking",
-                            "settings": [
-                                {"email": "False", "topic": "tasking:order_status"}
-                            ],
-                        }
-                    ]
-                }
-            )
+            .with_body(api_request.body)
             .will_respond_with(422)
             .with_body(id_response_body)
         )
@@ -275,13 +288,7 @@ class TestID:
             pact.upon_receiving("Create a webhook")
             .given("user exists")
             .with_request(method="POST", path="/webhooks")
-            .with_body(
-                {
-                    "event_types": ["tasking:order_status"],
-                    "name": "My Webhook 2",
-                    "url": "https://my-webhook-url-2.com",
-                }
-            )
+            .with_body(api_request.body)
             .will_respond_with(200)
             .with_body(id_response_body)
         )
@@ -339,8 +346,6 @@ class TestID:
                 "active": True,
                 "event_types": [
                     {
-                        # "description": "Receive notifications for all tasking order updates", this isn't in the response at the moment.
-                        # "name": "Tasking order status updates", neither is this one.
                         "topic": "tasking:order_status",
                     }
                 ],
@@ -539,15 +544,7 @@ class TestID:
             pact.upon_receiving("Edit webhook")
             .given("webhook exists")
             .with_request(method="PATCH", path=f"/webhooks/{webhook_id}")
-            .with_body(
-                json.dumps(
-                    {
-                        "active": True,
-                        "event_types": ["tasking:order_status"],
-                        "name": "My Webhook",
-                    }
-                )
-            )
+            .with_body(api_request.body)
             .will_respond_with(200)
             .with_body(id_response_body)
         )
