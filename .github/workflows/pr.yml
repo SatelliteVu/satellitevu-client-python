@@ -90,6 +90,7 @@ jobs:
           ENVIRONMENT: qa
         run: make -f pact.mk can_i_deploy
       - name: Check compatibility with SatVu APIs on production env
+        if: always()
         env:
           ENVIRONMENT: production
         run: make -f pact.mk can_i_deploy
