@@ -1,3 +1,9 @@
+## v5.7.0 (2025-01-21)
+
+### Feat
+
+- ID update tests to support updated ID Service responses
+
 ## v5.6.0 (2025-01-17)
 
 ### Feat
