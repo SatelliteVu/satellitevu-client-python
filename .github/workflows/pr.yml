@@ -94,7 +94,7 @@ jobs:
           echo "previous_revision=$PREVIOUS_REVISION" >> $GITHUB_OUTPUT
           echo "revision=$REVISION" >> $GITHUB_OUTPUT
       - name: Publish pact
-        if: steps.test.outputs.previous_revision != steps.test.outputs.revision
+        if: ${{ steps.test.outputs.previous_revision != steps.test.outputs.revision }}
         run: make -f pact.mk publish_pacts
       - name: get allure_run_id
         if: always()
