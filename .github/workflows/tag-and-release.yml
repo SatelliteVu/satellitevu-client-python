@@ -24,7 +24,6 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           ref: ${{ github.event.repository.default_branch }}
-          # `fetch-depth` > 0 is required to have `ref` have an effect
           fetch-depth: 999
           fetch-tags: true
       - id: bump
@@ -88,16 +87,27 @@ jobs:
   record_release_pact:
     name: Record release in pactflow
     needs:
+      - tag
       - release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR branch
-        uses: actions/checkout@v4
+      - id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.PUBLIC_RELEASE_MANAGER_ID }}
+          private-key: ${{ secrets.PUBLIC_RELEASE_MANAGER_SECRET }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.event.repository.default_branch }}
+          # `fetch-depth` > 0 is required to have `ref` have an effect
+          fetch-depth: 999
+          fetch-tags: true
       - name: Mark release in Pactflow  🚀
         env:
           ENVIRONMENT: production
           GH_TOKEN: ${{ github.token }}
-          GIT_BRANCH: ${{ github.ref_name }}
+          GIT_BRANCH: ${{ github.event.repository.default_branch }}
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
           VERSION: ${{ needs.tag.outputs.version }}
