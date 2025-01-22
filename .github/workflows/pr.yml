@@ -31,6 +31,9 @@ jobs:
         run: nox --session=lint
 
   test:
+    outputs:
+      previous_revision: ${{ steps.app.outputs.previous_revision }}
+      revision: ${{ steps.app.outputs.revision }}
     env:
       ALLURE_RESULTS: allure-results
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
@@ -74,8 +77,13 @@ jobs:
         uses: commitizen-tools/commitizen-action@master
         with:
           github_token: ${{ github.token }}
+      - name: get app revision
+        id: app
+        run: |
+          echo "previous_revision=$PREVIOUS_REVISION" >> $GITHUB_OUTPUT
+          echo "revision=$REVISION" >> $GITHUB_OUTPUT
       - name: Publish pact
-        if: ${{ env.PREVIOUS_REVISION != env.REVISION }}
+        if: steps.test.outputs.previous_revision != steps.test.outputs.revision
         run: make -f pact.mk publish_pacts
       - name: get allure_run_id
         if: always()
@@ -84,10 +92,10 @@ jobs:
           echo ALLURE_LAUNCH_ID=$ALLURE_LAUNCH_ID >> $GITHUB_ENV
 
   can-i-deploy:
-    if: ${{ env.PREVIOUS_REVISION != env.REVISION }}
     name: Check compatibility with SatVu APIs
     runs-on: ubuntu-latest
     needs: test
+    if: test.outputs.previous_revision != test.outputs.revision
     steps:
       - uses: actions/checkout@v4
       - run: docker pull pactfoundation/pact-cli:latest
