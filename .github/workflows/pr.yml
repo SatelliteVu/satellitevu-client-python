@@ -70,10 +70,9 @@ jobs:
         run: allurectl watch -- nox --session=tests
       - name: Build package wheel
         run: poetry build
-      - name: commitizen debug
+      - name: Check commit eligibility
         uses: commitizen-tools/commitizen-action@master
         with:
-          dry_run: true
           github_token: ${{ github.token }}
       - name: Publish pact
         if: ${{ env.PREVIOUS_REVISION != env.REVISION }}
