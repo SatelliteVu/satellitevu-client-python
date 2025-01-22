@@ -40,6 +40,11 @@ jobs:
     name: Test Code
     runs-on: ubuntu-20.04
     steps:
+      - id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.PUBLIC_RELEASE_MANAGER_ID }}
+          private-key: ${{ secrets.PUBLIC_RELEASE_MANAGER_SECRET }}
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
