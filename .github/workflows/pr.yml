@@ -70,7 +70,13 @@ jobs:
         run: allurectl watch -- nox --session=tests
       - name: Build package wheel
         run: poetry build
+      - name: commitizen debug
+        uses: commitizen-tools/commitizen-action@master
+        with:
+          dry_run: true
+          github_token: ${{ github.token }}
       - name: Publish pact
+        if: ${{ env.PREVIOUS_REVISION != env.REVISION }}
         run: make -f pact.mk publish_pacts
       - name: get allure_run_id
         if: always()
@@ -82,6 +88,12 @@ jobs:
     name: Check compatibility with SatVu APIs
     runs-on: ubuntu-latest
     needs: test
+    if: >
+      github.event_name == 'pull_request' &&
+      !startsWith(github.event.pull_request.title || '', 'ci:') &&
+      !startsWith(github.event.pull_request.title || '', 'ci(release)') &&
+      !startsWith(github.event.pull_request.title || '', '(ci)') &&
+      !startsWith(github.event.pull_request.title || '', 'fix(ci)')
     steps:
       - uses: actions/checkout@v4
       - run: docker pull pactfoundation/pact-cli:latest
