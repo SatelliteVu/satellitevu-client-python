@@ -71,18 +71,7 @@ class TestOrders:
                             "stac_metadata": {
                                 "id": "string",
                                 "collection": "string",
-                                "assets": {
-                                    "property1": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                    "property2": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                },
+                                "assets": {},
                                 "bbox": [0, 0, 0, 0],
                                 "properties": {
                                     "eo:cloud_cover": 0,
@@ -168,18 +157,7 @@ class TestOrders:
                             "stac_metadata": {
                                 "id": "string",
                                 "collection": "string",
-                                "assets": {
-                                    "property1": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                    "property2": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                },
+                                "assets": {},
                                 "bbox": [0, 0, 0, 0],
                                 "properties": {
                                     "eo:cloud_cover": 0,
@@ -206,18 +184,7 @@ class TestOrders:
                             "stac_metadata": {
                                 "id": "string",
                                 "collection": "string",
-                                "assets": {
-                                    "property1": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                    "property2": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                },
+                                "assets": {},
                                 "bbox": [0, 0, 0, 0],
                                 "properties": {
                                     "eo:cloud_cover": 0,
@@ -244,18 +211,7 @@ class TestOrders:
                             "stac_metadata": {
                                 "id": "string",
                                 "collection": "string",
-                                "assets": {
-                                    "property1": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                    "property2": {
-                                        "href": "http://example.com",
-                                        "type": "string",
-                                        "roles": ["string"],
-                                    },
-                                },
+                                "assets": {},
                                 "bbox": [0, 0, 0, 0],
                                 "properties": {
                                     "eo:cloud_cover": 0,

@@ -2,14 +2,17 @@
 name = "satellitevu"
 version = "5.7.0"
 description = "Client SDK for SatelliteVu's platform APIs"
-authors = ["Christian Wygoda <christian.wygoda@satellitevu.com>", "Zhelini Sivanesan <zhelini.sivanesan@satellitevu.com>", "James Harrison <james.harrison@satellitevu.com>"]
+authors = [
+    "Christian Wygoda <christian.wygoda@satellitevu.com>",
+    "Zhelini Sivanesan <zhelini.sivanesan@satellitevu.com>",
+    "James Harrison <james.harrison@satellitevu.com>",
+]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 appdirs = "^1.4.4"
-allure-pytest = "^2.13.5"
 
 [tool.poetry.group.dev.dependencies]
 allure-pytest = "^2.13.5"
@@ -58,13 +61,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.fawltydeps]
-ignore_unused = [
-    "fawltydeps",
-    "nox",
-    "pytest-cov",
-    "ruff",
-    "pact-python",
-]
+ignore_unused = ["fawltydeps", "nox", "pytest-cov", "ruff", "pact-python"]
 
 [tool.fawltydeps.custom_mapping]
 allure-pytest = ["allure"]
