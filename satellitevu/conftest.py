@@ -178,13 +178,7 @@ def order_list_response():
                             "stac_metadata": {
                                 "id": "20231208T115432000_visual_30_hotsat1",
                                 "collection": "visual",
-                                "assets": {
-                                    "thumbnail": {
-                                        "href": "https://images.test.satvu.com/stac-ingestion/hotsat1/20231208T115432000_visual_30_hotsat1_thumbnail.png",
-                                        "type": "image/png",
-                                        "roles": ["thumbnail"],
-                                    }
-                                },
+                                "assets": {},
                                 "bbox": [
                                     23.323807253417414,
                                     29.586046830070046,
@@ -229,13 +223,7 @@ def order_list_response():
                             "stac_metadata": {
                                 "id": "20231208T120814000_visual_30_hotsat1",
                                 "collection": "visual",
-                                "assets": {
-                                    "thumbnail": {
-                                        "href": "https://images.test.satvu.com/stac-ingestion/hotsat1/20231208T120814000_visual_30_hotsat1_thumbnail.png",
-                                        "type": "image/png",
-                                        "roles": ["thumbnail"],
-                                    }
-                                },
+                                "assets": {},
                                 "bbox": [
                                     17.038442295262946,
                                     -22.53553050270601,
@@ -290,13 +278,7 @@ def order_list_response():
                             "stac_metadata": {
                                 "id": "20231208T102026000_visual_30_hotsat1",
                                 "collection": "visual",
-                                "assets": {
-                                    "thumbnail": {
-                                        "href": "https://images.test.satvu.com/stac-ingestion/hotsat1/20231208T102026000_visual_30_hotsat1_thumbnail.png",
-                                        "type": "image/png",
-                                        "roles": ["thumbnail"],
-                                    }
-                                },
+                                "assets": {},
                                 "bbox": [
                                     51.286698951221425,
                                     25.09593322503868,
@@ -341,13 +323,7 @@ def order_list_response():
                             "stac_metadata": {
                                 "id": "20231208T115018000_visual_30_hotsat1",
                                 "collection": "visual",
-                                "assets": {
-                                    "thumbnail": {
-                                        "href": "https://images.test.satvu.com/20231208T115018000_visual_30_hotsat1_thumbnail.png",
-                                        "type": "image/png",
-                                        "roles": ["thumbnail"],
-                                    }
-                                },
+                                "assets": {},
                                 "bbox": [
                                     33.47715177281742,
                                     44.588782508565636,
@@ -390,13 +366,7 @@ def order_list_response():
                             "stac_metadata": {
                                 "id": "20231208T115432000_visual_30_hotsat1",
                                 "collection": "visual",
-                                "assets": {
-                                    "thumbnail": {
-                                        "href": "https://images.test.satvu.com/stac-ingestion/hotsat1/20231208T115432000_visual_30_hotsat1_thumbnail.png",
-                                        "type": "image/png",
-                                        "roles": ["thumbnail"],
-                                    }
-                                },
+                                "assets": {},
                                 "bbox": [
                                     23.323807253417414,
                                     29.586046830070046,
@@ -451,18 +421,7 @@ def order_details_response():
                     "stac_metadata": {
                         "id": "string",
                         "collection": "string",
-                        "assets": {
-                            "property1": {
-                                "href": "http://example.com",
-                                "type": "string",
-                                "roles": ["string"],
-                            },
-                            "property2": {
-                                "href": "http://example.com",
-                                "type": "string",
-                                "roles": ["string"],
-                            },
-                        },
+                        "assets": {},
                         "bbox": [0, 0, 0, 0],
                         "properties": {
                             "eo:cloud_cover": 0,
