@@ -1,3 +1,10 @@
+## v5.8.1 (2025-03-07)
+
+### Fix
+
+- add in multiple status for the while loop
+- add min/max off nadir and update response params
+
 ## v5.8.0 (2025-03-03)
 
 ### Feat
