@@ -34,7 +34,7 @@ poetry run python ./examples/catalog.py --example=recent
 The easiest way to get started is to use the `satellitevu.Client` class, which needs
 a client_id and client_secret only:
 
-```
+```python
 import os
 
 from satellitevu import Client
@@ -55,7 +55,7 @@ page size limit of 25.
 The `satellitevu.Auth` class provides the main interface to retrieve an
 authorization token required to interact with the API endpoints.
 
-```
+```python
 import os
 
 from satellitevu import Auth
