@@ -30,26 +30,23 @@ def feasibility(contract_id):
         contract_id=contract_id,
         coordinates=[12, 52],
         date_from=now,
-        date_to=now + timedelta(days=5),
+        date_to=now + timedelta(days=7),
+        min_off_nadir=0,
+        max_off_nadir=45
     )
 
-    print(f"### POST Response: {response.status} ###")
-    data = response.json()
-    pprint(data)
-
-    fid = data["id"]
-    status = data["properties"]["status"]
+    fid = response["id"]
+    status = response["properties"]["status"]
 
     while status == "pending":
         sleep(2)
         print("### Polling status…", end=" ")
         response = client.otm_v2.get_feasibility(contract_id=contract_id, id=fid)
-        data = response.json()
-        status = data["properties"]["status"]
+        status = response["properties"]["status"]
         print(f"{status} ###")
 
     print("### FINAL: ###")
-    pprint(data)
+    pprint(response)
 
 
 if __name__ == "__main__":
