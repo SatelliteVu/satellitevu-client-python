@@ -341,6 +341,7 @@ class OtmV2(AbstractApi):
                     "Orders with assured priority must have a signature token."
                 )
             payload["properties"].update({"signature": signature})
+            payload["properties"].update(kwargs)
 
         else:
             payload["properties"].update(

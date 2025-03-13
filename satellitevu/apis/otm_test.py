@@ -266,6 +266,7 @@ class TestTasking:
         pact,
     ):
         contract_id = otm_request_parameters["contract_id"]
+        otm_request_parameters["extra_kwarg"] = "extra_kwarg_value"
         api_path = API_PATH_ORDERS.replace("contract-id", str(contract_id))
 
         if product == "assured":
@@ -300,6 +301,7 @@ class TestTasking:
             assert "signature" in api_request_body["properties"].keys()
             for key in properties_keys:
                 assert not api_request_body["properties"].get(key)
+            assert api_request_body["extra_kwarg"] == "extra_kwarg_value"
         else:
             assert api_request_body["geometry"] == {
                 "type": "Point",
@@ -314,6 +316,7 @@ class TestTasking:
                 api_request_body["properties"]["datetime"]
                 == f"{otm_request_parameters['date_from'].isoformat()}/{otm_request_parameters['date_to'].isoformat()}"  # noqa: E501
             )
+            assert api_request_body["extra_kwarg"] == "extra_kwarg_value"
 
             (
                 pact.upon_receiving(f"A tasking order ({product})")
