@@ -1,4 +1,4 @@
-from allure import description, story, title
+from allure import description, feature, title
 import tempfile
 from io import BytesIO
 from json import dumps
@@ -18,7 +18,7 @@ API_PATH = "orders/v2/contract-id/"
 
 
 @mark.usefixtures("mocketize_fixture")
-@story("Orders")
+@feature("Orders")
 class TestOrders:
     @title("Submit order (single item)")
     @description("Submit an order for a single item")

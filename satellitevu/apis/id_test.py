@@ -1,4 +1,4 @@
-from allure import description, story, title
+from allure import description, feature, title
 import json
 import re
 from urllib.parse import urlparse
@@ -13,7 +13,7 @@ from satellitevu.apis.exceptions import IDAPIError
 
 @mark.parametrize("pact", ["id-service"], indirect=True)
 @mark.usefixtures("mocketize_fixture")
-@story("ID")
+@feature("ID")
 class TestID:
     @title("Get user details")
     @description("Retrieve the details of a user.")
