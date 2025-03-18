@@ -1,3 +1,9 @@
+## v5.8.2 (2025-03-18)
+
+### Fix
+
+- Fix **kwargs being ignored for assured order placement
+
 ## v5.8.1 (2025-03-07)
 
 ### Fix
