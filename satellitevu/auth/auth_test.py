@@ -1,4 +1,4 @@
-from allure import story, title
+from allure import feature, title
 from base64 import urlsafe_b64encode
 from datetime import datetime
 from json import dumps
@@ -14,7 +14,7 @@ from .auth import Auth, is_expired_token
 from .exc import AuthError
 
 
-@story("Auth")
+@feature("Auth")
 @mark.usefixtures("mocketize_fixture")
 class TestAuth:
     def _encode(self, claims: Dict[str, any]) -> str:
