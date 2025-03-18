@@ -1,4 +1,4 @@
-import allure
+from allure import dynamic
 from calendar import timegm
 from datetime import datetime, timedelta, timezone
 from importlib import import_module
@@ -711,5 +711,5 @@ def pact(request) -> Generator[Pact, None, None]:
 @fixture(autouse=True)
 def allure_metadata():
     """Allure labels to be added at runtime"""
-    allure.dynamic.label("layer", "unit")
-    allure.dynamic.epic("Python SDK")
+    dynamic.label("layer", "unit")
+    dynamic.epic("Python SDK")
