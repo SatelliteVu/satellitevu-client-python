@@ -1,4 +1,4 @@
-from allure import description, story, title
+from allure import description, feature, title
 from datetime import datetime, timezone
 from json import dumps
 from urllib.parse import urlparse
@@ -14,7 +14,7 @@ from satellitevu.auth.exc import Api401Error, Api403Error
 API_PATH = "catalog/v1/contract-id/"
 
 
-@story("Catalog")
+@feature("Catalog")
 class TestCatalog:
     @mocketize(strict_mode=True)
     @mark.parametrize(
