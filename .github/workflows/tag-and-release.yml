@@ -66,7 +66,7 @@ jobs:
         with:
           ref: ${{ env.GIT_TAG }}
       - name: Install poetry
-        run: pipx install poetry
+        run: pipx install poetry==1.8.5
       - uses: actions/github-script@v7
         env:
           CHANGES: ${{ needs.tag.outputs.changes }}

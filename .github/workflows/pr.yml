@@ -22,7 +22,7 @@ jobs:
           architecture: x64
       - name: Install nox
         run: |
-          pipx install poetry
+          pipx install poetry==1.8.5
           pipx install nox
           pipx inject nox nox-poetry
       - name: Checkout PR branch
@@ -75,7 +75,7 @@ jobs:
           allure-project-id: 34
       - name: Install nox
         run: |
-          pipx install poetry
+          pipx install poetry==1.8.5
           pipx install nox
           pipx inject nox nox-poetry
       - name: Run tests
