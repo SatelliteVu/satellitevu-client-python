@@ -712,4 +712,4 @@ def pact(request) -> Generator[Pact, None, None]:
 def allure_metadata():
     """Allure labels to be added at runtime"""
     dynamic.label("layer", "unit")
-    dynamic.epic("Python SDK")
+    dynamic.parent_suite("Python SDK")
