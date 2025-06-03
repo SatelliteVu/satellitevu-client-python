@@ -1,4 +1,4 @@
-from allure import description, feature, title
+from allure import description, title, suite
 from json import dumps, loads
 from itertools import product
 from secrets import token_urlsafe
@@ -16,7 +16,7 @@ API_PATH_FEASIBILITY = "otm/v2/contract-id/tasking/feasibilities/"
 API_PATH_ORDERS = "otm/v2/contract-id/tasking/orders/"
 
 
-@feature("Tasking")
+@suite("Tasking")
 @mark.usefixtures("mocketize_fixture")
 class TestTasking:
     @title("Cannot use OTM v2 without contract ID")
