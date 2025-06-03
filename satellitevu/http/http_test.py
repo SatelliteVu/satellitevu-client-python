@@ -1,4 +1,4 @@
-from allure import feature, title
+from allure import title, suite
 from importlib.metadata import version
 from json import dumps
 from unittest.mock import Mock
@@ -12,7 +12,7 @@ from satellitevu.auth.auth import Auth
 from . import ResponseWrapper, UrllibClient
 
 
-@feature("HTTP")
+@suite("HTTP")
 class TestHttp:
     @title("HTTP client")
     @mark.parametrize("method", ("GET", "POST"))

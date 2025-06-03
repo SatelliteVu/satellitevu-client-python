@@ -1,4 +1,4 @@
-from allure import description, feature, title
+from allure import description, title, suite
 from json import dumps
 from typing import List
 from urllib.parse import parse_qs
@@ -19,7 +19,7 @@ class TestApi(AbstractApi):
     scopes = ["test"]
 
 
-@feature("Base")
+@suite("Base")
 @title("Scopes")
 @description("Test that the correct scopes are sent in the request")
 @mark.parametrize("kwargs", ({}, {"scopes": ["foo"]}))

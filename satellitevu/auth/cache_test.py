@@ -1,4 +1,4 @@
-from allure import feature, title
+from allure import title, suite
 from configparser import ConfigParser
 from pathlib import Path
 
@@ -9,7 +9,7 @@ from .cache import AppDirCache, MemoryCache
 TEST_DIR = Path("/test")
 
 
-@feature("Cache")
+@suite("Cache")
 class TestCache:
     @title("Empty cache save")
     def test_empty_cache_save(self, fs: FakeFilesystem):
