@@ -72,17 +72,15 @@ class Auth:
             scopes = []
         logger.info("Performing client_credential authentication")
         token_url = urljoin(self.auth_url, "oauth/token")
-        response = self.client.post(
-            token_url,
-            headers={"content-type": "application/x-www-form-urlencoded"},
-            data={
-                "grant_type": "client_credentials",
-                "client_id": self.client_id,
-                "client_secret": self.client_secret,
-                "audience": self.audience,
-                "scope": " ".join(scopes),
-            },
-        )
+        headers = {"content-type": "application/x-www-form-urlencoded"}
+        data = {
+            "grant_type": "client_credentials",
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "audience": self.audience,
+            "scope": " ".join(scopes),
+        }
+        response = self.client.post(token_url, headers=headers, data=data)
 
         if response.status != 200:
             raise AuthError(
@@ -94,5 +92,8 @@ class Auth:
             return payload["access_token"]
         except Exception:
             raise AuthError(
-                "Unexpected response body for client_credential flow: " + response.text
+                "Unexpected response body for client_credential flow: " + response.text,
+                response,
+                ["POST", token_url],
+                {"headers": headers, "data": data},
             )
