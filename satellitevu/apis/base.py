@@ -28,13 +28,18 @@ class AbstractApi(ABC):
         response = self.client.request(*args, **kwargs)
 
         if response.status == 401:
-            raise Api401Error("Unauthorized to make this request.")
+            raise Api401Error(
+                "Unauthorized to make this request.", response, args, kwargs
+            )
         elif response.status == 403:
             raise Api403Error(
                 (
                     "Not permitted to perform this action. "
                     "Please contact Satellite Vu for assistance."
-                )
+                ),
+                response,
+                args,
+                kwargs,
             )
 
         return response
