@@ -2,7 +2,7 @@ from abc import ABC
 from urllib.parse import urljoin
 from warnings import simplefilter, warn
 
-from satellitevu.auth.exc import Api401Error, Api403Error
+from satellitevu.auth.exc import Api401Error, Api403Error, ApiClientError, ApiServerError
 from satellitevu.http import AbstractClient
 
 
@@ -28,14 +28,21 @@ class AbstractApi(ABC):
         response = self.client.request(*args, **kwargs)
 
         if response.status == 401:
-            raise Api401Error("Unauthorized to make this request.")
+            raise Api401Error("Unauthorized to make this request.", response_text=response.text)
         elif response.status == 403:
             raise Api403Error(
                 (
                     "Not permitted to perform this action. "
                     "Please contact Satellite Vu for assistance."
-                )
+                ),
+                response_text=response.text
+
             )
+        elif response.status >= 400 and response.status < 500:
+            raise ApiClientError(response_status=response.status, response_text=response.text)
+        elif response.status >= 500 and response.status < 600:
+            raise ApiServerError(response_status=response.status, response_text=response.text)
+
 
         return response
 

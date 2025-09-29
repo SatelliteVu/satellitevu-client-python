@@ -4,6 +4,8 @@ from time import sleep
 from typing import Any, List, Literal, Optional, Tuple, Union, Dict
 from uuid import UUID
 
+from satellitevu.auth.exc import ApiError
+
 from .base import AbstractApi
 from .exceptions import (
     OTMOrderCancellationError,
@@ -419,10 +421,14 @@ class OtmV2(AbstractApi):
         Returns:
             None
         """
-        response = self.make_request(
-            method="POST",
-            url=self.url(f"{str(contract_id)}/tasking/orders/{str(order_id)}/cancel"),
-        )
+        try:
+            response = self.make_request(
+                method="POST",
+                url=self.url(f"{str(contract_id)}/tasking/orders/{str(order_id)}/cancel"),
+            )
+        except ApiError as e:
+            raise OTMOrderCancellationError(e.response_status, e.response_text) from e
+
         if response.status != 204:
             raise OTMOrderCancellationError(response.status, response.text)
 

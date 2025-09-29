@@ -3,6 +3,7 @@ from uuid import UUID
 
 from satellitevu.apis.base import AbstractApi
 from satellitevu.apis.exceptions import IDAPIError
+from satellitevu.auth.exc import ApiError
 
 
 class IdV2(AbstractApi):
@@ -40,9 +41,12 @@ class IdV2(AbstractApi):
         Update user settings.
         """
         url = self.url("user/settings")
-        response = self.make_request(
-            method="PUT", url=url, json={"notifications": notifications}
-        )
+        try:
+            response = self.make_request(
+                method="PUT", url=url, json={"notifications": notifications}
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -53,7 +57,10 @@ class IdV2(AbstractApi):
         for the contract minus the total credits used.
         """
         url = self.url(f"{str(contract_id)}/wallet/credit")
-        response = self.make_request(method="GET", url=url)
+        try:
+            response = self.make_request(method="GET", url=url)
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -90,11 +97,14 @@ class IdV2(AbstractApi):
             **kwargs,
         }
 
-        response = self.make_request(
-            method="POST",
-            url=self.url("webhooks/"),
-            json=payload,
-        )
+        try:
+            response = self.make_request(
+                method="POST",
+                url=self.url("webhooks/"),
+                json=payload,
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
 
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
@@ -110,10 +120,13 @@ class IdV2(AbstractApi):
         Returns:
             A dictionary containing properties of the webhook.
         """
-        response = self.make_request(
-            method="GET",
-            url=self.url(f"webhooks/{str(webhook_id)}/"),
-        )
+        try:
+            response = self.make_request(
+                method="GET",
+                url=self.url(f"webhooks/{str(webhook_id)}/"),
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -140,7 +153,10 @@ class IdV2(AbstractApi):
         if page_token:
             url += f"&token={page_token}"
 
-        response = self.make_request(method="GET", url=url)
+        try:
+            response = self.make_request(method="GET", url=url)
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -181,11 +197,14 @@ class IdV2(AbstractApi):
         if name:
             payload["name"] = name
 
-        response = self.make_request(
-            method="PATCH",
-            url=self.url(f"webhooks/{webhook_id}/"),
-            json=payload,
-        )
+        try:
+            response = self.make_request(
+                method="PATCH",
+                url=self.url(f"webhooks/{webhook_id}/"),
+                json=payload,
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -198,12 +217,15 @@ class IdV2(AbstractApi):
             webhook_id: The webhook ID.
         """
 
-        response = self.make_request(
-            method="DELETE",
-            url=self.url(
-                f"webhooks/{webhook_id}/",
-            ),
-        )
+        try:
+            response = self.make_request(
+                method="DELETE",
+                url=self.url(
+                    f"webhooks/{webhook_id}/",
+                ),
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 204:
             raise IDAPIError(response.status, response.text)
 
@@ -218,9 +240,12 @@ class IdV2(AbstractApi):
             A dictionary containing properties of the webhook,
             including the new signing key.
         """
-        response = self.make_request(
-            method="POST", url=self.url(f"webhooks/{webhook_id}/rotate/")
-        )
+        try:
+            response = self.make_request(
+                method="POST", url=self.url(f"webhooks/{webhook_id}/rotate/")
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
@@ -236,9 +261,12 @@ class IdV2(AbstractApi):
             A dictionary containing properties of the webhook
             and details about the result of the test.
         """
-        response = self.make_request(
-            method="POST", url=self.url(f"/webhooks/{webhook_id}/test/")
-        )
+        try:
+            response = self.make_request(
+                method="POST", url=self.url(f"/webhooks/{webhook_id}/test/")
+            )
+        except ApiError as e:
+            raise IDAPIError(e.response_status, e.response_text) from e
         if response.status != 200:
             raise IDAPIError(response.status, response.text)
         return response.json()
