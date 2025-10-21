@@ -1,5 +1,5 @@
 from base64 import b64decode
-from datetime import datetime
+from datetime import datetime, timedelta
 from hashlib import sha1
 from json import loads
 from logging import getLogger
@@ -15,14 +15,27 @@ from .exc import AuthError
 logger = getLogger(__file__)
 
 
-def is_expired_token(token: str) -> bool:
+def is_expired_token(token: str, grace_period_seconds: int = 0) -> bool:
+    """
+    Check if a JWT token is expired.
+
+    Args:
+        token: JWT token string
+        grace_period_seconds: Number of seconds before actual expiration to consider token expired.
+                            This provides a safety buffer for network latency and clock skew.
+                            Default is 0 (no grace period).
+
+    Returns:
+        True if token is expired (or within grace period of expiration), False otherwise
+    """
     json = b64decode(token.split(".")[1] + "==")
     claims = loads(json)
     if not claims or "exp" not in claims:
         return False
     exp = float(claims["exp"])
     exp_dt = datetime.fromtimestamp(exp)
-    return exp_dt <= datetime.now()
+    grace_period = timedelta(seconds=grace_period_seconds)
+    return exp_dt <= datetime.now() + grace_period
 
 
 class Auth:
@@ -34,6 +47,7 @@ class Auth:
 
     auth_url: str
     client: AbstractClient
+    grace_period_seconds: int
 
     def __init__(
         self,
@@ -44,7 +58,22 @@ class Auth:
         cache: Optional[AbstractCache] = None,
         auth_url: Optional[str] = None,
         client: Optional[AbstractClient] = None,
+        grace_period_seconds: int = 60,
     ):
+        """
+        Initialize Auth handler for OAuth2 client credentials flow.
+
+        Args:
+            client_id: OAuth2 client ID
+            client_secret: OAuth2 client secret
+            audience: OAuth2 audience (defaults to API gateway URL)
+            cache: Cache implementation for storing tokens (defaults to AppDirCache)
+            auth_url: Authentication server base URL
+            client: HTTP client implementation (defaults to UrllibClient)
+            grace_period_seconds: Number of seconds before token expiration to consider it expired.
+                                This provides a safety buffer for network latency and clock skew.
+                                Default is 60 seconds.
+        """
         self.client_id = client_id
         self.client_secret = client_secret
         self.audience = audience or AUDIENCE
@@ -52,6 +81,7 @@ class Auth:
         self.cache = cache or AppDirCache()
         self.auth_url = auth_url or AUTH_URL
         self.client = client or UrllibClient()
+        self.grace_period_seconds = grace_period_seconds
 
     def token(self, scopes: Optional[List] = None) -> str:
         if not scopes:
@@ -61,7 +91,7 @@ class Auth:
 
         token = self.cache.load(cache_key.hexdigest())
 
-        if not token or is_expired_token(token):
+        if not token or is_expired_token(token, self.grace_period_seconds):
             token = self._auth(scopes)
             self.cache.save(cache_key.hexdigest(), token)
 
