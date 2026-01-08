@@ -16,9 +16,10 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from josepy import JWKRSA
 from jwt import PyJWK, encode
-from mocket import mocketize, Mocketizer
-from mocket.mockhttp import Entry
-from pact.v3 import Pact
+from mocket import Mocketizer
+from mocket.mocks.mockhttp import Entry
+from pact import Pact
+from pact_ffi import log_to_stderr
 from pytest import fixture, mark, param
 
 try:
@@ -109,7 +110,6 @@ def auth_url() -> str:
     return "http://auth.example.com"
 
 
-@mocketize(strict_mode=True)
 @fixture(scope="function")
 def generic_token_factory(
     jwk,
@@ -695,9 +695,7 @@ def _setup_pact_logging() -> None:
     """
     Set up logging for the pact package.
     """
-    from pact.v3 import ffi
-
-    ffi.log_to_stderr("INFO")
+    log_to_stderr("INFO")
 
 
 @fixture

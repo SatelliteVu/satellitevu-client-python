@@ -15,19 +15,19 @@ python = "^3.10"
 appdirs = "^1.4.4"
 
 [tool.poetry.group.dev.dependencies]
-allure-pytest = "^2.13.5"
-cryptography = "^43.0.3"
-fawltydeps = "^0.17.0"
-josepy = "^1.14.0"
-mocket = "^3.13.2"
-nox = "^2024.10.9"
-nox-poetry = "^1.0.1"
-pyfakefs = "^5.7.1"
-pytest = "^8.3.3"
-pytest-cov = "^5.0.0"
-pyjwt = "^2.9.0"
-ruff = "^0.7.3"
-pact-python = "^2.2.2"
+allure-pytest = "^2.15.3"
+cryptography = "^46.0.3"
+fawltydeps = "^0.20.0"
+josepy = "^2.2.0"
+mocket = "^3.14.0"
+nox = "^2025.11.12"
+nox-poetry = "^1.2.0"
+pyfakefs = "^6.0.0"
+pytest = "^9.0.2"
+pytest-cov = "^7.0.0"
+pyjwt = "^2.10.1"
+ruff = "^0.14.10"
+pact-python = "^3.2.1"
 
 [tool.poetry.group.requests]
 optional = true
@@ -69,4 +69,4 @@ ignore_unused = ["fawltydeps", "nox", "pytest-cov", "ruff", "pact-python"]
 [tool.fawltydeps.custom_mapping]
 allure-pytest = ["allure"]
 pyjwt = ["jwt"]
-pact-python = ["pact"]
+pact-python = ["pact", "pact_ffi"]
