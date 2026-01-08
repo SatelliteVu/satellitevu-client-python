@@ -15,7 +15,7 @@ The package is published to [PyPi][pypi] and can be installed with pip:
 ```
 pip install satellitevu
 ```
-Currently, versions of Python >=3.9 and above are supported.
+Currently, versions of Python >=3.10 and above are supported.
 
 ## Usage
 

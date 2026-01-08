@@ -29,15 +29,15 @@ endif
 
 	@echo
 	@echo Checking Python versions
-ifeq (, $(shell which python3.8))
-	@echo "WARNING: No Python 3.8 found"
-else
-	@echo "INFO: Python 3.8 found"
-endif
 ifeq (, $(shell which python3.10))
 	@echo "WARNING: No Python 3.10 found"
 else
 	@echo "INFO: Python 3.10 found"
+endif
+ifeq (, $(shell which python3.11))
+	@echo "WARNING: No Python 3.11 found"
+else
+	@echo "INFO: Python 3.11 found"
 endif
 
 
