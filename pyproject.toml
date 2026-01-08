@@ -50,6 +50,9 @@ optional = true
 [tool.poetry.group.httpx.dependencies]
 httpx = "^0.23.0"
 
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.9"
+
 [tool.commitizen]
 tag_format = "v$version"
 version_scheme = "semver2"
