@@ -1,5 +1,7 @@
 # SatelliteVu SDK for Python
 
+> ⚠️ **DEPRECATED**: This package is deprecated and will no longer be maintained. Please use [satvu-api-sdk](https://github.com/SatelliteVu/satvu-api-sdk) instead.
+
 [![pypi](https://img.shields.io/pypi/v/satellitevu)](https://pypi.org/project/satellitevu/)
 [![license](https://img.shields.io/github/license/SatelliteVu/satellitevu-client-python)](https://github.com/SatelliteVu/satellitevu-client-python/blob/main/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/satellitevu?style=social)](https://twitter.com/intent/follow?screen_name=satellitevu)

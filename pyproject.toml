@@ -7,6 +7,9 @@ authors = [
     "Zhelini Sivanesan <zhelini.sivanesan@satellitevu.com>",
     "James Harrison <james.harrison@satellitevu.com>",
 ]
+classifiers = [
+    "Development Status :: 7 - Inactive",
+]
 license = "MIT"
 readme = "README.md"
 
