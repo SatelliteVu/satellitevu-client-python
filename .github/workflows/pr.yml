@@ -22,7 +22,8 @@ jobs:
           architecture: x64
       - name: Install nox
         run: |
-          pipx install poetry==1.8.5
+          pipx install poetry==2.2.1
+          pipx inject poetry poetry-plugin-export
           pipx install nox
           pipx inject nox nox-poetry
       - name: Checkout PR branch
@@ -55,7 +56,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9.21
+          python-version: 3.10
           architecture: x64
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -75,7 +76,8 @@ jobs:
           allure-project-id: 34
       - name: Install nox
         run: |
-          pipx install poetry==1.8.5
+          pipx install poetry==2.2.1
+          pipx inject poetry poetry-plugin-export
           pipx install nox
           pipx inject nox nox-poetry
       - name: Run tests
