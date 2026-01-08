@@ -1,3 +1,15 @@
+## v6.0.0 (2026-01-08)
+
+### BREAKING CHANGE
+
+- drop support for Python 3.9
+
+### Feat
+
+- mark package as deprecated
+- update dev dependencies
+- drop support for Python 3.9
+
 ## v5.8.2 (2025-03-18)
 
 ### Fix
