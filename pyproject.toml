@@ -11,7 +11,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 appdirs = "^1.4.4"
 
 [tool.poetry.group.dev.dependencies]
